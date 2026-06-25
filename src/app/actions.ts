@@ -158,9 +158,8 @@ export async function deleteProposal(id: string, passcode: string) {
 
 // === KARTU SAHABAT ACTIONS ===
 
-export async function createKartuSahabat(data: { committeeName: string, targetAmount?: number }, passcode: string) {
+export async function createKartuSahabat(data: { committeeName: string, targetAmount?: number }) {
   try {
-    if (passcode !== '2906') throw new Error('Passcode salah.')
     if (!data.committeeName) throw new Error('Nama panitia wajib diisi.')
     
     // Poka-Yoke: Cegah target negatif

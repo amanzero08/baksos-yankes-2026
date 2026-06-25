@@ -32,7 +32,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     
     const targetNum = targetAmount ? parseFloat(targetAmount.replace(/[^0-9.-]+/g,"")) : 0;
     
-    const res = await createKartuSahabat({ committeeName, targetAmount: targetNum }, passcode)
+    const res = await createKartuSahabat({ committeeName, targetAmount: targetNum })
     if (res.success) {
       setIsAddOpen(false)
       setCommitteeName("")
@@ -95,10 +95,6 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               <div className="space-y-2">
                 <Label>Target Pribadi (Opsional)</Label>
                 <Input value={targetAmount} onChange={e => setTargetAmount(e.target.value)} className="bg-slate-900/50 border-white/10" placeholder="Contoh: 5000000" />
-              </div>
-              <div className="space-y-2">
-                <Label>Passcode Admin</Label>
-                <Input required type="password" value={passcode} onChange={e => setPasscode(e.target.value)} className="bg-slate-900/50 border-white/10" />
               </div>
               {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500">
