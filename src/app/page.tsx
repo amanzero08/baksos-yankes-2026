@@ -3,104 +3,113 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2 } from "lucide-react";
+import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
 }
 
 const stagger = {
-  visible: { transition: { staggerChildren: 0.1 } }
+  visible: { transition: { staggerChildren: 0.15 } }
 }
 
 export default function Home() {
   return (
-    <main className="flex flex-col min-h-screen bg-white selection:bg-[var(--color-primary-blue)] selection:text-white pb-24 sm:pb-0">
+    <main className="flex flex-col min-h-screen bg-slate-950 text-slate-200 selection:bg-amber-500/30 selection:text-amber-200 pb-24 sm:pb-0 overflow-hidden relative">
       
-      {/* Hero Section */}
-      <section className="relative w-full pt-16 sm:pt-28 pb-32 overflow-hidden flex flex-col items-center justify-center min-h-[90vh] bg-[#fafafa]">
-        {/* Modern SaaS Mesh/Blur Background */}
-        <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-           <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-300/20 rounded-full blur-[120px]"></div>
-           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-300/20 rounded-full blur-[120px]"></div>
-        </div>
+      {/* Ambient Background Orbs */}
+      <div className="fixed inset-0 overflow-hidden z-0 pointer-events-none">
+        <motion.div 
+          animate={{ x: [0, 50, 0], y: [0, -50, 0], scale: [1, 1.1, 1] }} 
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px]"
+        />
+        <motion.div 
+          animate={{ x: [0, -50, 0], y: [0, 50, 0], scale: [1, 1.2, 1] }} 
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-amber-500/10 rounded-full blur-[150px]"
+        />
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"></div>
+      </div>
 
+      {/* Hero Section */}
+      <section className="relative w-full pt-20 sm:pt-32 pb-32 flex flex-col items-center justify-center min-h-[90vh]">
         <motion.div 
           initial="hidden" animate="visible" variants={stagger}
           className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center mt-10"
         >
-          <motion.div variants={fadeUp} className="inline-flex items-center rounded-full border border-slate-200/60 bg-white/50 backdrop-blur-md px-4 py-1.5 text-sm font-medium text-slate-600 mb-8 shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-            Pelayanan Kasih 14 - 18 September 2026
+          <motion.div variants={fadeUp} className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 backdrop-blur-md px-5 py-2 text-sm font-medium text-amber-200 mb-8 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+            <Sparkles className="w-4 h-4 mr-2 text-amber-400" />
+            <span className="tracking-wide">Pelayanan Kasih 14 - 18 September 2026</span>
           </motion.div>
           
           <motion.div variants={fadeUp}>
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-900 leading-[1.1]">
+            <h1 className="font-heading text-5xl md:text-8xl font-extrabold tracking-tight mb-6 text-slate-100 leading-[1.1] drop-shadow-2xl">
               Kesehatan untuk Semua, <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary-blue)] to-blue-400">Dimanapun Berada.</span>
+              <span className="gold-gradient-text text-glow">Dimanapun Berada.</span>
             </h1>
           </motion.div>
           
-          <motion.p variants={fadeUp} className="mt-4 text-xl text-slate-500 max-w-2xl mx-auto mb-10 font-normal leading-relaxed">
+          <motion.p variants={fadeUp} className="mt-6 text-xl text-slate-400 max-w-3xl mx-auto mb-12 font-medium leading-relaxed">
             Yayasan Kesehatan GPIB dan GMIM bersinergi menghadirkan akses layanan medis premium ke pelosok Sulawesi Utara melalui Bakti Sosial Lintas Sinodal 2026.
           </motion.p>
           
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto justify-center">
             <Link href="/proposal" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto bg-[var(--color-primary-blue)] hover:bg-[var(--color-primary-blue-light)] text-white font-semibold text-lg px-8 py-6 rounded-full shadow-lg shadow-blue-500/25 transition-transform hover:-translate-y-0.5">
+              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-slate-900 font-bold text-lg px-10 py-7 rounded-full shadow-[0_0_30px_rgba(253,224,71,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(253,224,71,0.5)] border border-yellow-300/50">
                 Mulai Donasi
               </Button>
             </Link>
             <Link href="#lokasi" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-slate-200 text-slate-600 hover:bg-slate-50 px-8 py-6 rounded-full transition-transform hover:-translate-y-0.5 font-semibold">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/20 text-slate-200 hover:bg-white/10 hover:text-white px-10 py-7 rounded-full transition-all hover:scale-105 font-semibold backdrop-blur-md">
                 Lihat Lokasi
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
           </motion.div>
         </motion.div>
 
-        {/* Trusted By / Logos & Summaries */}
+        {/* Trusted By / Logos */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 1 }}
-          className="mt-32 w-full max-w-5xl mx-auto px-4 z-10"
+          transition={{ delay: 1, duration: 1.2 }}
+          className="mt-40 w-full max-w-5xl mx-auto px-4 z-10"
         >
-          <p className="text-center text-sm font-bold text-[var(--color-primary-blue)] mb-12 uppercase tracking-widest">Diselenggarakan Bersama Oleh</p>
+          <p className="text-center text-xs font-bold text-slate-500 mb-14 uppercase tracking-[0.3em]">Diselenggarakan Bersama Oleh</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 text-center">
             {/* GPIB */}
             <div className="flex flex-col items-center group">
-              <div className="h-32 md:h-40 w-full mb-6 flex items-center justify-center p-6 rounded-[2rem] bg-white/60 backdrop-blur-md border border-slate-200/50 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-blue-500/10 group-hover:-translate-y-2">
-                <img src="/logo-gpib.png" alt="GPIB" className="h-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" />
+              <div className="h-40 md:h-48 w-full mb-8 flex items-center justify-center p-2 rounded-[2rem] glass-panel transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group-hover:-translate-y-2 group-hover:bg-slate-800/50">
+                <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-gpib.png" alt="GPIB" className="h-28 md:h-36 w-auto object-contain filter grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
               </div>
-              <h4 className="font-extrabold text-xl text-slate-900 mb-3 tracking-tight">GPIB</h4>
-              <p className="text-slate-500 text-sm leading-relaxed font-medium">
+              <h4 className="font-heading font-bold text-2xl text-slate-100 mb-3 tracking-tight">GPIB</h4>
+              <p className="text-slate-400 text-sm leading-relaxed font-medium">
                 Membangun jemaat misioner pembawa damai sejahtera bagi seluruh lapisan masyarakat di wilayah pelayanannya.
               </p>
             </div>
 
             {/* Yankes GPIB */}
             <div className="flex flex-col items-center group">
-              <div className="h-32 md:h-40 w-full mb-6 flex items-center justify-center p-6 rounded-[2rem] bg-white/60 backdrop-blur-md border border-slate-200/50 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-blue-500/10 group-hover:-translate-y-2">
-                <img src="/logo-yankes.png" alt="Yayasan Kesehatan GPIB" className="h-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" />
+              <div className="h-40 md:h-48 w-full mb-8 flex items-center justify-center p-2 rounded-[2rem] glass-panel transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group-hover:-translate-y-2 group-hover:bg-slate-800/50">
+                <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" alt="Yayasan Kesehatan GPIB" className="h-28 md:h-36 w-auto object-contain filter grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
               </div>
-              <h4 className="font-extrabold text-xl text-slate-900 mb-3 tracking-tight">Yayasan Kesehatan GPIB</h4>
-              <p className="text-slate-500 text-sm leading-relaxed font-medium">
+              <h4 className="font-heading font-bold text-2xl text-slate-100 mb-3 tracking-tight">Yayasan Kesehatan GPIB</h4>
+              <p className="text-slate-400 text-sm leading-relaxed font-medium">
                 Perpanjangan tangan gereja yang berkomitmen penuh dalam menghadirkan layanan medis inklusif, berkualitas, dan profesional.
               </p>
             </div>
 
             {/* GMIM */}
             <div className="flex flex-col items-center group">
-              <div className="h-32 md:h-40 w-full mb-6 flex items-center justify-center p-6 rounded-[2rem] bg-white/60 backdrop-blur-md border border-slate-200/50 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-blue-500/10 group-hover:-translate-y-2">
-                <img src="/logo-gmim.png" alt="GMIM" className="h-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" />
+              <div className="h-40 md:h-48 w-full mb-8 flex items-center justify-center p-2 rounded-[2rem] glass-panel transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group-hover:-translate-y-2 group-hover:bg-slate-800/50">
+                <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-gmim.png" alt="GMIM" className="h-24 md:h-32 w-auto object-contain filter grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
               </div>
-              <h4 className="font-extrabold text-xl text-slate-900 mb-3 tracking-tight">GMIM</h4>
-              <p className="text-slate-500 text-sm leading-relaxed font-medium">
+              <h4 className="font-heading font-bold text-2xl text-slate-100 mb-3 tracking-tight">GMIM</h4>
+              <p className="text-slate-400 text-sm leading-relaxed font-medium">
                 Gereja yang global, mandiri, dan misioner dalam melayani masyarakat secara menyeluruh di tanah Minahasa.
               </p>
             </div>
@@ -108,100 +117,142 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Feature Grid (SaaS style) */}
-      <section className="py-28 bg-white relative z-20 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">Pelayanan Tanpa Batas</h2>
-            <p className="text-slate-500 text-lg">Membangun masyarakat yang sehat dan kuat melalui pendekatan medis yang komprehensif dan transparan.</p>
+      {/* Feature Grid */}
+      <section className="py-32 relative z-20 border-t border-white/5">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900/50 -z-10"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <h2 className="font-heading text-4xl md:text-5xl font-bold text-slate-100 mb-6 tracking-tight">Pelayanan Tanpa Batas</h2>
+            <p className="text-slate-400 text-lg leading-relaxed">Membangun masyarakat yang sehat dan kuat melalui pendekatan medis yang komprehensif, eksklusif, dan transparan.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1">
-              <div className="h-14 w-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6 shadow-sm">
-                <HeartPulse className="h-7 w-7" />
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="glass-panel rounded-[2rem] p-10 hover:bg-slate-800/60 transition-all duration-500 hover:-translate-y-2 group">
+              <div className="h-16 w-16 rounded-2xl bg-blue-900/40 border border-blue-500/30 text-blue-400 flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(59,130,246,0.2)] group-hover:scale-110 transition-transform duration-500">
+                <HeartPulse className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Medis Menyeluruh</h3>
-              <p className="text-slate-500 leading-relaxed font-medium">Pengobatan gratis, pemeriksaan umum, dan penyuluhan gizi bagi masyarakat di daerah terpencil.</p>
+              <h3 className="font-heading text-2xl font-bold text-slate-100 mb-4">Medis Menyeluruh</h3>
+              <p className="text-slate-400 leading-relaxed font-medium">Pengobatan gratis, pemeriksaan umum, dan penyuluhan gizi bagi masyarakat di daerah terpencil dengan fasilitas setara klinik premium.</p>
             </motion.div>
 
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} transition={{ delay: 0.1 }} className="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1">
-              <div className="h-14 w-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6 shadow-sm">
-                <CheckCircle2 className="h-7 w-7" />
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} transition={{ delay: 0.1 }} className="glass-panel rounded-[2rem] p-10 hover:bg-slate-800/60 transition-all duration-500 hover:-translate-y-2 group">
+              <div className="h-16 w-16 rounded-2xl bg-amber-900/40 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(245,158,11,0.2)] group-hover:scale-110 transition-transform duration-500">
+                <CheckCircle2 className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Transparansi Dana</h3>
-              <p className="text-slate-500 leading-relaxed font-medium">Setiap donasi dicatat secara digital. Proposal dan bukti konfirmasi dapat diverifikasi secara *real-time*.</p>
+              <h3 className="font-heading text-2xl font-bold text-slate-100 mb-4">Transparansi Mutlak</h3>
+              <p className="text-slate-400 leading-relaxed font-medium">Setiap donasi dicatat secara digital. Proposal dan bukti konfirmasi dapat diverifikasi secara *real-time* melalui dasbor terenkripsi.</p>
             </motion.div>
 
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} transition={{ delay: 0.2 }} className="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1">
-              <div className="h-14 w-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6 shadow-sm">
-                <Calendar className="h-7 w-7" />
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} transition={{ delay: 0.2 }} className="glass-panel rounded-[2rem] p-10 hover:bg-slate-800/60 transition-all duration-500 hover:-translate-y-2 group">
+              <div className="h-16 w-16 rounded-2xl bg-emerald-900/40 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(16,185,129,0.2)] group-hover:scale-110 transition-transform duration-500">
+                <Calendar className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Tepat Sasaran</h3>
-              <p className="text-slate-500 leading-relaxed font-medium">Dilaksanakan pada 14-18 September 2026, bertepatan dengan momentum sinodal strategis.</p>
+              <h3 className="font-heading text-2xl font-bold text-slate-100 mb-4">Tepat Sasaran</h3>
+              <p className="text-slate-400 leading-relaxed font-medium">Dilaksanakan pada 14-18 September 2026, bertepatan dengan momentum sinodal strategis untuk dampak yang maksimal.</p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Peta Lokasi - SaaS Tabs */}
-      <section id="lokasi" className="py-28 bg-slate-50 rounded-t-[3rem] border-t border-slate-200/60 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+      {/* Peta Lokasi */}
+      <section id="lokasi" className="py-32 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-16">
-            <span className="text-[var(--color-primary-blue)] font-bold tracking-widest uppercase text-xs mb-3 block">Jangkauan Geografis</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-5 tracking-tight">3 Titik Pusat Pelayanan</h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">Menjangkau yang tak terjangkau. Fokus pelayanan terbagi di tiga wilayah utama Sulawesi Utara.</p>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-20">
+            <span className="text-amber-500 font-bold tracking-[0.2em] uppercase text-xs mb-4 block">Jangkauan Geografis</span>
+            <h2 className="font-heading text-4xl md:text-5xl font-extrabold text-slate-100 mb-6 tracking-tight">3 Titik Pelayanan</h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">Menjangkau yang tak terjangkau. Fokus pelayanan terbagi di tiga wilayah utama Sulawesi Utara.</p>
           </motion.div>
 
           <Tabs defaultValue="tondanouw" className="w-full max-w-5xl mx-auto">
-            <div className="flex justify-center mb-10 overflow-x-auto pb-4 hide-scrollbar">
-              <TabsList className="bg-white p-1.5 rounded-full border border-slate-200/60 shadow-sm w-full sm:w-auto flex flex-nowrap min-w-max">
-                <TabsTrigger value="tondanouw" className="rounded-full px-6 py-3 text-sm font-semibold text-slate-500 data-[state=active]:bg-[var(--color-primary-blue)] data-[state=active]:text-white transition-all shadow-none">
+            <div className="flex justify-center mb-12 overflow-x-auto pb-4 hide-scrollbar">
+              <TabsList className="glass-panel p-2 rounded-full w-full sm:w-auto flex flex-nowrap min-w-max">
+                <TabsTrigger value="tondanouw" className="rounded-full px-8 py-3.5 text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
                   Desa Tondanouw
                 </TabsTrigger>
-                <TabsTrigger value="likupang" className="rounded-full px-6 py-3 text-sm font-semibold text-slate-500 data-[state=active]:bg-[var(--color-primary-blue)] data-[state=active]:text-white transition-all shadow-none">
+                <TabsTrigger value="likupang" className="rounded-full px-8 py-3.5 text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
                   Likupang
                 </TabsTrigger>
-                <TabsTrigger value="lolah" className="rounded-full px-6 py-3 text-sm font-semibold text-slate-500 data-[state=active]:bg-[var(--color-primary-blue)] data-[state=active]:text-white transition-all shadow-none">
+                <TabsTrigger value="lolah" className="rounded-full px-8 py-3.5 text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
                   Desa Lolah
                 </TabsTrigger>
               </TabsList>
             </div>
 
-            <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden relative">
+            <div className="glass-panel rounded-[2.5rem] p-8 md:p-12 overflow-hidden relative">
               {/* Tabs Content */}
               {[{
                 val: "tondanouw", 
                 title: "Desa Tondanouw", 
                 subtitle: "Kec. Touluaan, Kab. Mitra", 
-                desc: "Wilayah Minahasa Tenggara memiliki tantangan aksesibilitas pelayanan medis di daerah pelosok. Desa Tondanouw akan menjadi titik sentral pelayanan medis intensif.",
+                desc: (
+                  <div className="text-sm space-y-4 mt-6 text-slate-300 text-left leading-relaxed">
+                    <p>Desa Tondanouw adalah salah satu desa yang berada di wilayah Kecamatan Touluaan, bagian dari Kabupaten Minahasa Tenggara di Provinsi Sulawesi Utara, Indonesia. Desa ini merupakan wilayah pedesaan yang kehidupan masyarakatnya banyak bergantung pada sektor pertanian dan kegiatan sosial kemasyarakatan khas daerah Minahasa.</p>
+                    <p><strong className="text-amber-400">1. Letak Geografis</strong><br/>Desa Tondanouw berada di kawasan Kecamatan Touluaan yang terdiri dari beberapa desa lain seperti Lobu, Ranoketang Atas, dan Tondanouw Satu. Wilayah ini termasuk daerah dataran dengan ketinggian sekitar ±272 meter di atas permukaan laut dan memiliki kode pos 95981.</p>
+                    <p><strong className="text-amber-400">2. Kondisi Penduduk</strong><br/>Jumlah penduduk desa ini sekitar ±1.500 jiwa dengan masyarakat yang hidup dalam suasana kekeluargaan dan gotong royong yang kuat. Struktur wilayah desa biasanya dibagi dalam beberapa jaga (lingkungan) untuk memudahkan pelayanan pemerintahan dan koordinasi masyarakat.</p>
+                    <p><strong className="text-amber-400">3. Mata Pencaharian dan Potensi Desa</strong><br/>Sebagian besar masyarakat Desa Tondanouw bekerja di bidang pertanian dan perkebunan, terutama:</p>
+                    <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                      <li>Pertanian padi sawah (desa ini dikenal sebagai salah satu sentra produksi padi di wilayah tersebut)</li>
+                      <li>Perkebunan tanaman pangan dan hortikultura</li>
+                      <li>Usaha kecil dan perdagangan lokal</li>
+                    </ul>
+                  </div>
+                ),
                 mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.756260278784!2d124.6970425!3d1.037497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32876b54133b6697%3A0xc3f7a4e7f3c64c12!2sTondanou%2C%20Touluaan%2C%20Southeast%20Minahasa%20Regency%2C%20North%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
               }, {
                 val: "likupang",
                 title: "Likupang",
                 subtitle: "Kab. Minahasa Utara",
-                desc: "Sebagai kawasan pariwisata prioritas, kami berkomitmen menjaga kesehatan masyarakat pesisir Likupang, khususnya keluarga nelayan yang rentan.",
+                desc: (
+                  <div className="text-sm space-y-4 mt-6 text-slate-300 text-left leading-relaxed">
+                    <p>Likupang adalah kawasan yang terletak di Kabupaten Minahasa Utara, Provinsi Sulawesi Utara. Wilayah ini berada di bagian utara Pulau Sulawesi dan berjarak sekitar 60 km dari Kota Manado.</p>
+                    <p>Secara administratif, kawasan Likupang terbagi menjadi beberapa kecamatan:</p>
+                    <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                      <li>Likupang Barat</li>
+                      <li>Likupang Timur</li>
+                      <li>Likupang Selatan</li>
+                    </ul>
+                    <p><strong className="text-amber-400">Data Populasi</strong><br/>Data populasi Likupang biasanya dihitung per kecamatan. Berdasarkan data BPS (sekitar sensus 2010):</p>
+                    <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                      <li>Likupang Barat: ±16.988 jiwa</li>
+                      <li>Likupang Timur: ±16.519 jiwa</li>
+                      <li>Likupang Selatan: ±4.958 jiwa</li>
+                    </ul>
+                    <p>Jadi, total perkiraan populasi kawasan Likupang (gabungan tiga kecamatan) sekitar ±38.000 jiwa.</p>
+                  </div>
+                ),
                 mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127581.4243685511!2d125.0069502!3d1.6787342!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32870ad46b3846cd%3A0x86bd7dcf3607775!2sLikupang%2C%20North%20Minahasa%20Regency%2C%20North%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
               }, {
                 val: "lolah",
                 title: "Desa Lolah",
                 subtitle: "Kec. Tombariri Timur",
-                desc: "Pelayanan bagi masyarakat perbukitan Minahasa, mencakup edukasi gizi holistik bagi keluarga dan pengobatan penyakit degeneratif.",
+                desc: (
+                  <div className="text-sm space-y-4 mt-6 text-slate-300 text-left leading-relaxed">
+                    <p>Lolah Satu adalah sebuah desa administratif yang terletak di Kecamatan Tombariri Timur, Kabupaten Minahasa, Provinsi Sulawesi Utara, Indonesia. Desa ini memadukan potensi agraris, warisan budaya megalitik, dan panorama pesisir di ujung utara Pulau Sulawesi.</p>
+                    <p>Rincian profil dan karakteristik wilayah Lolah Satu meliputi:</p>
+                    <ul className="list-disc pl-5 space-y-3 text-slate-400">
+                      <li><strong className="text-amber-400">Geografi dan Aksesibilitas:</strong> Berada di wilayah administrasi Kabupaten Minahasa, desa ini berdekatan secara geografis dengan Kota Tomohon dan ibu kota provinsi, Kota Manado. Wilayah ini dihubungkan oleh jaringan jalan darat yang memberikan akses menuju pusat ekonomi dan wisata di pesisir barat Minahasa.</li>
+                      <li><strong className="text-amber-400">Potensi Ekonomi:</strong> Mayoritas penduduknya menggantungkan hidup pada sektor pertanian, perkebunan, dan perikanan (untuk wilayah yang dekat dengan pesisir). Desa ini juga dikenal memiliki infrastruktur pendukung pertanian skala kecil seperti mesin perontok padi dan jagung.</li>
+                      <li><strong className="text-amber-400">Warisan Budaya:</strong> Lolah Satu dan sekitarnya (Situs Lolah) termasuk wilayah yang kaya akan peninggalan budaya megalitik. Di kawasan ini terdapat temuan sejarah arkeologis seperti waruga dan menhir.</li>
+                      <li><strong className="text-amber-400">Demografi:</strong> Desa ini dihuni oleh ratusan kepala keluarga dengan jumlah penduduk mencapai sekitar seribu jiwa, dengan mayoritas masyarakat yang hidup dalam nuansa adat dan budaya Minahasa yang kental.</li>
+                    </ul>
+                  </div>
+                ),
                 mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15953.595085600984!2d124.7876801!3d1.341852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3287140e695d13ef%3A0x1d4ffbc4242ec674!2sLolah%2C%20East%20Tombariri%2C%20Minahasa%20Regency%2C%20North%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
               }].map(loc => (
                 <TabsContent key={loc.val} value={loc.val} className="mt-0 focus-visible:outline-none">
-                  <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
-                    <div className="w-full lg:w-5/12 flex flex-col justify-center">
-                      <div className="inline-flex w-12 h-12 rounded-full bg-slate-50 border border-slate-100 shadow-sm text-blue-600 items-center justify-center mb-6">
-                        <MapPin className="h-6 w-6" />
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start pt-4">
+                    <div className="w-full lg:w-5/12 flex flex-col justify-start">
+                      <div className="inline-flex w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 items-center justify-center mb-8 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                        <MapPin className="h-7 w-7" />
                       </div>
-                      <h3 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">{loc.title}</h3>
-                      <p className="text-[var(--color-primary-blue)] font-semibold mb-6 flex items-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span>
+                      <h3 className="font-heading text-4xl font-bold text-slate-100 mb-3 tracking-tight">{loc.title}</h3>
+                      <p className="text-amber-400 font-semibold mb-4 flex items-center text-lg">
+                        <span className="w-2 h-2 rounded-full bg-amber-500 mr-3 shadow-[0_0_8px_rgba(245,158,11,0.8)]"></span>
                         {loc.subtitle}
                       </p>
-                      <p className="text-slate-500 leading-relaxed font-medium">{loc.desc}</p>
+                      {loc.desc}
                     </div>
-                    <div className="w-full lg:w-7/12 h-[350px] md:h-[400px] rounded-[1.5rem] overflow-hidden bg-slate-100 border border-slate-200/60 shadow-inner group">
+                    <div className="w-full lg:w-7/12 h-[550px] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative">
+                      <div className="absolute inset-0 border border-white/5 rounded-[2rem] pointer-events-none z-10"></div>
                       <iframe 
                         title={`Peta ${loc.title}`}
                         src={loc.mapSrc} 
@@ -211,7 +262,7 @@ export default function Home() {
                         allowFullScreen={true} 
                         loading="lazy" 
                         referrerPolicy="no-referrer-when-downgrade"
-                        className="w-full h-full grayscale-[25%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"
+                        className="w-full h-full grayscale-[50%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-in-out"
                       ></iframe>
                     </div>
                   </motion.div>
@@ -222,14 +273,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Modern SaaS Footer */}
-      <footer className="bg-white border-t border-slate-200/60 py-12 pb-24 sm:pb-12">
+      {/* Footer */}
+      <footer className="bg-slate-950 border-t border-white/5 py-12 pb-24 sm:pb-12 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3">
-            <img src="/logo-yankes.png" alt="Yankes Logo" className="h-8 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all" />
-            <span className="font-bold text-slate-900 tracking-tight">Baksos 2026</span>
+          <div className="flex items-center gap-4">
+            <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" alt="Yankes Logo" className="h-10 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
+            <span className="font-heading font-bold text-slate-300 tracking-wider text-xl">BAKSOS <span className="text-amber-500">2026</span></span>
           </div>
-          <p className="text-slate-400 text-sm text-center md:text-left font-medium">
+          <p className="text-slate-500 text-sm text-center md:text-left font-medium tracking-wide">
             &copy; {new Date().getFullYear()} Yayasan Kesehatan GPIB & GMIM. All rights reserved.
           </p>
         </div>
