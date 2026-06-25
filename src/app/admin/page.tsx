@@ -46,8 +46,8 @@ export default async function AdminDashboard() {
           <CardContent className="p-0">
             {proposals && proposals.length > 0 ? (
               <div className="overflow-x-auto hide-scrollbar">
-                <Table className="min-w-[800px]">
-                  <TableHeader>
+                <Table className="w-full md:min-w-[800px]">
+                  <TableHeader className="hidden md:table-header-group">
                     <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
                       <TableHead className="font-bold text-amber-500 uppercase text-xs tracking-widest px-6 sm:px-10 py-6">Nomor Proposal</TableHead>
                       <TableHead className="font-bold text-amber-500 uppercase text-xs tracking-widest py-6">Donatur / Institusi</TableHead>

@@ -119,7 +119,7 @@ export function ProposalRow({ prop }: { prop: any }) {
     <>
       <TableRow 
         onClick={() => setDetailsOpen(true)}
-        className="hover:bg-slate-800/40 transition-colors border-b border-white/5 cursor-pointer"
+        className="hidden md:table-row hover:bg-slate-800/40 transition-colors border-b border-white/5 cursor-pointer"
       >
         <TableCell className="font-bold text-amber-500 whitespace-nowrap px-6 sm:px-10 py-5">
           {prop.proposal_number}
@@ -163,6 +163,50 @@ export function ProposalRow({ prop }: { prop: any }) {
             <span className="text-slate-600 text-sm italic font-medium ml-6">-</span>
           )}
         </TableCell>
+      </TableRow>
+
+      {/* Mobile Card View */}
+      <TableRow 
+        onClick={() => setDetailsOpen(true)}
+        className="md:hidden block border-b border-white/5 p-5 cursor-pointer hover:bg-slate-800/40 transition-colors"
+      >
+        <td className="block w-full">
+          <div className="flex justify-between items-start mb-3">
+            <span className="font-bold text-amber-500 text-sm tracking-wide">{prop.proposal_number}</span>
+            {isVerified ? (
+              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5">Terkonfirmasi</Badge>
+            ) : hasDonation ? (
+              <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2 py-0.5">Review</Badge>
+            ) : (
+              <Badge className="bg-slate-800 text-slate-400 border border-white/5 text-[10px] px-2 py-0.5">Belum Ada</Badge>
+            )}
+          </div>
+          
+          <div className="flex flex-col gap-1.5 mb-4">
+            <span className="font-semibold text-slate-100 flex items-center gap-2 text-base">
+              <User className="w-4 h-4 text-slate-400" />
+              {prop.donor_name}
+            </span>
+            {prop.institution && (
+              <span className="text-sm text-slate-400 flex items-center gap-2 font-medium">
+                <Building2 className="w-4 h-4 text-slate-500" />
+                {prop.institution}
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between pt-3 border-t border-white/5">
+            <span className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+              <Calendar className="w-3.5 h-3.5" />
+              {new Date(prop.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </span>
+            {prop.message && (
+              <span className="text-xs text-slate-400 flex items-center gap-1.5 truncate max-w-[120px]">
+                <MessageSquare className="w-3.5 h-3.5" /> {prop.message}
+              </span>
+            )}
+          </div>
+        </td>
       </TableRow>
 
       {/* Details Modal */}
