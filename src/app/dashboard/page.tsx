@@ -30,7 +30,7 @@ export default async function DashboardPage() {
 
   // Format currency
   const formatIDR = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(amount);
+    return "Rp " + Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   return (

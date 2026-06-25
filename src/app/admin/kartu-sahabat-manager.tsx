@@ -34,7 +34,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   }
 
   const formatIDR = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(amount);
+    return "Rp " + Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -42,7 +42,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     setLoading(true)
     setError("")
     
-    const targetNum = targetAmount ? parseFloat(targetAmount.replace(/[^0-9.-]+/g,"")) : 0;
+    const targetNum = targetAmount ? parseFloat(targetAmount.replace(/\D/g,"")) : 0;
     
     const res = await createKartuSahabat({ committeeName, targetAmount: targetNum })
     if (res.success) {
@@ -61,7 +61,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     setLoading(true)
     setError("")
     
-    const collectedNum = collectedAmount ? parseFloat(collectedAmount.replace(/[^0-9.-]+/g,"")) : 0;
+    const collectedNum = collectedAmount ? parseFloat(collectedAmount.replace(/\D/g,"")) : 0;
     
     const res = await updateKartuSahabatAmount(selectedKartu.id, collectedNum, passcode)
     if (res.success) {

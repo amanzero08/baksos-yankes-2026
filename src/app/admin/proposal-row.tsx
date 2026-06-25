@@ -51,6 +51,10 @@ export function ProposalRow({ prop }: { prop: any }) {
     setVerificationAmount(formattedValue)
   }
 
+  const formatIDR = (amount: number) => {
+    return "Rp " + Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
   const hasDonation = prop.donations && prop.donations.length > 0;
   const isVerified = hasDonation && prop.donations.some((d: any) => d.verified);
 
@@ -105,7 +109,7 @@ export function ProposalRow({ prop }: { prop: any }) {
           setError(result.error || 'Gagal mengupdate proposal')
         }
       } else if (actionType === 'verify' && hasDonation) {
-        const amountNum = verificationAmount ? parseFloat(verificationAmount.replace(/[^0-9.-]+/g,"")) : 0;
+        const amountNum = parseFloat(verificationAmount.replace(/\D/g,"")) || 0;
         const result = await verifyDonation(prop.donations[0].id, amountNum, passcode)
         if (result.success) {
           setIsOpen(false)

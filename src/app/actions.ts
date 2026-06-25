@@ -72,7 +72,7 @@ export async function submitDonation(formData: FormData) {
     if (!prop) throw new Error('Proposal tidak ditemukan')
     const donorName = prop.donor_name;
 
-    const amount = amountStr ? parseFloat(amountStr.replace(/[^0-9.-]+/g,"")) : 0;
+    const amount = amountStr ? parseFloat(amountStr.replace(/\D/g,"")) : 0;
     
     // Poka-Yoke: Cegah nominal negatif
     if (amount < 0) {
