@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 import { ProposalRow } from "./proposal-row";
+import { KartuSahabatManager } from "./kartu-sahabat-manager";
 
 export const revalidate = 0; // Disable cache for this page to always fetch latest
 
@@ -11,6 +12,12 @@ export default async function AdminDashboard() {
   const { data: proposals, error } = await supabaseAdmin
     .from("proposals")
     .select("*, donations(*)")
+    .order("created_at", { ascending: false });
+
+  // Fetch Kartu Sahabat
+  const { data: kartuSahabatData } = await supabaseAdmin
+    .from("kartu_sahabat")
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -65,6 +72,16 @@ export default async function AdminDashboard() {
                 <p className="text-slate-500 max-w-md leading-relaxed font-medium">Daftar proposal kosong. Silakan generate proposal baru untuk melihatnya muncul di sini.</p>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel border-t-4 border-t-blue-500 rounded-[2rem] overflow-hidden mt-10">
+          <CardHeader className="bg-slate-900/40 border-b border-white/5 pb-6 px-6 sm:px-10 pt-8">
+            <CardTitle className="text-2xl text-blue-400 font-heading tracking-wide">Manajemen Kartu Sahabat</CardTitle>
+            <CardDescription className="text-slate-400 mt-1">Kelola data perolehan dana dari Kartu Sahabat masing-masing panitia.</CardDescription>
+          </CardHeader>
+          <CardContent className="p-6 sm:p-10">
+            <KartuSahabatManager initialData={kartuSahabatData || []} />
           </CardContent>
         </Card>
       </div>

@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { TableRow, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Building2, User, Calendar, MessageSquare, Edit, Trash2, Download, Eye, FileText } from "lucide-react"
+import { Building2, User, Calendar, MessageSquare, Edit, Trash2, Download, Eye, FileText, CheckCircle } from "lucide-react"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { updateProposal, deleteProposal } from '@/app/actions'
+import { updateProposal, deleteProposal, verifyDonation } from '@/app/actions'
 import dynamic from 'next/dynamic'
 
 const PDFDownloadLink = dynamic(
@@ -31,7 +31,7 @@ export function ProposalRow({ prop }: { prop: any }) {
   
   // Action state
   const [isOpen, setIsOpen] = useState(false)
-  const [actionType, setActionType] = useState<'edit' | 'delete' | null>(null)
+  const [actionType, setActionType] = useState<'edit' | 'delete' | 'verify' | null>(null)
   const [passcode, setPasscode] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -41,11 +41,14 @@ export function ProposalRow({ prop }: { prop: any }) {
   const [institution, setInstitution] = useState(prop.institution || '')
   const [committeeName, setCommitteeName] = useState(prop.committee_name || '')
   const [message, setMessage] = useState(prop.message || '')
+  
+  // Verification state
+  const [verificationAmount, setVerificationAmount] = useState('')
 
   const hasDonation = prop.donations && prop.donations.length > 0;
   const isVerified = hasDonation && prop.donations.some((d: any) => d.verified);
 
-  const handleOpenAction = (type: 'edit' | 'delete') => {
+  const handleOpenAction = (type: 'edit' | 'delete' | 'verify') => {
     setActionType(type)
     setPasscode('')
     setError('')
@@ -54,6 +57,11 @@ export function ProposalRow({ prop }: { prop: any }) {
     setInstitution(prop.institution || '')
     setCommitteeName(prop.committee_name || '')
     setMessage(prop.message || '')
+    if (type === 'verify' && hasDonation) {
+      // pre-fill amount if the donation already has one
+      const donation = prop.donations[0]
+      setVerificationAmount(donation.amount ? donation.amount.toString() : '')
+    }
     setIsOpen(true)
   }
 
@@ -88,6 +96,16 @@ export function ProposalRow({ prop }: { prop: any }) {
           router.refresh()
         } else {
           setError(result.error || 'Gagal mengupdate proposal')
+        }
+      } else if (actionType === 'verify' && hasDonation) {
+        const amountNum = verificationAmount ? parseFloat(verificationAmount.replace(/[^0-9.-]+/g,"")) : 0;
+        const result = await verifyDonation(prop.donations[0].id, amountNum, passcode)
+        if (result.success) {
+          setIsOpen(false)
+          setDetailsOpen(false)
+          router.refresh()
+        } else {
+          setError(result.error || 'Gagal memverifikasi donasi')
         }
       }
     } catch (err: any) {
@@ -196,6 +214,11 @@ export function ProposalRow({ prop }: { prop: any }) {
             </PDFDownloadLink>
             
             <div className="flex gap-3 pt-2">
+              {hasDonation && !isVerified && (
+                <Button variant="outline" className="flex-1 text-emerald-400 border-emerald-900/50 hover:bg-emerald-900/30 hover:text-emerald-300 bg-slate-900" onClick={() => handleOpenAction('verify')}>
+                  <CheckCircle className="w-4 h-4 mr-2" /> Verifikasi
+                </Button>
+              )}
               <Button variant="outline" className="flex-1 text-blue-400 border-blue-900/50 hover:bg-blue-900/30 hover:text-blue-300 bg-slate-900" onClick={() => handleOpenAction('edit')}>
                 <Edit className="w-4 h-4 mr-2" /> Edit
               </Button>
@@ -211,10 +234,14 @@ export function ProposalRow({ prop }: { prop: any }) {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px] bg-slate-950 border-white/10 text-slate-200">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-heading text-amber-400">{actionType === 'edit' ? 'Edit Proposal' : 'Hapus Proposal'}</DialogTitle>
+            <DialogTitle className="text-2xl font-heading text-amber-400">
+              {actionType === 'edit' ? 'Edit Proposal' : actionType === 'verify' ? 'Verifikasi Donasi' : 'Hapus Proposal'}
+            </DialogTitle>
             <DialogDescription className="text-slate-400">
               {actionType === 'edit' 
                 ? 'Ubah data proposal di bawah ini. Masukkan passcode otoritas untuk menyimpan.' 
+                : actionType === 'verify'
+                ? 'Konfirmasi nominal donasi yang ditransfer. Nominal ini akan tercatat di Dasbor.'
                 : 'Tindakan ini tidak dapat dibatalkan. Masukkan passcode otoritas untuk menghapus permanen.'}
             </DialogDescription>
           </DialogHeader>
@@ -239,6 +266,18 @@ export function ProposalRow({ prop }: { prop: any }) {
                 </div>
               </>
             )}
+            {actionType === 'verify' && (
+              <div className="space-y-2">
+                <Label htmlFor="verificationAmount" className="text-slate-300">Nominal Donasi (Angka)</Label>
+                <Input 
+                  id="verificationAmount" 
+                  value={verificationAmount} 
+                  onChange={(e) => setVerificationAmount(e.target.value)} 
+                  className="bg-slate-900 border-white/10 text-slate-100" 
+                  placeholder="Contoh: 1500000"
+                />
+              </div>
+            )}
             <div className="space-y-2 mt-2">
               <Label htmlFor="passcode" className="text-red-400 font-semibold tracking-wide">Passcode Otorisasi</Label>
               <Input 
@@ -257,9 +296,9 @@ export function ProposalRow({ prop }: { prop: any }) {
             <Button 
               onClick={handleSubmitAction} 
               disabled={isSubmitting}
-              className={actionType === 'delete' ? 'bg-red-600 hover:bg-red-500 text-white' : 'bg-amber-600 hover:bg-amber-500 text-slate-900 font-bold'}
+              className={actionType === 'delete' ? 'bg-red-600 hover:bg-red-500 text-white' : actionType === 'verify' ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-amber-600 hover:bg-amber-500 text-slate-900 font-bold'}
             >
-              {isSubmitting ? 'Memproses...' : actionType === 'edit' ? 'Simpan Perubahan' : 'Hapus Permanen'}
+              {isSubmitting ? 'Memproses...' : actionType === 'edit' ? 'Simpan Perubahan' : actionType === 'verify' ? 'Verifikasi Sekarang' : 'Hapus Permanen'}
             </Button>
           </DialogFooter>
         </DialogContent>

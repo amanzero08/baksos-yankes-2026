@@ -2,12 +2,10 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { revalidatePath } from 'next/cache'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-// For server actions that bypass RLS for counting/inserting, ideally use service role.
-// Here we use anon key, but ensure RLS allows it.
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export async function createProposal(data: {
@@ -17,7 +15,6 @@ export async function createProposal(data: {
   message?: string
 }) {
   try {
-    // 1. Get current count to generate sequential number
     const { count, error: countError } = await supabase
       .from('proposals')
       .select('*', { count: 'exact', head: true })
@@ -27,7 +24,6 @@ export async function createProposal(data: {
     const nextNum = (count || 0) + 1
     const proposalNumber = `BAKSOS-GPIB-2026-${String(nextNum).padStart(4, '0')}`
 
-    // 2. Insert new proposal
     const { data: inserted, error: insertError } = await supabase
       .from('proposals')
       .insert({
@@ -54,13 +50,15 @@ export async function submitDonation(formData: FormData) {
     const donorName = formData.get('donorName') as string
     const proposalNumber = formData.get('proposalNumber') as string
     const notes = formData.get('notes') as string
+    const amountStr = formData.get('amount') as string
     const file = formData.get('receipt') as File
 
     if (!donorName || !file || file.size === 0) {
       throw new Error('Nama donatur dan bukti transfer wajib diisi')
     }
 
-    // Optional: lookup proposal ID by proposal number
+    const amount = amountStr ? parseFloat(amountStr.replace(/[^0-9.-]+/g,"")) : 0;
+
     let proposalId = null
     if (proposalNumber) {
       const { data: prop } = await supabase
@@ -71,7 +69,6 @@ export async function submitDonation(formData: FormData) {
       if (prop) proposalId = prop.id
     }
 
-    // Upload file to storage
     const fileExt = file.name.split('.').pop()
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
     
@@ -86,16 +83,15 @@ export async function submitDonation(formData: FormData) {
 
     if (uploadError) throw new Error(uploadError.message)
 
-    // Using the path as URL reference. Since bucket is private, admin will need signed URLs to view
     const receiptPath = uploadData.path
 
-    // Insert donation record
     const { data: donation, error: insertError } = await supabase
       .from('donations')
       .insert({
         donor_name: donorName,
         proposal_id: proposalId,
         notes: notes || null,
+        amount: amount,
         receipt_url: receiptPath,
         verified: false
       })
@@ -104,8 +100,10 @@ export async function submitDonation(formData: FormData) {
 
     if (insertError) throw new Error(insertError.message)
 
+    revalidatePath('/dashboard')
+    revalidatePath('/admin')
+    
     return { success: true, data: donation }
-
   } catch (error: any) {
     console.error('Error submitting donation:', error)
     return { success: false, error: error.message }
@@ -119,9 +117,7 @@ export async function updateProposal(id: string, data: {
   message?: string
 }, passcode: string) {
   try {
-    if (passcode !== '2906') {
-      throw new Error('Passcode salah. Anda tidak memiliki izin untuk mengubah data.')
-    }
+    if (passcode !== '2906') throw new Error('Passcode salah. Anda tidak memiliki izin untuk mengubah data.')
 
     const { data: updated, error } = await supabaseAdmin
       .from('proposals')
@@ -136,30 +132,103 @@ export async function updateProposal(id: string, data: {
       .single()
 
     if (error) throw new Error(error.message)
-
+    revalidatePath('/admin')
     return { success: true, data: updated }
   } catch (error: any) {
-    console.error('Error updating proposal:', error)
     return { success: false, error: error.message }
   }
 }
 
 export async function deleteProposal(id: string, passcode: string) {
   try {
-    if (passcode !== '2906') {
-      throw new Error('Passcode salah. Anda tidak memiliki izin untuk menghapus data.')
-    }
+    if (passcode !== '2906') throw new Error('Passcode salah. Anda tidak memiliki izin untuk menghapus data.')
 
-    const { error } = await supabaseAdmin
-      .from('proposals')
-      .delete()
-      .eq('id', id)
-
+    const { error } = await supabaseAdmin.from('proposals').delete().eq('id', id)
     if (error) throw new Error(error.message)
-
+    
+    revalidatePath('/admin')
+    revalidatePath('/dashboard')
     return { success: true }
   } catch (error: any) {
-    console.error('Error deleting proposal:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+// === KARTU SAHABAT ACTIONS ===
+
+export async function createKartuSahabat(data: { committeeName: string, targetAmount: number }, passcode: string) {
+  try {
+    if (passcode !== '2906') throw new Error('Passcode salah.')
+
+    const { data: inserted, error } = await supabaseAdmin
+      .from('kartu_sahabat')
+      .insert({
+        committee_name: data.committeeName,
+        target_amount: data.targetAmount,
+        collected_amount: 0
+      })
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    revalidatePath('/admin')
+    revalidatePath('/dashboard')
+    return { success: true, data: inserted }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}
+
+export async function updateKartuSahabatAmount(id: string, collectedAmount: number, passcode: string) {
+  try {
+    if (passcode !== '2906') throw new Error('Passcode salah.')
+
+    const { data: updated, error } = await supabaseAdmin
+      .from('kartu_sahabat')
+      .update({ collected_amount: collectedAmount })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    revalidatePath('/admin')
+    revalidatePath('/dashboard')
+    return { success: true, data: updated }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}
+
+export async function deleteKartuSahabat(id: string, passcode: string) {
+  try {
+    if (passcode !== '2906') throw new Error('Passcode salah.')
+
+    const { error } = await supabaseAdmin.from('kartu_sahabat').delete().eq('id', id)
+    if (error) throw new Error(error.message)
+    revalidatePath('/admin')
+    revalidatePath('/dashboard')
+    return { success: true }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}
+
+export async function verifyDonation(id: string, amount: number, passcode: string) {
+  try {
+    if (passcode !== '2906') throw new Error('Passcode salah.')
+
+    const { data: updated, error } = await supabaseAdmin
+      .from('donations')
+      .update({ verified: true, amount: amount })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+    revalidatePath('/admin')
+    revalidatePath('/dashboard')
+    return { success: true, data: updated }
+  } catch (error: any) {
     return { success: false, error: error.message }
   }
 }

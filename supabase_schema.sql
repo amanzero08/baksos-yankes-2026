@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS donations (
   proposal_id UUID REFERENCES proposals(id) ON DELETE SET NULL,
   donor_name TEXT NOT NULL,
   notes TEXT,
+  amount NUMERIC DEFAULT 0,
   receipt_url TEXT NOT NULL,
   verified BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -31,10 +32,20 @@ CREATE TABLE IF NOT EXISTS news (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 4. Enable Row Level Security (RLS)
+-- 4. Create kartu_sahabat table
+CREATE TABLE IF NOT EXISTS kartu_sahabat (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  committee_name TEXT NOT NULL,
+  collected_amount NUMERIC DEFAULT 0,
+  target_amount NUMERIC,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 5. Enable Row Level Security (RLS)
 ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE news ENABLE ROW LEVEL SECURITY;
+ALTER TABLE kartu_sahabat ENABLE ROW LEVEL SECURITY;
 
 -- 5. Create RLS Policies
 
@@ -51,6 +62,8 @@ DROP POLICY IF EXISTS "Public can view donations" ON donations;
 DROP POLICY IF EXISTS "Public can view news" ON news;
 DROP POLICY IF EXISTS "Admins can insert news" ON news;
 DROP POLICY IF EXISTS "Admins can update news" ON news;
+
+DROP POLICY IF EXISTS "Public can view kartu_sahabat" ON kartu_sahabat;
 
 -- Public can insert proposals
 CREATE POLICY "Public can insert proposals" ON proposals
@@ -76,7 +89,13 @@ CREATE POLICY "Public can view news" ON news
 
 -- News updates handled via Server Actions (bypassing RLS)
 
--- 6. Storage Buckets (Execute in SQL Editor or via Supabase Dashboard)
+-- Public can view kartu_sahabat
+CREATE POLICY "Public can view kartu_sahabat" ON kartu_sahabat
+  FOR SELECT USING (true);
+
+-- Kartu Sahabat updates handled via Server Actions (bypassing RLS)
+
+-- 7. Storage Buckets (Execute in SQL Editor or via Supabase Dashboard)
 INSERT INTO storage.buckets (id, name, public) VALUES ('receipts', 'receipts', false) ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('news-images', 'news-images', true) ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('assets', 'assets', true) ON CONFLICT (id) DO NOTHING;

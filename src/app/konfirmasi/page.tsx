@@ -112,6 +112,19 @@ export default function KonfirmasiPage() {
                 </div>
 
                 <div className="space-y-3">
+                  <Label htmlFor="amount" className="text-slate-300 font-semibold">Nominal Donasi <span className="text-amber-500">*</span></Label>
+                  <Input 
+                    id="amount" 
+                    name="amount" 
+                    type="text"
+                    placeholder="Contoh: 1.000.000" 
+                    required
+                    className="bg-slate-900/50 border-white/10 text-slate-100 placeholder:text-slate-600 focus-visible:ring-amber-500 h-12"
+                  />
+                  <p className="text-xs text-slate-500 ml-1">Masukkan angka saja. Akan digunakan untuk menghitung capaian di Dasbor.</p>
+                </div>
+
+                <div className="space-y-3">
                   <Label htmlFor="notes" className="text-slate-300 font-semibold">Catatan Khusus (Opsional)</Label>
                   <Input 
                     id="notes" 
