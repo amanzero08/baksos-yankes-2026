@@ -8,6 +8,26 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+export async function getPanitiaList() {
+  const { data, error } = await supabase.from('kartu_sahabat').select('id, committee_name').order('committee_name');
+  if (error) {
+    console.error('Error fetching panitia:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function getPendingProposals() {
+  // Fetch proposals and their donations
+  const { data, error } = await supabaseAdmin.from('proposals').select('id, proposal_number, donor_name, institution, donations(id, verified)').order('created_at', { ascending: false });
+  if (error) {
+    console.error('Error fetching proposals:', error);
+    return [];
+  }
+  // Return proposals that DO NOT have a verified donation
+  return (data || []).filter(prop => !prop.donations || prop.donations.length === 0 || !prop.donations.some((d: any) => d.verified));
+}
+
 export async function createProposal(data: {
   donorName: string
   institution?: string
@@ -38,31 +58,25 @@ export async function createProposal(data: {
 
 export async function submitDonation(formData: FormData) {
   try {
-    const donorName = formData.get('donorName') as string
-    const proposalNumber = formData.get('proposalNumber') as string
+    const proposalId = formData.get('proposalId') as string
     const notes = formData.get('notes') as string
     const amountStr = formData.get('amount') as string
     const file = formData.get('receipt') as File
 
-    if (!donorName || !file || file.size === 0) {
-      throw new Error('Nama donatur dan bukti transfer wajib diisi')
+    if (!proposalId || !file || file.size === 0) {
+      throw new Error('Proposal dan bukti transfer wajib diisi')
     }
+
+    // Get donor_name from proposal
+    const { data: prop } = await supabaseAdmin.from('proposals').select('donor_name').eq('id', proposalId).single()
+    if (!prop) throw new Error('Proposal tidak ditemukan')
+    const donorName = prop.donor_name;
 
     const amount = amountStr ? parseFloat(amountStr.replace(/[^0-9.-]+/g,"")) : 0;
     
     // Poka-Yoke: Cegah nominal negatif
     if (amount < 0) {
       throw new Error('Nominal donasi tidak boleh negatif')
-    }
-
-    let proposalId = null
-    if (proposalNumber) {
-      const { data: prop } = await supabase
-        .from('proposals')
-        .select('id')
-        .eq('proposal_number', proposalNumber)
-        .single()
-      if (prop) proposalId = prop.id
     }
 
     const fileExt = file.name.split('.').pop()
