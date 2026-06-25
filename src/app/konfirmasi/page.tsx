@@ -81,13 +81,13 @@ export default function KonfirmasiPage() {
           </Card>
         ) : (
           <Card className="glass-panel shadow-[0_0_30px_rgba(0,0,0,0.3)] border-t-4 border-t-amber-500 rounded-[2rem] overflow-hidden">
-            <CardHeader className="border-b border-white/5 pb-8 pt-10 px-8 sm:px-12 bg-slate-900/30 text-center">
+            <CardHeader className="border-b border-white/5 pb-8 pt-10 px-6 sm:px-12 bg-slate-900/30 text-center">
               <CardTitle className="font-heading text-3xl sm:text-4xl text-amber-400 font-bold mb-3 tracking-tight">Konfirmasi Donasi</CardTitle>
               <CardDescription className="text-slate-400 text-base">
                 Unggah bukti transfer donasi Anda di bawah ini agar sistem kami dapat memverifikasi dan mencatat partisipasi Anda.
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-10 pb-10 px-8 sm:px-12">
+            <CardContent className="pt-10 pb-10 px-6 sm:px-12">
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
                 <div className="space-y-3">
                   <Label htmlFor="donorName" className="text-slate-300 font-semibold">Nama Donatur / Instansi <span className="text-amber-500">*</span></Label>

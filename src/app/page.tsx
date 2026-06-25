@@ -164,15 +164,15 @@ export default function Home() {
           </motion.div>
 
           <Tabs defaultValue="tondanouw" className="w-full max-w-5xl mx-auto">
-            <div className="flex justify-center mb-12 overflow-x-auto pb-4 hide-scrollbar">
-              <TabsList className="glass-panel p-2 rounded-full w-full sm:w-auto flex flex-nowrap min-w-max">
-                <TabsTrigger value="tondanouw" className="rounded-full px-8 py-3.5 text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
+            <div className="flex justify-start md:justify-center mb-10 md:mb-12 overflow-x-auto pb-4 hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              <TabsList className="glass-panel p-1.5 md:p-2 rounded-full w-max flex flex-nowrap">
+                <TabsTrigger value="tondanouw" className="rounded-full px-6 md:px-8 py-2.5 md:py-3.5 text-xs md:text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
                   Desa Tondanouw
                 </TabsTrigger>
-                <TabsTrigger value="likupang" className="rounded-full px-8 py-3.5 text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
+                <TabsTrigger value="likupang" className="rounded-full px-6 md:px-8 py-2.5 md:py-3.5 text-xs md:text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
                   Likupang
                 </TabsTrigger>
-                <TabsTrigger value="lolah" className="rounded-full px-8 py-3.5 text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
+                <TabsTrigger value="lolah" className="rounded-full px-6 md:px-8 py-2.5 md:py-3.5 text-xs md:text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
                   Desa Lolah
                 </TabsTrigger>
               </TabsList>
@@ -252,7 +252,7 @@ export default function Home() {
                       </p>
                       {loc.desc}
                     </div>
-                    <div className="w-full lg:w-7/12 h-[550px] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative">
+                    <div className="w-full lg:w-7/12 h-[300px] lg:h-[550px] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative">
                       <div className="absolute inset-0 border border-white/5 rounded-[2rem] pointer-events-none z-10"></div>
                       <iframe 
                         title={`Peta ${loc.title}`}
