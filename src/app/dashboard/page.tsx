@@ -1,3 +1,4 @@
+import React from "react";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -133,7 +134,7 @@ export default async function DashboardPage() {
                   </TableHeader>
                   <TableBody>
                     {kartuSahabatList.map((kartu: any, idx: number) => (
-                      <div key={kartu.id} className="contents">
+                      <React.Fragment key={kartu.id}>
                         {/* Desktop View */}
                         <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors group">
                           <TableCell className="px-6 sm:px-10 py-5 font-bold text-slate-400 group-hover:text-amber-400">
@@ -171,7 +172,7 @@ export default async function DashboardPage() {
                             </div>
                           </td>
                         </TableRow>
-                      </div>
+                      </React.Fragment>
                     ))}
                   </TableBody>
                 </Table>

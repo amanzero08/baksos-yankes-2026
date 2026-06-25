@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -130,7 +130,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
           <TableBody>
             {initialData && initialData.length > 0 ? (
               initialData.map((kartu: any) => (
-                <div key={kartu.id} className="contents">
+                <React.Fragment key={kartu.id}>
                   {/* Desktop View */}
                   <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5">
                     <TableCell className="px-6 py-4 font-bold text-slate-200">{kartu.committee_name}</TableCell>
@@ -184,8 +184,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                       </div>
                     </td>
                   </TableRow>
-                </div>
-              ))
+                  </React.Fragment>
+                ))
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8 text-slate-500">Belum ada panitia yang terdaftar.</TableCell>
