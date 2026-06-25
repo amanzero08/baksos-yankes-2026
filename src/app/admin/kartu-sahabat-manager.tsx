@@ -21,6 +21,18 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  const handleTargetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, "")
+    const formattedValue = rawValue ? new Intl.NumberFormat("id-ID").format(Number(rawValue)) : ""
+    setTargetAmount(formattedValue)
+  }
+
+  const handleCollectedAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, "")
+    const formattedValue = rawValue ? new Intl.NumberFormat("id-ID").format(Number(rawValue)) : ""
+    setCollectedAmount(formattedValue)
+  }
+
   const formatIDR = (amount: number) => {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(amount);
   }
@@ -94,7 +106,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               </div>
               <div className="space-y-2">
                 <Label>Target Pribadi (Opsional)</Label>
-                <Input value={targetAmount} onChange={e => setTargetAmount(e.target.value)} className="bg-slate-900/50 border-white/10" placeholder="Contoh: 5000000" />
+                <Input value={targetAmount} onChange={handleTargetAmountChange} className="bg-slate-900/50 border-white/10" placeholder="Contoh: 5.000.000" />
               </div>
               {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500">
@@ -126,7 +138,12 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     <TableCell className="py-4 text-slate-400 font-medium text-right">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</TableCell>
                     <TableCell className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { setSelectedKartu(kartu); setCollectedAmount(kartu.collected_amount?.toString() || ""); setIsEditOpen(true); }}>
+                        <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { 
+                          setSelectedKartu(kartu); 
+                          const rawVal = kartu.collected_amount?.toString() || "";
+                          setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : ""); 
+                          setIsEditOpen(true); 
+                        }}>
                           <Edit2 className="h-4 w-4" />
                         </Button>
                         <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
@@ -142,7 +159,12 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                       <div className="flex justify-between items-center mb-2">
                         <span className="font-bold text-slate-200 text-base">{kartu.committee_name}</span>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { setSelectedKartu(kartu); setCollectedAmount(kartu.collected_amount?.toString() || ""); setIsEditOpen(true); }}>
+                          <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { 
+                            setSelectedKartu(kartu); 
+                            const rawVal = kartu.collected_amount?.toString() || "";
+                            setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : ""); 
+                            setIsEditOpen(true); 
+                          }}>
                             <Edit2 className="h-4 w-4" />
                           </Button>
                           <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
@@ -183,8 +205,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
           </DialogHeader>
           <form onSubmit={handleEdit} className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label>Nominal Terkumpul (Angka Saja)</Label>
-              <Input required type="text" value={collectedAmount} onChange={e => setCollectedAmount(e.target.value)} className="bg-slate-900/50 border-white/10" placeholder="Misal: 1500000" />
+              <Label>Nominal Terkumpul (Akan Diformat Otomatis)</Label>
+              <Input required type="text" value={collectedAmount} onChange={handleCollectedAmountChange} className="bg-slate-900/50 border-white/10" placeholder="Misal: 1.500.000" />
             </div>
             <div className="space-y-2">
               <Label>Passcode Admin</Label>

@@ -14,7 +14,14 @@ export default function KonfirmasiPage() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState('')
   const [fileName, setFileName] = useState('')
+  const [amountInput, setAmountInput] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, "")
+    const formattedValue = rawValue ? new Intl.NumberFormat("id-ID").format(Number(rawValue)) : ""
+    setAmountInput(formattedValue)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -117,6 +124,8 @@ export default function KonfirmasiPage() {
                     id="amount" 
                     name="amount" 
                     type="text"
+                    value={amountInput}
+                    onChange={handleAmountChange}
                     placeholder="Contoh: 1.000.000" 
                     required
                     className="bg-slate-900/50 border-white/10 text-slate-100 placeholder:text-slate-600 focus-visible:ring-amber-500 h-12"

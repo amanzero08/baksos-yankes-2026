@@ -45,6 +45,12 @@ export function ProposalRow({ prop }: { prop: any }) {
   // Verification state
   const [verificationAmount, setVerificationAmount] = useState('')
 
+  const handleVerificationAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, "")
+    const formattedValue = rawValue ? new Intl.NumberFormat("id-ID").format(Number(rawValue)) : ""
+    setVerificationAmount(formattedValue)
+  }
+
   const hasDonation = prop.donations && prop.donations.length > 0;
   const isVerified = hasDonation && prop.donations.some((d: any) => d.verified);
 
@@ -60,7 +66,8 @@ export function ProposalRow({ prop }: { prop: any }) {
     if (type === 'verify' && hasDonation) {
       // pre-fill amount if the donation already has one
       const donation = prop.donations[0]
-      setVerificationAmount(donation.amount ? donation.amount.toString() : '')
+      const rawVal = donation.amount ? donation.amount.toString() : ''
+      setVerificationAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : '')
     }
     setIsOpen(true)
   }
@@ -316,9 +323,9 @@ export function ProposalRow({ prop }: { prop: any }) {
                 <Input 
                   id="verificationAmount" 
                   value={verificationAmount} 
-                  onChange={(e) => setVerificationAmount(e.target.value)} 
+                  onChange={handleVerificationAmountChange} 
                   className="bg-slate-900 border-white/10 text-slate-100" 
-                  placeholder="Contoh: 1500000"
+                  placeholder="Contoh: 1.500.000"
                 />
               </div>
             )}
