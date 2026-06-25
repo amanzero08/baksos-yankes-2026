@@ -3,13 +3,32 @@
 -- 1. Create proposals table
 CREATE TABLE IF NOT EXISTS proposals (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  proposal_number TEXT UNIQUE NOT NULL,
+  proposal_number TEXT UNIQUE,
   donor_name TEXT NOT NULL,
   institution TEXT,
   committee_name TEXT,
   message TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- 1.1 Sequence and Trigger for proposal_number (Antisipasi Race Condition)
+CREATE SEQUENCE IF NOT EXISTS proposal_number_seq START 1;
+
+CREATE OR REPLACE FUNCTION set_proposal_number()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.proposal_number IS NULL THEN
+    NEW.proposal_number := 'BAKSOS-GPIB-2026-' || LPAD(nextval('proposal_number_seq')::TEXT, 4, '0');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_set_proposal_number ON proposals;
+CREATE TRIGGER trigger_set_proposal_number
+BEFORE INSERT ON proposals
+FOR EACH ROW
+EXECUTE FUNCTION set_proposal_number();
 
 -- 2. Create donations table
 CREATE TABLE IF NOT EXISTS donations (

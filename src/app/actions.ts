@@ -15,19 +15,10 @@ export async function createProposal(data: {
   message?: string
 }) {
   try {
-    const { count, error: countError } = await supabase
-      .from('proposals')
-      .select('*', { count: 'exact', head: true })
-
-    if (countError) throw new Error(countError.message)
-
-    const nextNum = (count || 0) + 1
-    const proposalNumber = `BAKSOS-GPIB-2026-${String(nextNum).padStart(4, '0')}`
-
+    // proposal_number di-generate otomatis oleh database sequence (Anti Race Condition)
     const { data: inserted, error: insertError } = await supabase
       .from('proposals')
       .insert({
-        proposal_number: proposalNumber,
         donor_name: data.donorName,
         institution: data.institution || null,
         committee_name: data.committeeName || null,
@@ -58,6 +49,11 @@ export async function submitDonation(formData: FormData) {
     }
 
     const amount = amountStr ? parseFloat(amountStr.replace(/[^0-9.-]+/g,"")) : 0;
+    
+    // Poka-Yoke: Cegah nominal negatif
+    if (amount < 0) {
+      throw new Error('Nominal donasi tidak boleh negatif')
+    }
 
     let proposalId = null
     if (proposalNumber) {
@@ -143,6 +139,12 @@ export async function deleteProposal(id: string, passcode: string) {
   try {
     if (passcode !== '2906') throw new Error('Passcode salah. Anda tidak memiliki izin untuk menghapus data.')
 
+    // Poka-Yoke: Prevent deletion if proposal has verified donations
+    const { data: donations } = await supabaseAdmin.from('donations').select('id, verified').eq('proposal_id', id)
+    if (donations && donations.some(d => d.verified)) {
+      throw new Error('Gagal menghapus! Proposal ini sudah memiliki donasi yang terverifikasi.')
+    }
+
     const { error } = await supabaseAdmin.from('proposals').delete().eq('id', id)
     if (error) throw new Error(error.message)
     
@@ -156,9 +158,15 @@ export async function deleteProposal(id: string, passcode: string) {
 
 // === KARTU SAHABAT ACTIONS ===
 
-export async function createKartuSahabat(data: { committeeName: string, targetAmount: number }, passcode: string) {
+export async function createKartuSahabat(data: { committeeName: string, targetAmount?: number }, passcode: string) {
   try {
     if (passcode !== '2906') throw new Error('Passcode salah.')
+    if (!data.committeeName) throw new Error('Nama panitia wajib diisi.')
+    
+    // Poka-Yoke: Cegah target negatif
+    if (data.targetAmount !== undefined && data.targetAmount < 0) {
+      throw new Error('Target tidak boleh negatif')
+    }
 
     const { data: inserted, error } = await supabaseAdmin
       .from('kartu_sahabat')
@@ -182,6 +190,9 @@ export async function createKartuSahabat(data: { committeeName: string, targetAm
 export async function updateKartuSahabatAmount(id: string, collectedAmount: number, passcode: string) {
   try {
     if (passcode !== '2906') throw new Error('Passcode salah.')
+    
+    // Poka-Yoke: Cegah angka negatif
+    if (collectedAmount < 0) throw new Error('Nominal tidak boleh negatif')
 
     const { data: updated, error } = await supabaseAdmin
       .from('kartu_sahabat')
@@ -216,6 +227,9 @@ export async function deleteKartuSahabat(id: string, passcode: string) {
 export async function verifyDonation(id: string, amount: number, passcode: string) {
   try {
     if (passcode !== '2906') throw new Error('Passcode salah.')
+    
+    // Poka-Yoke: Cegah nominal negatif
+    if (amount < 0) throw new Error('Nominal tidak boleh negatif')
 
     const { data: updated, error } = await supabaseAdmin
       .from('donations')
