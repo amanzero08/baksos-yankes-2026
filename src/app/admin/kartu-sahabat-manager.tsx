@@ -106,8 +106,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       </div>
 
       <div className="overflow-x-auto hide-scrollbar">
-        <Table className="min-w-[600px]">
-          <TableHeader>
+        <Table className="w-full md:min-w-[600px]">
+          <TableHeader className="hidden md:table-header-group">
             <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
               <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4">Panitia</TableHead>
               <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right">Terkumpul</TableHead>
@@ -118,21 +118,51 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
           <TableBody>
             {initialData && initialData.length > 0 ? (
               initialData.map((kartu: any) => (
-                <TableRow key={kartu.id} className="border-b border-white/5 hover:bg-white/5">
-                  <TableCell className="px-6 py-4 font-bold text-slate-200">{kartu.committee_name}</TableCell>
-                  <TableCell className="py-4 text-emerald-400 font-bold text-right">{formatIDR(kartu.collected_amount || 0)}</TableCell>
-                  <TableCell className="py-4 text-slate-400 font-medium text-right">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</TableCell>
-                  <TableCell className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { setSelectedKartu(kartu); setCollectedAmount(kartu.collected_amount?.toString() || ""); setIsEditOpen(true); }}>
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                <div key={kartu.id} className="contents">
+                  {/* Desktop View */}
+                  <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5">
+                    <TableCell className="px-6 py-4 font-bold text-slate-200">{kartu.committee_name}</TableCell>
+                    <TableCell className="py-4 text-emerald-400 font-bold text-right">{formatIDR(kartu.collected_amount || 0)}</TableCell>
+                    <TableCell className="py-4 text-slate-400 font-medium text-right">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</TableCell>
+                    <TableCell className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { setSelectedKartu(kartu); setCollectedAmount(kartu.collected_amount?.toString() || ""); setIsEditOpen(true); }}>
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+
+                  {/* Mobile Card View */}
+                  <TableRow className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors">
+                    <td className="block w-full">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-bold text-slate-200 text-base">{kartu.committee_name}</span>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { setSelectedKartu(kartu); setCollectedAmount(kartu.collected_amount?.toString() || ""); setIsEditOpen(true); }}>
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Terkumpul</span>
+                          <span className="text-emerald-400 font-bold">{formatIDR(kartu.collected_amount || 0)}</span>
+                        </div>
+                        <div className="flex flex-col text-right">
+                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Target</span>
+                          <span className="text-slate-400 font-medium">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </TableRow>
+                </div>
               ))
             ) : (
               <TableRow>

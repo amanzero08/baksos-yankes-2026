@@ -122,8 +122,8 @@ export default async function DashboardPage() {
           <CardContent className="p-0">
             {kartuSahabatList && kartuSahabatList.length > 0 ? (
               <div className="overflow-x-auto hide-scrollbar">
-                <Table className="min-w-[600px]">
-                  <TableHeader>
+                <Table className="w-full md:min-w-[600px]">
+                  <TableHeader className="hidden md:table-header-group">
                     <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
                       <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 sm:px-10 py-6">Peringkat</TableHead>
                       <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-6">Nama Panitia</TableHead>
@@ -133,20 +133,45 @@ export default async function DashboardPage() {
                   </TableHeader>
                   <TableBody>
                     {kartuSahabatList.map((kartu: any, idx: number) => (
-                      <TableRow key={kartu.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                        <TableCell className="px-6 sm:px-10 py-5 font-bold text-slate-400 group-hover:text-amber-400">
-                          #{idx + 1}
-                        </TableCell>
-                        <TableCell className="py-5 font-bold text-slate-200">
-                          {kartu.committee_name}
-                        </TableCell>
-                        <TableCell className="py-5 text-emerald-400 font-bold text-right text-lg">
-                          {formatIDR(kartu.collected_amount || 0)}
-                        </TableCell>
-                        <TableCell className="px-6 sm:px-10 py-5 text-slate-400 font-medium text-right">
-                          {kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}
-                        </TableCell>
-                      </TableRow>
+                      <div key={kartu.id} className="contents">
+                        {/* Desktop View */}
+                        <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors group">
+                          <TableCell className="px-6 sm:px-10 py-5 font-bold text-slate-400 group-hover:text-amber-400">
+                            #{idx + 1}
+                          </TableCell>
+                          <TableCell className="py-5 font-bold text-slate-200">
+                            {kartu.committee_name}
+                          </TableCell>
+                          <TableCell className="py-5 text-emerald-400 font-bold text-right text-lg">
+                            {formatIDR(kartu.collected_amount || 0)}
+                          </TableCell>
+                          <TableCell className="px-6 sm:px-10 py-5 text-slate-400 font-medium text-right">
+                            {kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}
+                          </TableCell>
+                        </TableRow>
+
+                        {/* Mobile Card View */}
+                        <TableRow className="md:hidden block border-b border-white/5 p-5 hover:bg-white/5 transition-colors group">
+                          <td className="block w-full">
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="font-bold text-slate-200 text-lg flex items-center gap-3">
+                                <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md text-sm">#{idx + 1}</span>
+                                {kartu.committee_name}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center bg-slate-900/50 p-4 rounded-xl border border-white/5">
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Terkumpul</span>
+                                <span className="text-emerald-400 font-bold text-lg">{formatIDR(kartu.collected_amount || 0)}</span>
+                              </div>
+                              <div className="flex flex-col text-right">
+                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Target Pribadi</span>
+                                <span className="text-slate-400 font-medium">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</span>
+                              </div>
+                            </div>
+                          </td>
+                        </TableRow>
+                      </div>
                     ))}
                   </TableBody>
                 </Table>
