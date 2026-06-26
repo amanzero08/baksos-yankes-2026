@@ -386,19 +386,46 @@ export default function Home() {
                       </p>
                       {loc.desc}
                     </div>
-                    <div className="w-full lg:w-7/12 h-[300px] lg:h-[550px] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative">
-                      <div className="absolute inset-0 border border-white/5 rounded-[2rem] pointer-events-none z-10"></div>
-                      <iframe 
-                        title={`Peta ${loc.title}`}
-                        src={loc.mapSrc} 
-                        width="100%" 
-                        height="100%" 
-                        style={{ border: 0 }} 
-                        allowFullScreen={true} 
-                        loading="lazy" 
-                        referrerPolicy="no-referrer-when-downgrade"
-                        className="w-full h-full grayscale-[50%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-in-out"
-                      ></iframe>
+                    <div className="w-full lg:w-7/12 flex flex-col gap-6">
+                      {/* Peta Sulawesi Utara (Overview) */}
+                      <div className="w-full h-[220px] lg:h-[260px] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative">
+                        <div className="absolute inset-0 border border-white/5 rounded-[2rem] pointer-events-none z-10"></div>
+                        <div className="absolute top-4 left-4 bg-slate-950/85 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10 z-20 text-[10px] font-bold text-amber-400 tracking-wider uppercase flex items-center gap-1.5 shadow-lg">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                          📍 Peta Sulawesi Utara (Ikhtisar)
+                        </div>
+                        <iframe 
+                          title="Peta Ikhtisar Sulawesi Utara"
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2037703.1118128362!2d123.6338573!3d1.2464735!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x327df58d60dfb13f%3A0x1030bfbca7c7e40!2sNorth%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid" 
+                          width="100%" 
+                          height="100%" 
+                          style={{ border: 0 }} 
+                          allowFullScreen={true} 
+                          loading="lazy" 
+                          referrerPolicy="no-referrer-when-downgrade"
+                          className="w-full h-full grayscale-[50%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-in-out"
+                        ></iframe>
+                      </div>
+
+                      {/* Peta Detail Lokasi */}
+                      <div className="w-full h-[220px] lg:h-[260px] rounded-[2rem] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group relative">
+                        <div className="absolute inset-0 border border-white/5 rounded-[2rem] pointer-events-none z-10"></div>
+                        <div className="absolute top-4 left-4 bg-slate-950/85 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10 z-20 text-[10px] font-bold text-amber-400 tracking-wider uppercase flex items-center gap-1.5 shadow-lg">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                          🔍 Detail Lokasi: {loc.title}
+                        </div>
+                        <iframe 
+                          title={`Peta Detail ${loc.title}`}
+                          src={loc.mapSrc} 
+                          width="100%" 
+                          height="100%" 
+                          style={{ border: 0 }} 
+                          allowFullScreen={true} 
+                          loading="lazy" 
+                          referrerPolicy="no-referrer-when-downgrade"
+                          className="w-full h-full grayscale-[50%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-in-out"
+                        ></iframe>
+                      </div>
                     </div>
                   </motion.div>
                 </TabsContent>
