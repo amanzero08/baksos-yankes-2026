@@ -71,7 +71,7 @@ export default async function DashboardPage() {
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         <div className="text-center">
           <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-slate-100 tracking-tight mt-6">Dasbor Pencapaian</h1>
-          <p className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto">Pantauan *real-time* penggalangan dana Bakti Sosial Lintas Sinodal 2026 melalui Proposal dan Kartu Sahabat.</p>
+          <p className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto">Pantauan <span className="italic">real-time</span> penggalangan dana Bakti Sosial Lintas Sinodal 2026 melalui Proposal dan Kartu Sahabat.</p>
         </div>
 
         {/* Global Progress Bar */}

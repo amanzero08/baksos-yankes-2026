@@ -140,7 +140,7 @@ export default function Home() {
                 <CheckCircle2 className="h-8 w-8" />
               </div>
               <h3 className="font-heading text-2xl font-bold text-slate-100 mb-4">Transparansi Mutlak</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">Setiap donasi dicatat secara digital. Proposal dan bukti konfirmasi dapat diverifikasi secara *real-time* melalui dasbor terenkripsi.</p>
+              <p className="text-slate-400 leading-relaxed font-medium">Setiap donasi dicatat secara digital. Proposal dan bukti konfirmasi dapat diverifikasi secara <span className="italic">real-time</span> melalui dasbor terenkripsi.</p>
             </motion.div>
 
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} transition={{ delay: 0.2 }} className="glass-panel rounded-[2rem] p-10 hover:bg-slate-800/60 transition-all duration-500 hover:-translate-y-2 group">
