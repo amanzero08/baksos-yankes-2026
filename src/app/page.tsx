@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock } from "lucide-react";
+import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock, Stethoscope, Droplet, Eye, Scissors, Activity } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import CountdownTimer from "@/components/countdown-timer";
 
@@ -196,6 +196,85 @@ export default function Home() {
               <h3 className="font-heading text-2xl font-bold text-slate-100 mb-4">Tepat Sasaran</h3>
               <p className="text-slate-400 leading-relaxed font-medium">Dilaksanakan pada 14-18 September 2026, bertepatan dengan momentum sinodal strategis untuk dampak yang maksimal.</p>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Jenis Pelayanan Section */}
+      <section className="py-32 relative z-20 border-t border-white/5 bg-slate-950/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial="hidden" 
+            whileInView="visible" 
+            viewport={{ once: true }} 
+            variants={fadeUp} 
+            className="text-center mb-20 max-w-3xl mx-auto"
+          >
+            <span className="text-amber-500 font-bold tracking-[0.2em] uppercase text-xs mb-4 block">Bentuk Kegiatan</span>
+            <h2 className="font-heading text-4xl md:text-5xl font-extrabold text-slate-100 mb-6 tracking-tight">Jenis Pelayanan Medis</h2>
+            <p className="text-lg text-slate-400 leading-relaxed font-medium">
+              Pelayanan kesehatan cuma-cuma yang disiapkan untuk membantu meningkatkan derajat kesehatan masyarakat di lokasi pelayanan.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Pemeriksaan & Pengobatan Umum",
+                desc: "Layanan konsultasi dokter, pemeriksaan fisik, diagnosis keluhan penyakit umum, serta pemberian obat-obatan dasar gratis sesuai indikasi medis.",
+                icon: Stethoscope,
+                color: "from-blue-500/10 to-blue-500/5 text-blue-400 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]",
+              },
+              {
+                title: "Pengobatan Gigi",
+                desc: "Tindakan pemeriksaan kesehatan mulut dasar, penambalan berlubang, pembersihan karang gigi (scaling), dan pencabutan gigi.",
+                icon: Activity,
+                color: "from-amber-500/10 to-amber-500/5 text-amber-400 border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.1)]",
+              },
+              {
+                title: "Bedah Minor",
+                desc: "Tindakan bedah skala kecil gratis untuk mengatasi kista epitel, lipoma, clavus (mata ikan), abses luar, atau penjahitan luka dengan bius lokal.",
+                icon: Scissors,
+                color: "from-red-500/10 to-red-500/5 text-red-400 border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]",
+              },
+              {
+                title: "Pemeriksaan Darah",
+                desc: "Skrining kesehatan berkala melalui pemeriksaan parameter darah krusial, meliputi kadar Gula Darah, Asam Urat, serta Kolesterol.",
+                icon: Droplet,
+                color: "from-rose-500/10 to-rose-500/5 text-rose-400 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)]",
+              },
+              {
+                title: "Pemberian Kacamata Baca",
+                desc: "Pengujian visus/ketajaman penglihatan sederhana dan pemberian kacamata baca secara gratis guna menunjang produktivitas harian warga lansia.",
+                icon: Eye,
+                color: "from-emerald-500/10 to-emerald-500/5 text-emerald-400 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]",
+              },
+              {
+                title: "Sunatan massal",
+                desc: "Bakti sosial khitanan massal gratis bagi anak-anak usia sekolah, dilaksanakan secara higienis dan terstandar khusus di wilayah Likupang.",
+                icon: Sparkles,
+                color: "from-indigo-500/10 to-indigo-500/5 text-indigo-400 border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.1)]",
+              },
+            ].map((srv, idx) => {
+              const IconComp = srv.icon;
+              return (
+                <motion.div 
+                  key={idx}
+                  initial="hidden" 
+                  whileInView="visible" 
+                  viewport={{ once: true, margin: "-100px" }} 
+                  variants={fadeUp} 
+                  transition={{ delay: idx * 0.05 }}
+                  className={`glass-panel bg-gradient-to-br ${srv.color} rounded-[2rem] p-8 border hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 group`}
+                >
+                  <div className="h-14 w-14 rounded-2xl bg-slate-900/60 border border-white/10 flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-500">
+                    <IconComp className="h-7 w-7" />
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-slate-100 mb-4">{srv.title}</h3>
+                  <p className="text-slate-400 leading-relaxed text-sm font-medium">{srv.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
