@@ -290,14 +290,23 @@ export default function Home() {
 
           <Tabs defaultValue="tondanouw" className="w-full max-w-5xl mx-auto">
             <div className="flex justify-center mb-10 md:mb-12 px-4 md:px-0">
-              <TabsList className="glass-panel p-1.5 rounded-full w-full max-w-md grid grid-cols-3 gap-1">
-                <TabsTrigger value="tondanouw" className="rounded-full py-2.5 text-xs md:text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
+              <TabsList className="glass-panel p-1 rounded-full w-full max-w-md grid grid-cols-3 gap-1 h-auto min-h-11 items-center">
+                <TabsTrigger 
+                  value="tondanouw" 
+                  className="rounded-full py-2 px-3 text-xs md:text-sm font-bold text-slate-400 hover:text-slate-200 transition-all data-[active]:bg-amber-500 data-[active]:text-slate-950 dark:data-[active]:bg-amber-500 dark:data-[active]:text-slate-950 dark:data-[active]:border-transparent dark:data-[active]:shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                >
                   Tondanouw
                 </TabsTrigger>
-                <TabsTrigger value="likupang" className="rounded-full py-2.5 text-xs md:text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
+                <TabsTrigger 
+                  value="likupang" 
+                  className="rounded-full py-2 px-3 text-xs md:text-sm font-bold text-slate-400 hover:text-slate-200 transition-all data-[active]:bg-amber-500 data-[active]:text-slate-950 dark:data-[active]:bg-amber-500 dark:data-[active]:text-slate-950 dark:data-[active]:border-transparent dark:data-[active]:shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                >
                   Likupang
                 </TabsTrigger>
-                <TabsTrigger value="lolah" className="rounded-full py-2.5 text-xs md:text-sm font-bold text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all">
+                <TabsTrigger 
+                  value="lolah" 
+                  className="rounded-full py-2 px-3 text-xs md:text-sm font-bold text-slate-400 hover:text-slate-200 transition-all data-[active]:bg-amber-500 data-[active]:text-slate-950 dark:data-[active]:bg-amber-500 dark:data-[active]:text-slate-950 dark:data-[active]:border-transparent dark:data-[active]:shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                >
                   Lolah
                 </TabsTrigger>
               </TabsList>
