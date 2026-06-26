@@ -30,6 +30,7 @@ export function ProposalRow({ prop }: { prop: any }) {
   const router = useRouter()
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [waLang, setWaLang] = useState<'id' | 'en'>('id')
+  const [certLang, setCertLang] = useState<'id' | 'en'>('id')
   
   // Action state
   const [isOpen, setIsOpen] = useState(false)
@@ -172,6 +173,25 @@ export function ProposalRow({ prop }: { prop: any }) {
         `In order to realize our love ministry, we, the Committee of the 2026 Cross-Synodal Social Mission (Healthcare Services by GPIB & GMIM), intend to submit a partnership donation proposal for free healthcare services in Likupang & Touluaan, North Sulawesi. The details of this service program can be found in the attached PDF document.\n\n` +
         `It would be a great honor and joy for us if you would walk with us as an extension of God's hand of love for our brothers and sisters in need.\n\n` +
         `Thank you very much for your attention and generosity. May the Lord Jesus always bless your health, family, and all your work and efforts. Amen.`
+  };
+
+  const donationAmount = prop.donations && prop.donations.length > 0 ? prop.donations[0].amount : 0;
+  const formattedAmountID = "Rp " + Math.round(donationAmount).toLocaleString('id-ID');
+  const formattedAmountEN = "Rp " + Math.round(donationAmount).toLocaleString('en-US');
+
+  const waCertMessages = {
+    id: `Syalom ${prop.donor_name},\n\n` +
+        `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
+        `Dengan penuh rasa hormat dan sukacita, kami segenap Panitia Bakti Sosial Lintas Sinodal 2026 menyampaikan ucapan terima kasih yang mendalam atas donasi pelayanan kasih sebesar ${formattedAmountID} yang telah kami terima dan verifikasi.\n\n` +
+        `Keberadaan dukungan Bapak/Ibu adalah bukti nyata kepedulian yang menghidupkan harapan baru bagi saudara-saudara kita yang membutuhkan layanan kesehatan di pelosok Sulawesi Utara. Kami bersyukur atas ketulusan hati Bapak/Ibu.\n\n` +
+        `Sebagai bentuk apresiasi resmi dan pertanggungjawaban kami, bersama pesan ini kami lampirkan dokumen digital Sertifikat Penghargaan resmi (silakan unduh file PDF yang kami bagikan ini).\n\n` +
+        `Doa kami senantiasa, kiranya Tuhan Yesus Kristus melimpahkan kesehatan, damai sejahtera, serta memberkati seluruh karya, usaha, dan keluarga Bapak/Ibu. Amin.`,
+    en: `Shalom ${prop.donor_name},\n\n` +
+        `Warm greetings in the love of our Lord Jesus Christ.\n\n` +
+        `With deep respect and joy, the entire Committee of the 2026 Cross-Synodal Social Mission expresses our heartfelt gratitude for your generous donation of ${formattedAmountEN} which has been received and verified.\n\n` +
+        `Your support is a tangible proof of care that brings new hope and healing to our brothers and sisters in need of healthcare services in remote areas of North Sulawesi. We are truly grateful for your generosity.\n\n` +
+        `As a token of our official appreciation and accountability, we attach herewith the digital document of the official Certificate of Appreciation (please download the PDF file we shared).\n\n` +
+        `Our prayer is always that the Lord Jesus Christ blesses your health, peace, and all your work, endeavors, and family. Amen.`
   };
 
   return (
@@ -373,39 +393,52 @@ export function ProposalRow({ prop }: { prop: any }) {
               </div>
             ) : (
               <div className="p-4 rounded-xl border border-emerald-900/50 bg-emerald-950/20 space-y-3 mt-2 text-left">
-                <h4 className="text-sm font-bold text-emerald-400 tracking-wide uppercase flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4" /> Ucapkan Terima Kasih
-                </h4>
+                <div className="flex items-center justify-between gap-3">
+                  <h4 className="text-sm font-bold text-emerald-400 tracking-wide uppercase flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4" /> Ucapkan Terima Kasih
+                  </h4>
+                  <div className="flex items-center gap-0.5 bg-slate-900 p-0.5 rounded-lg border border-white/10 shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setCertLang('id'); }}
+                      className={`px-2 py-0.5 text-[9px] font-bold rounded transition-all ${certLang === 'id' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      ID
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setCertLang('en'); }}
+                      className={`px-2 py-0.5 text-[9px] font-bold rounded transition-all ${certLang === 'en' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      EN
+                    </button>
+                  </div>
+                </div>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Donasi telah diverifikasi. Unduh sertifikat penghargaan resmi PDF dan bagikan apresiasi hangat kepada donatur.
+                  {certLang === 'en'
+                    ? 'Donation verified. Download the official PDF certificate of appreciation and share our warm appreciation with the donor.'
+                    : 'Donasi telah diverifikasi. Unduh sertifikat penghargaan resmi PDF dan bagikan apresiasi hangat kepada donatur.'}
                 </p>
                 
                 <div className="flex flex-col gap-2.5 pt-1">
                   <PDFDownloadLink
-                    document={<ThankYouPDF data={prop} />}
-                    fileName={`SERTIFIKAT_PENGHARGAAN_${prop.proposal_number}_${prop.donor_name.replace(/\s+/g, '_')}.pdf`}
+                    document={<ThankYouPDF data={prop} lang={certLang} />}
+                    fileName={`SERTIFIKAT_PENGHARGAAN_${prop.proposal_number}_${prop.donor_name.replace(/\s+/g, '_')}_${certLang.toUpperCase()}.pdf`}
                     className="w-full"
                   >
                     {/* @ts-ignore */}
                     {({ loading }) => (
                       <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm h-11" disabled={loading}>
                         <Download className="w-4 h-4 mr-2" />
-                        {loading ? 'Menyiapkan Sertifikat...' : 'Unduh Sertifikat Penghargaan PDF'}
+                        {loading 
+                          ? (certLang === 'en' ? 'Preparing Certificate...' : 'Menyiapkan Sertifikat...') 
+                          : (certLang === 'en' ? 'Download Certificate PDF' : 'Unduh Sertifikat Penghargaan PDF')}
                       </Button>
                     )}
                   </PDFDownloadLink>
  
                   <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-                      `Syalom ${prop.donor_name},\n\n` +
-                      `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
-                      `Dengan penuh rasa hormat dan sukacita, kami segenap Panitia Bakti Sosial Lintas Sinodal 2026 menyampaikan ucapan terima kasih yang mendalam atas donasi pelayanan kasih sebesar ${
-                        prop.donations && prop.donations.length > 0 ? "Rp " + Math.round(prop.donations[0].amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-"
-                      } yang telah kami terima dan verifikasi.\n\n` +
-                      `Keberadaan dukungan Bapak/Ibu adalah bukti nyata kepedulian yang menghidupkan harapan baru bagi saudara-saudara kita yang membutuhkan layanan kesehatan di pelosok Sulawesi Utara. Kami bersyukur atas ketulusan hati Bapak/Ibu.\n\n` +
-                      `Sebagai bentuk apresiasi resmi dan pertanggungjawaban kami, bersama pesan ini kami lampirkan dokumen digital Sertifikat Penghargaan resmi (silakan unduh file PDF yang kami bagikan ini).\n\n` +
-                      `Doa kami senantiasa, kiranya Tuhan Yesus Kristus melimpahkan kesehatan, damai sejahtera, serta memberkati seluruh karya, usaha, dan keluarga Bapak/Ibu. Amin.`
-                    )}`}
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(waCertMessages[certLang])}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full inline-block"
@@ -414,18 +447,30 @@ export function ProposalRow({ prop }: { prop: any }) {
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.5-5.739-1.446L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.863-9.864.001-2.63-1.023-5.101-2.879-6.958C16.6 1.924 14.129.9 11.504.9 6.072.9 1.646 5.321 1.643 10.765c0 1.701.447 3.361 1.294 4.803l-.973 3.556 3.649-.957zm11.597-4.815c-.325-.163-1.926-.95-2.222-1.058-.297-.11-.513-.163-.73.163-.216.325-.838 1.058-1.027 1.275-.19.217-.379.244-.704.082-.325-.162-1.372-.507-2.614-1.613-.966-.862-1.618-1.927-1.807-2.253-.19-.325-.02-.5-.183-.661-.147-.146-.325-.379-.487-.57-.162-.19-.216-.324-.325-.541-.108-.217-.053-.407-.026-.57.027-.162.216-.515.325-.677.108-.162.162-.271.243-.459.082-.19.041-.353-.021-.515-.062-.163-.513-1.246-.704-1.708-.186-.447-.37-.387-.513-.394-.132-.007-.284-.007-.437-.007s-.403.058-.613.285c-.21.228-.802.787-.802 1.918s.82 2.222.934 2.373c.115.151 1.613 2.463 3.908 3.45.546.235.973.376 1.306.482.548.173 1.047.149 1.443.09.44-.066 1.413-.578 1.61-1.139.198-.56.198-1.042.139-1.139-.059-.098-.216-.163-.542-.326z" />
                       </svg>
-                      Kirim Terima Kasih via WA
+                      {certLang === 'en' ? 'Send Thank You via WA' : 'Kirim Terima Kasih via WA'}
                     </Button>
                   </a>
                 </div>
-
+ 
                 {/* Panduan Pengiriman */}
                 <div className="p-3.5 bg-slate-900/60 rounded-xl border border-white/5 space-y-2 mt-2">
-                  <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider block">💡 Panduan Kirim Sertifikat (Untuk Panitia)</span>
+                  <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider block">
+                    {certLang === 'en' ? '💡 Send Certificate Guide (For Committee)' : '💡 Panduan Kirim Sertifikat (Untuk Panitia)'}
+                  </span>
                   <div className="space-y-1.5 text-[11px] text-slate-400">
-                    <span className="block">1. Klik tombol <span className="text-emerald-400 font-semibold">"Unduh Sertifikat Penghargaan PDF"</span> di atas untuk mengunduh berkas sertifikat donatur.</span>
-                    <span className="block">2. Klik tombol <span className="text-[#25D366] font-semibold">"Kirim Terima Kasih via WA"</span> untuk membuka WhatsApp donatur dengan teks template yang sudah disiapkan otomatis.</span>
-                    <span className="block">3. Di chat WhatsApp donatur, kirimkan teks tersebut dan <span className="text-slate-200 font-semibold">lampirkan berkas PDF</span> sertifikat yang baru Anda unduh.</span>
+                    {certLang === 'en' ? (
+                      <>
+                        <span className="block">1. Click the <span className="text-emerald-400 font-semibold">"Download Certificate PDF"</span> button above to download the donor's certificate.</span>
+                        <span className="block">2. Click the <span className="text-[#25D366] font-semibold">"Send Thank You via WA"</span> button to open WhatsApp with the automated message template.</span>
+                        <span className="block">3. In the donor's WhatsApp chat, send the message and <span className="text-slate-200 font-semibold">attach the downloaded PDF</span> certificate.</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="block">1. Klik tombol <span className="text-emerald-400 font-semibold">"Unduh Sertifikat Penghargaan PDF"</span> di atas untuk mengunduh berkas sertifikat donatur.</span>
+                        <span className="block">2. Klik tombol <span className="text-[#25D366] font-semibold">"Kirim Terima Kasih via WA"</span> untuk membuka WhatsApp donatur dengan teks template yang sudah disiapkan otomatis.</span>
+                        <span className="block">3. Di chat WhatsApp donatur, kirimkan teks tersebut dan <span className="text-slate-200 font-semibold">lampirkan berkas PDF</span> sertifikat yang baru Anda unduh.</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

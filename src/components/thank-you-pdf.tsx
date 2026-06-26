@@ -273,19 +273,53 @@ const styles = StyleSheet.create({
   }
 })
 
-export const ThankYouPDF = ({ data }: { data: any }) => {
-  const currentDate = new Date().toLocaleDateString('id-ID', {
+// Translations dictionary
+const t = {
+  id: {
+    foundationName: "Yayasan Kesehatan GPIB & GMIM",
+    certTitle: "Sertifikat Penghargaan",
+    subTitle: "Bakti Sosial Lintas Sinodal 2026",
+    recipientLabel: "Diberikan Kepada / Presented To:",
+    bodyText: "Sebagai ungkapan penghargaan yang mendalam dan rasa terima kasih yang tulus atas partisipasi dan kontribusi berharga dalam aksi kemanusiaan pelayanan kesehatan gratis bagi masyarakat Touluaan, Likupang, dan Lolah, Sulawesi Utara. Dukungan Anda telah menghadirkan pemulihan dan harapan baru.",
+    donationVerified: "Donasi Terverifikasi: ",
+    chairmanTitle: "Ketua Panitia Pelaksana",
+    committeeRole: "Lintas Sinodal 2026",
+    picTitle: "PIC Pendamping Dana",
+    picRole: "Yayasan Kesehatan GPIB",
+    qrLabel: "Pindai untuk otentikasi digital",
+    certNo: "No. CERT: CERT-TY-",
+    dateOfIssue: "Tanggal Terbit: "
+  },
+  en: {
+    foundationName: "GPIB & GMIM Health Foundation",
+    certTitle: "Certificate of Appreciation",
+    subTitle: "2026 Cross-Synodal Social Mission",
+    recipientLabel: "Diberikan Kepada / Presented To:",
+    bodyText: "As an expression of deep appreciation and sincere gratitude for your valuable participation and contribution in the humanitarian action of providing free healthcare services for the community in Touluaan, Likupang, and Lolah, North Sulawesi. Your support has brought healing and new hope.",
+    donationVerified: "Verified Donation: ",
+    chairmanTitle: "Chairman of the Organizing Committee",
+    committeeRole: "2026 Cross-Synodal",
+    picTitle: "Fundraising Liaison Officer",
+    picRole: "GPIB Health Foundation",
+    qrLabel: "Scan for digital verification",
+    certNo: "Cert No: CERT-TY-",
+    dateOfIssue: "Date of Issue: "
+  }
+}
+
+export const ThankYouPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'en' }) => {
+  const currentDate = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'id-ID', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   });
 
-  const formatIDR = (amount: number) => {
-    return "Rp " + Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const formatCurrency = (amount: number) => {
+    return "Rp " + Math.round(amount).toLocaleString(lang === 'en' ? 'en-US' : 'id-ID');
   }
 
   const donation = data.donations && data.donations.length > 0 ? data.donations[0] : { amount: 0 };
-  const formattedAmount = formatIDR(donation.amount);
+  const formattedAmount = formatCurrency(donation.amount);
 
   return (
     <Document>
@@ -312,13 +346,13 @@ export const ThankYouPDF = ({ data }: { data: any }) => {
 
         {/* Header Titles */}
         <View style={styles.certificateHeader}>
-          <Text style={styles.headerOrg}>Yayasan Kesehatan GPIB & GMIM</Text>
-          <Text style={styles.headerMainTitle}>Sertifikat Penghargaan</Text>
-          <Text style={styles.headerSubTitle}>Bakti Sosial Lintas Sinodal 2026</Text>
+          <Text style={styles.headerOrg}>{t[lang].foundationName}</Text>
+          <Text style={styles.headerMainTitle}>{t[lang].certTitle}</Text>
+          <Text style={styles.headerSubTitle}>{t[lang].subTitle}</Text>
         </View>
 
         {/* Recipient info */}
-        <Text style={styles.recipientLabel}>Diberikan Kepada / Presented To:</Text>
+        <Text style={styles.recipientLabel}>{t[lang].recipientLabel}</Text>
         <Text style={styles.recipientName}>{data.donor_name}</Text>
         {data.institution && (
           <Text style={styles.recipientInst}>{data.institution}</Text>
@@ -328,22 +362,22 @@ export const ThankYouPDF = ({ data }: { data: any }) => {
 
         {/* Body Appreciation */}
         <Text style={styles.bodyText}>
-          Sebagai ungkapan penghargaan yang mendalam dan rasa terima kasih yang tulus atas partisipasi dan kontribusi berharga dalam aksi kemanusiaan pelayanan kesehatan gratis bagi masyarakat Touluaan, Likupang, dan Lolah, Sulawesi Utara. Dukungan Anda telah menghadirkan pemulihan dan harapan baru.
+          {t[lang].bodyText}
         </Text>
 
         {/* Amount Box */}
         <View style={styles.amountBox}>
-          <Text style={styles.amountText}>Donasi Terverifikasi: {formattedAmount}</Text>
+          <Text style={styles.amountText}>{t[lang].donationVerified}{formattedAmount}</Text>
         </View>
 
         {/* Bottom Section: Signatures & Verification */}
         <View style={styles.bottomSection}>
           {/* Chairman Signature Line */}
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureTitle}>Ketua Panitia Pelaksana</Text>
+            <Text style={styles.signatureTitle}>{t[lang].chairmanTitle}</Text>
             <Text style={styles.signatureName}>Pdt. Jan Jona Lumanauw</Text>
             <View style={styles.signatureLine} />
-            <Text style={styles.signatureRole}>Lintas Sinodal 2026</Text>
+            <Text style={styles.signatureRole}>{t[lang].committeeRole}</Text>
           </View>
 
           {/* Validation QR Code */}
@@ -352,22 +386,22 @@ export const ThankYouPDF = ({ data }: { data: any }) => {
               src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://baksos-yankes.id/thanks/${data.proposal_number}&color=065f46&bgcolor=ffffff`} 
               style={styles.qrCode} 
             />
-            <Text style={styles.qrLabel}>Pindai untuk otentikasi digital</Text>
+            <Text style={styles.qrLabel}>{t[lang].qrLabel}</Text>
           </View>
 
           {/* PIC Signature Line */}
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureTitle}>PIC Pendamping Dana</Text>
+            <Text style={styles.signatureTitle}>{t[lang].picTitle}</Text>
             <Text style={styles.signatureName}>{data.committee_name || 'Panitia Baksos'}</Text>
             <View style={styles.signatureLine} />
-            <Text style={styles.signatureRole}>Yayasan Kesehatan GPIB</Text>
+            <Text style={styles.signatureRole}>{t[lang].picRole}</Text>
           </View>
         </View>
 
         {/* Metadata Footer */}
         <View style={styles.footerMeta} fixed>
-          <Text>No. CERT: CERT-TY-{data.proposal_number}</Text>
-          <Text>Tanggal Terbit: {currentDate}</Text>
+          <Text>{t[lang].certNo}{data.proposal_number}</Text>
+          <Text>{t[lang].dateOfIssue}{currentDate}</Text>
         </View>
       </Page>
     </Document>
