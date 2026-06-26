@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   coverRecipientBox: {
     borderWidth: 1,
     borderColor: '#334155',
-    backgroundColor: '#1e293b/30',
+    backgroundColor: '#1e293b',
     padding: 20,
     borderRadius: 8,
     width: '100%',
@@ -530,15 +530,305 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
   }
-})
+});
 
 // Helper for formatting Currency
 const formatIDR = (amount: number) => {
   return "Rp " + Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
-export const ProposalPDF = ({ data }: { data: any }) => {
-  const currentDate = new Date().toLocaleDateString('id-ID', {
+// Translations lookup
+const t = {
+  id: {
+    coverTitleLabel: "Proposal Kemitraan",
+    coverSubtitle: "Pelayanan Kesehatan Gratis Lintas Sinode",
+    toHonorable: "Kepada Yang Terhormat,",
+    loveDonor: "Calon Donatur Pelayanan Kasih",
+    yearOfMinistry: "Tahun Pelayanan 2026",
+    headerTitle: "Bakti Sosial Lintas Sinodal",
+    headerSubtitle: "YANKES GPIB & GMIM 2026",
+    donationProposal: "Proposal Donasi",
+    pageOf: (current: number, total: number) => `Halaman ${current} dari ${total}`,
+    docTitle: "Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026",
+    
+    sec1Num: "I.",
+    sec1Title: "Pendahuluan",
+    sec1P1: "Kesehatan merupakan kebutuhan dasar yang sangat penting dalam menunjang kualitas hidup masyarakat. Namun, dalam realitas sosial saat ini, masih banyak masyarakat di wilayah Likupang dan Ratahan yang menghadapi keterbatasan akses terhadap layanan kesehatan, baik dari sisi jarak, biaya pemeriksaan, ketersediaan tenaga medis, maupun rendahnya kesadaran pemeriksaan kesehatan secara rutin. Kondisi tersebut berdampak pada meningkatnya risiko penyakit tidak menular maupun penyakit menular, serta masih adanya angka kematian yang dipengaruhi oleh keterlambatan penanganan medis.",
+    sec1P2: "Melalui kegiatan bakti sosial ini, Yayasan Kesehatan GPIB berkomitmen untuk mengambil bagian dalam pelayanan kemanusiaan melalui penyediaan layanan kesehatan gratis yang mencakup pemeriksaan umum, konsultasi dokter, pemeriksaan tekanan darah, pemeriksaan gula darah, kolesterol, asam urat, edukasi kesehatan, serta pemberian obat dasar sesuai indikasi medis.",
+    sec1P3: "Kegiatan ini diharapkan dapat menjadi bentuk nyata kepedulian terhadap masyarakat, sekaligus mendukung program pemerintah dalam peningkatan derajat kesehatan masyarakat di wilayah-wilayah terpencil di Provinsi Sulawesi Utara. Sinergi antara Yayasan Kesehatan GPIB dan Sinode GMIM menjadi bukti kebersamaan gerejawi untuk melayani sesama manusia tanpa membedakan latar belakang sosial dan golongan.",
+
+    sec2Num: "II.",
+    sec2Title: "Profil Organisasi Sinergi",
+    gpibTitle: "Gereja Protestan di Indonesia bagian Barat (GPIB)",
+    gpibDesc: "Gereja Protestan di Indonesia bagian Barat (disingkat GPIB) adalah persekutuan orang percaya Kristen Protestan di Indonesia dimana Tuhan Yesus Kristus menjadi dasar dan kepalanya. GPIB melaksanakan panggilan dan pengutusan-Nya melalui persekutuan, pelayanan dan kesaksian yang dituangkan dalam Pokok-pokok Kebijakan Umum Pelayanan dan Kesaksian (PKUPPG). GPIB merupakan bagian dari Gereja Protestan di Indonesia (GPI) yang pada zaman Hindia Belanda bernama De Protestantsche Kerk in Nederlandsch-Indie atau Indische Kerk. Pelembagaan dan pembentukan GPIB sebagai gereja bagian mandiri keempat di lingkungan GPI, disetujui dan diputuskan melalui Surat Keputusan Wakil Tinggi Kerajaan Belanda di Indonesia No. 2, tanggal 1 Desember 1948.",
+    visi: "Visi",
+    gpibVisi: "GPIB menjadi gereja yang mewujudkan damai sejahtera bagi seluruh ciptaan-Nya.",
+    misi: "Misi",
+    gpibMisi1: "Menjadi Gereja yang terus menerus diperbaharui dengan bertolak dari Firman Allah, yang terwujud dalam perilaku kehidupan warga gereja, baik dalam persekutuan, maupun dalam hidup bermasyarakat.",
+    gpibMisi2: "Menjadi gereja yang hadir sebagai contoh kehidupan, yang terwujud melalui inisiatif dan partisipasi dalam kesetiakawanan sosial serta kerukunan dalam masyarakat, dengan berbasis pada perilaku kehidupan keluarga yang kuat dan sejahtera.",
+    gpibMisi3: "Menjadi Gereja yang membangun keutuhan ciptaan yang terwujud melalui perhatian terhadap lingkungan hidup, semangat keesaan dan semangat persatuan dan kesatuan warga Gereja sebagai warga masyarakat.",
+
+    gmimTitle: "Gereja Masehi Injili di Minahasa (GMIM)",
+    gmimDesc: "Gereja Masehi Injili di Minahasa (GMIM) adalah persekutuan orang-orang Minahasa dan suku lain serta ras lain, yang ada di tanah Minahasa dan di luar tanah Minahasa, yang percaya kepada Yesus Kristus untuk memberitakan perbuatan-perbuatan besar Tuhan Allah dan menjadi berkat bagi orang banyak di manapun dan kapanpun. Dengan bersumber dari kesaksian Alkitab maka dalam Tata Gereja 2021, GMIM merumuskan panggilannya dalam 3 bentuk yakni terpanggil untuk bersekutu, bersaksi, dan melayani.",
+    gmimVisi: "GMIM Yang Kudus, Am dan Rasuli (Yang Kudus dipahami sebagai persekutuan orang-orang kudus yang telah dibenarkan dan ditebus; Am dipahami karena pekerjaan Yesus Kristus; Rasuli dipahami karena gereja diutus untuk memberitakan keselamatan).",
+    gmimMisi1: "Meningkatkan kualitas karakter dan spiritualitas Kristiani warga Gereja.",
+    gmimMisi2: "Meningkatkan pelayanan misi yang holistik bagi keadilan, perdamaian dan kesejahteraan sosial yang menjamin keberlangsungan keutuhan ciptaan.",
+    gmimMisi3: "Meningkatkan keesaan bersama Gereja-Gereja di Indonesia dan di seluruh dunia secara oikumenis.",
+    gmimMisi4: "Meningkatkan kapasitas kelembagaan GMIM dalam presbiterial sinodal sebagai upaya mewujudkan amanat amanat agung Kristus.",
+
+    sec3Num: "III.",
+    sec3Title: "Waktu Dan Tempat Pelaksanaan",
+    sec3Text: "Bakti Sosial Lintas Sinodal ini akan diselenggarakan secara maraton pada tanggal 14 s.d. 18 September 2026 dengan membagi tim medis ke dalam tiga wilayah koordinasi pelayanan utama, yaitu:",
+    pointA: "Titik A (Mitra)",
+    pointADesc: "Desa Tondanouw, Kec. Touluaan, Kabupaten Minahasa Tenggara",
+    pointB: "Titik B (Minut)",
+    pointBDesc: "Kecamatan Likupang, Kabupaten Minahasa Utara (Pusat Sunatan Massal)",
+    pointC: "Titik C (Minahasa)",
+    pointCDesc: "Desa Lolah, Kecamatan Tombariri Timur, Kabupaten Minahasa",
+
+    sec4Num: "IV.",
+    sec4Title: "Letak Geografis & Demografi Lokasi",
+    tondanouwTitle: "Desa Tondanouw (Mitra)",
+    tondanouwDesc: "Tondanouw berada di Kecamatan Touluaan, Kabupaten Minahasa Tenggara pada ketinggian ±272 mdpl. Dengan jumlah penduduk ±1.500 jiwa, masyarakat hidup rukun dalam gotong royong yang kuat. Mayoritas bekerja di bidang pertanian padi sawah (sentra produksi padi) dan perkebunan tanaman pangan/hortikultura.",
+    likupangTitle: "Kawasan Likupang (Minut)",
+    likupangDesc: "Likupang berjarak ±60 km dari Kota Manado di ujung utara Pulau Sulawesi. Secara administrasi terbagi menjadi: Likupang Barat (±16.988 jiwa), Likupang Timur (±16.519 jiwa), dan Likupang Selatan (±4.958 jiwa) dengan total populasi kawasan sekitar ±38.000 jiwa yang sebagian besar bermata pencaharian sebagai nelayan dan berkebun.",
+
+    sec5Num: "V.",
+    sec5Title: "Bentuk Kegiatan Pelayanan",
+    sec5Intro: "Pelayanan kesehatan diselenggarakan secara komprehensif oleh tim dokter spesialis, dokter umum, dokter gigi, perawat, apoteker, dan analis lab dengan bentuk layanan meliputi:",
+    service1Title: "Pemeriksaan & Pengobatan Umum: ",
+    service1Desc: "Pemeriksaan fisik mendalam, konsultasi medis, serta penanganan keluhan penyakit menular dan tidak menular.",
+    service2Title: "Pemeriksaan & Pengobatan Gigi: ",
+    service2Desc: "Pemeriksaan gigi dasar, penambalan, pembersihan karang gigi (scaling), dan ekstraksi/pencabutan gigi sesuai indikasi.",
+    service3Title: "Bedah Minor (Minor Surgery): ",
+    service3Desc: "Operasi kecil untuk mengangkat kista, lipoma, keloid, atau penanganan luka yang membutuhkan penjahitan.",
+    service4Title: "Laboratorium Darah Sederhana: ",
+    service4Desc: "Skrining instan kadar Gula Darah, Asam Urat, dan Kolesterol untuk mendeteksi risiko metabolik secara dini.",
+    service5Title: "Pemberian Kacamata Baca: ",
+    service5Desc: "Pengujian visus (ketajaman penglihatan) dan pembagian kacamata baca gratis bagi penderita presbiopia usia lanjut.",
+    service6Title: "Sunatan Massal (Khusus Likupang): ",
+    service6Desc: "Tindakan sirkumsisi gratis menggunakan metode bedah standar medis steril bagi anak-anak keluarga prasejahtera.",
+
+    sec6Num: "VI.",
+    sec6Title: "Rancangan Anggaran Belanja (RAB)",
+    expenditurePlan: "1. Rencana Pengeluaran (Alokasi Dana)",
+    no: "No",
+    budgetDesc: "Pos Anggaran & Keterangan",
+    amount: "Jumlah Nominal",
+    totalExp: "TOTAL PENGELUARAN KESELURUHAN",
+    
+    budgetItems: [
+      { id: 1, text: "Pembelian obat-obatan, kacamata baca, bahan habis pakai medis, dan instrumen sirkumsisi.", title: "Pelayanan Kesehatan: " },
+      { id: 2, text: "Tiket pesawat Jakarta - Manado (PP) untuk tim dokter spesialis dan paramedis.", title: "Transportasi Udara: " },
+      { id: 3, text: "Penginapan tim medis selama 5 hari pelaksanaan baksos di 3 titik.", title: "Akomodasi & Penginapan: " },
+      { id: 4, text: "Sewa bus operasional dan mobil logistik di lokasi pelayanan.", title: "Transportasi Darat & Bus: " },
+      { id: 5, text: "Konsumsi makan berat dan snack tim medis & panitia lokal.", title: "Konsumsi & Logistik Lapangan: " },
+      { id: 6, text: "Pembuatan dokumen, sertifikat penghargaan, bagasi, dan transport bandara.", title: "Sekretariat & Transport Bandara: " }
+    ],
+
+    incomePlan: "2. Rencana Pemasukan (Sumber Dana)",
+    fundingSource: "Sumber Pendanaan",
+    totalIncome: "TOTAL RENCANA PEMASUKAN",
+    incomeItems: [
+      "Alokasi Kas Majelis Sinode GPIB",
+      "Pencarian Dana Kemitraan (Proposal & Kartu Sahabat)"
+    ],
+
+    sec7Num: "VII.",
+    sec7Title: "Susunan Kepanitiaan Lintas Sinode",
+    committeeRoles: {
+      pengarah: "Dewan Pengarah",
+      gpibSinode: "Ketua II Majelis Sinode GPIB",
+      gpibYankes: "Ketua Yayasan Kesehatan GPIB",
+      harian: "Pelaksana Harian (Inti)",
+      ketua: "Ketua Pelaksana",
+      ketua1: "Ketua I (Seksi Acara)",
+      ketua2: "Ketua II (Seksi Dana)",
+      ketua3: "Ketua III (Kesehatan)",
+      ketua4: "Ketua IV (Transp. & Akom.)",
+      ketua5: "Ketua V (Hubungan Antar Agama)",
+      sekretaris: "Sekretaris & Wkl. Sekretaris",
+      bendahara: "Bendahara & Wkl. Bendahara",
+      acaraDana: "Seksi Acara & Seksi Dana",
+      acaraRole: "Sie. Acara (Koordinator & Anggota)",
+      danaRole: "Sie. Dana (Koordinator & Anggota)",
+      ops: "Seksi Pendukung Operasional",
+      transRole: "Sie. Transportasi & Akomodasi",
+      logRole: "Sie. Logistik & Sie. Konsumsi",
+      pastoralRole: "Tim Pastoral & Tim Doa",
+      local: "Seksi / Panitia Lokal Sulawesi Utara",
+      localMinut: "Panitia Lokal Minahasa Utara",
+      localMin: "Panitia Lokal Minahasa",
+      localMitra: "Panitia Lokal Minahasa Tenggara",
+      healthRoleTitle: "Seksi Kesehatan & Tim Medis Inti",
+      healthRole: "Sie. Kesehatan & Medis"
+    },
+
+    sec8Num: "VIII.",
+    sec8Title: "Saluran Partisipasi & Donasi Resmi",
+    sec8P1: "Sebagai wujud kepedulian bersama untuk menghadirkan pelayanan kesehatan gratis bagi saudara-saudara kita di pelosok Sulawesi Utara, kami mengundang Bapak/Ibu/Saudara/i untuk melimpahkan kasih melalui dukungan donasi secara resmi. Partisipasi dapat disalurkan melalui rekening panitia pusat berikut:",
+    officialAccountBox: "REKENING RESMI DONASI BAKSOS",
+    bankName: "Nama Bank",
+    accNum: "Nomor Rekening",
+    beneficiary: "Atas Nama Penerima",
+    sec8P2: "Demikian proposal donasi kemitraan ini kami sampaikan. Kami mengucapkan terima kasih yang sebesar-besarnya atas doa, perhatian, dan partisipasi aktif Bapak/Ibu/Saudara/i. Kiranya Tuhan Yesus Kristus senantiasa melimpahkan berkat kesehatan, damai sejahtera, serta melancarkan segala karya dan usaha Bapak/Ibu beserta keluarga. Amin.",
+    knowPengarah: "Mengetahui, Dewan Pengarah",
+    regardsHarian: "Hormat Kami, Pelaksana Harian",
+    fundraisingPic: "Tim Penggalangan Dana, PIC",
+    fundraisingPicRole: "PIC / Tim Penggalangan Dana Lapangan",
+    officialAuth: "Otentikasi Dokumen Digital Resmi",
+    qrLabel: "Pindai kode QR untuk memvalidasi keabsahan data proposal ini secara online di sistem baksos.",
+    noLabel: "No",
+    dateLabel: "Tanggal",
+  },
+  en: {
+    coverTitleLabel: "Partnership Proposal",
+    coverSubtitle: "Free Healthcare Services Across Synods",
+    toHonorable: "To the Honorable,",
+    loveDonor: "Prospective Donor of Love Ministry",
+    yearOfMinistry: "Ministry Year 2026",
+    headerTitle: "Cross-Synodal Social Mission",
+    headerSubtitle: "YANKES GPIB & GMIM 2026",
+    donationProposal: "Donation Proposal",
+    pageOf: (current: number, total: number) => `Page ${current} of ${total}`,
+    docTitle: "Official Document of the Cross-Synodal Social Mission Committee 2026",
+
+    sec1Num: "I.",
+    sec1Title: "Introduction",
+    sec1P1: "Health is a fundamental need crucial for supporting community quality of life. However, in current social reality, many people in Likupang and Ratahan regions face limited access to health services, due to distance, medical checkup costs, healthcare worker availability, and low awareness of routine health checks. This condition increases the risk of communicable and non-communicable diseases, alongside mortality rates influenced by delayed medical intervention.",
+    sec1P2: "Through this social mission, the GPIB Health Foundation commits to participating in humanitarian services by providing free healthcare including general examinations, doctor consultations, blood pressure checks, blood glucose checks, cholesterol, uric acid, health education, and the distribution of basic medicines according to medical indications.",
+    sec1P3: "This activity is expected to be a tangible expression of care for the community, while supporting government programs to improve health standards in remote areas of North Sulawesi Province. The synergy between the GPIB Health Foundation and the GMIM Synod testifies to church togetherness in serving humanity without regard for social background or class.",
+
+    sec2Num: "II.",
+    sec2Title: "Synergy Organization Profile",
+    gpibTitle: "Protestant Church in Western Indonesia (GPIB)",
+    gpibDesc: "The Protestant Church in Western Indonesia (abbreviated as GPIB) is a fellowship of Protestant Christian believers in Indonesia where the Lord Jesus Christ is the foundation and head. GPIB carries out His calling and sending through fellowship, service, and witness, formulated in the General Guidelines for Service and Witness Policies (PKUPPG). GPIB is part of the Protestant Church in Indonesia (GPI), which during the Dutch East Indies era was named De Protestantsche Kerk in Nederlandsch-Indie or Indische Kerk. The institutionalization and establishment of GPIB as the fourth independent member church within the GPI was approved and decided through the Decree of the Deputy High Commissioner of the Kingdom of the Netherlands in Indonesia No. 2, dated December 1, 1948.",
+    visi: "Vision",
+    gpibVisi: "GPIB becomes a church that realizes peace and prosperity for all His creation.",
+    misi: "Mission",
+    gpibMisi1: "To be a Church that is continuously renewed, centered on the Word of God, manifested in the behavioral life of church members both in fellowship and in community life.",
+    gpibMisi2: "To be a church present as an example of life, manifested through initiative and participation in social solidarity and harmony in society, built on the foundation of strong and prosperous family life.",
+    gpibMisi3: "To be a Church that builds the integrity of creation, manifested through care for the environment, the spirit of ecumenism, and the spirit of unity and oneness of church members as citizens.",
+
+    gmimTitle: "Christian Evangelical Church in Minahasa (GMIM)",
+    gmimDesc: "The Christian Evangelical Church in Minahasa (GMIM) is a fellowship of Minahasa people, other ethnic groups, and other races, residing in and outside Minahasa land, who believe in Jesus Christ to proclaim the great deeds of the Lord God and be a blessing to many people, wherever and whenever. Based on the testimony of the Bible in the 2021 Church Regulations, GMIM formulates its calling in three forms: being called to fellowship, witness, and serve.",
+    gmimVisi: "The Holy, Universal, and Apostolic GMIM (Holy is understood as a communion of saints who have been justified and redeemed; Universal is understood because of the work of Jesus Christ; Apostolic is understood because the church is sent to proclaim salvation).",
+    gmimMisi1: "Improving the quality of character and Christian spirituality of church members.",
+    gmimMisi2: "Increasing holistic mission services for justice, peace, and social welfare that guarantee the sustainability of creation's integrity.",
+    gmimMisi3: "Enhancing ecumenical unity with other churches in Indonesia and worldwide.",
+    gmimMisi4: "Increasing GMIM's institutional capacity in presbyterial synodal structures to realize Christ's Great Commission.",
+
+    sec3Num: "III.",
+    sec3Title: "Time and Place of Implementation",
+    sec3Text: "This Cross-Synodal Social Mission will be held as a marathon from September 14 to 18, 2026, by dividing the medical team into three main service coordination points:",
+    pointA: "Point A (Mitra)",
+    pointADesc: "Tondanouw Village, Touluaan District, Southeast Minahasa Regency",
+    pointB: "Point B (Minut)",
+    pointBDesc: "Likupang District, North Minahasa Regency (Mass Circumcision Center)",
+    pointC: "Point C (Minahasa)",
+    pointCDesc: "Lolah Village, East Tombariri District, Minahasa Regency",
+
+    sec4Num: "IV.",
+    sec4Title: "Geographic Location and Demography of Locations",
+    tondanouwTitle: "Tondanouw Village (Mitra)",
+    tondanouwDesc: "Tondanouw is located in Touluaan District, Southeast Minahasa Regency, at an altitude of ±272 meters above sea level. With a population of ±1,500 people, the community lives in harmony with strong mutual cooperation. The majority work in rice farming (a rice production center) and food crop/horticulture plantation.",
+    likupangTitle: "Likupang Region (Minut)",
+    likupangDesc: "Likupang is located ±60 km from Manado at the northern tip of Sulawesi Island. Administratively, it is divided into: West Likupang (±16,988 people), East Likupang (±16,519 people), and South Likupang (±4,958 people) with a total regional population of about ±38,000 people, most of whom work as fishermen and farmers.",
+
+    sec5Num: "V.",
+    sec5Title: "Forms of Service Activities",
+    sec5Intro: "Healthcare services are comprehensively organized by a team of medical specialists, general practitioners, dentists, nurses, pharmacists, and lab analysts, with forms of service including:",
+    service1Title: "General Examination & Treatment: ",
+    service1Desc: "In-depth physical examinations, medical consultations, and treatment of communicable and non-communicable disease complaints.",
+    service2Title: "Dental Examination & Treatment: ",
+    service2Desc: "Basic dental checkups, fillings, scaling, and tooth extraction as indicated.",
+    service3Title: "Minor Surgery: ",
+    service3Desc: "Small surgeries to remove cysts, lipomas, keloids, or wound treatment requiring suturing.",
+    service4Title: "Simple Blood Laboratory: ",
+    service4Desc: "Instant screening of Blood Glucose, Uric Acid, and Cholesterol levels to detect metabolic risks early.",
+    service5Title: "Provision of Reading Glasses: ",
+    service5Desc: "Visual acuity testing and distribution of free reading glasses for elderly presbyopia sufferers.",
+    service6Title: "Mass Circumcision (Likupang Only): ",
+    service6Desc: "Free circumcision procedures using sterile standard medical surgical methods for children of underprivileged families.",
+
+    sec6Num: "VI.",
+    sec6Title: "Budget Plan (RAB)",
+    expenditurePlan: "1. Expenditure Plan (Fund Allocation)",
+    no: "No",
+    budgetDesc: "Budget Item & Description",
+    amount: "Nominal Amount",
+    totalExp: "TOTAL OVERALL EXPENDITURE",
+
+    budgetItems: [
+      { id: 1, text: "Purchase of medicines, reading glasses, medical consumables, and circumcision instruments.", title: "Healthcare Services: " },
+      { id: 2, text: "Round-trip flight tickets Jakarta - Manado for medical specialists and paramedical teams.", title: "Air Transportation: " },
+      { id: 3, text: "Lodging of the medical team during the 5 days of social work in the 3 points.", title: "Accommodation & Lodging: " },
+      { id: 4, text: "Rental of operational buses and logistics cars at service locations.", title: "Land Transportation & Bus: " },
+      { id: 5, text: "Heavy meals and snacks for the medical team & local committee.", title: "Consumption & Field Logistics: " },
+      { id: 6, text: "Document production, appreciation certificates, excess baggage, and airport transfers.", title: "Secretariat & Airport Transport: " }
+    ],
+
+    incomePlan: "2. Income Plan (Fund Source)",
+    fundingSource: "Funding Source",
+    totalIncome: "TOTAL INCOME PLAN",
+    incomeItems: [
+      "Allocation of GPIB Synod Board Cash",
+      "Partnership Fundraising (Proposal & Friends Card)"
+    ],
+
+    sec7Num: "VII.",
+    sec7Title: "Cross-Synodal Committee Structure",
+    committeeRoles: {
+      pengarah: "Advisory Board",
+      gpibSinode: "Vice Chairman II of the GPIB Synod",
+      gpibYankes: "Chairperson of the GPIB Health Foundation",
+      harian: "Executive Committee (Core)",
+      ketua: "Chairman",
+      ketua1: "Vice Chairman I (Event Section)",
+      ketua2: "Vice Chairman II (Funding Section)",
+      ketua3: "Vice Chairman III (Health Section)",
+      ketua4: "Vice Chairman IV (Transp. & Accom.)",
+      ketua5: "Vice Chairman V (Interfaith Relations)",
+      sekretaris: "Secretary & Vice Secretary",
+      bendahara: "Treasurer & Vice Treasurer",
+      acaraDana: "Event Committee & Funding Committee",
+      acaraRole: "Event Div. (Coordinator & Members)",
+      danaRole: "Funding Div. (Coordinator & Members)",
+      ops: "Operational Supporting Divisions",
+      transRole: "Transport & Accommodation Div.",
+      logRole: "Logistics & Consumption Div.",
+      pastoralRole: "Pastoral & Prayer Team",
+      local: "North Sulawesi Local Committees",
+      localMinut: "North Minahasa Local Committee",
+      localMin: "Minahasa Local Committee",
+      localMitra: "Southeast Minahasa Local Committee",
+      healthRoleTitle: "Health Section & Core Medical Team",
+      healthRole: "Health & Medical Div."
+    },
+
+    sec8Num: "VIII.",
+    sec8Title: "Official Donation & Participation Channels",
+    sec8P1: "As a reflection of our collective care to bring free healthcare services to those in remote areas of North Sulawesi, we invite you to extend your love through official donation support. Participation can be funneled through the official central committee account:",
+    officialAccountBox: "OFFICIAL BAKSOS DONATION ACCOUNT",
+    bankName: "Bank Name",
+    accNum: "Account Number",
+    beneficiary: "Beneficiary Name",
+    sec8P2: "Thus we present this partnership donation proposal. We express our deepest gratitude for your prayers, attention, and active participation. May the Lord Jesus Christ always bestow blessings of health, peace, and prosper all your work and efforts along with your family. Amen.",
+    knowPengarah: "Acknowledged by, Advisory Board",
+    regardsHarian: "Respectfully yours, Executive Committee",
+    fundraisingPic: "Fundraising Team, PIC",
+    fundraisingPicRole: "PIC / Field Fundraising Team",
+    officialAuth: "Official Digital Document Authentication",
+    qrLabel: "Scan the QR code to validate the authenticity of this proposal online in the baksos system.",
+    noLabel: "No",
+    dateLabel: "Date",
+  }
+};
+
+export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'en' }) => {
+  const strings = t[lang] || t.id;
+
+  const currentDate = new Date().toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
@@ -560,26 +850,33 @@ export const ProposalPDF = ({ data }: { data: any }) => {
 
         {/* Title center */}
         <View style={styles.coverTitleContainer}>
-          <Text style={styles.coverTitleLabel}>Proposal Kemitraan</Text>
-          <Text style={styles.coverTitleMain}>BAKTI SOSIAL{"\n"}LINTAS SINODAL 2026</Text>
-          <Text style={styles.coverSubtitle}>Pelayanan Kesehatan Gratis Lintas Sinode</Text>
+          <Text style={styles.coverTitleLabel}>{strings.coverTitleLabel}</Text>
+          <Text style={styles.coverTitleMain}>
+            {lang === 'id' ? "BAKTI SOSIAL\nLINTAS SINODAL 2026" : "CROSS-SYNODAL\nSOCIAL MISSION 2026"}
+          </Text>
+          <Text style={styles.coverSubtitle}>{strings.coverSubtitle}</Text>
         </View>
 
-        {/* Recipient info */}
+        {/* Recipient info & proposal meta */}
         <View style={styles.coverRecipientBox}>
-          <Text style={styles.coverRecipientLabel}>Kepada Yang Terhormat,</Text>
+          <Text style={styles.coverRecipientLabel}>{strings.toHonorable}</Text>
           <Text style={styles.coverRecipientName}>{data.donor_name}</Text>
           {data.institution ? (
             <Text style={styles.coverRecipientInst}>{data.institution}</Text>
           ) : (
-            <Text style={styles.coverRecipientInst}>Calon Donatur Pelayanan Kasih</Text>
+            <Text style={styles.coverRecipientInst}>{strings.loveDonor}</Text>
           )}
+
+          <View style={{ marginTop: 12, borderTopWidth: 1, borderTopColor: '#334155', paddingTop: 8, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 8, color: '#94a3b8', fontWeight: 600 }}>{strings.noLabel}: {data.proposal_number}</Text>
+            <Text style={{ fontSize: 8, color: '#94a3b8', fontWeight: 600 }}>{strings.dateLabel}: {currentDate}</Text>
+          </View>
         </View>
 
         {/* Footer info */}
         <View style={{ width: '100%', alignItems: 'center' }}>
           <Text style={styles.coverFooterText}>YAYASAN KESEHATAN GPIB & SINODE GMIM</Text>
-          <Text style={{ ...styles.coverFooterText, fontSize: 8, color: '#475569', marginTop: 4 }}>Tahun Pelayanan 2026</Text>
+          <Text style={{ ...styles.coverFooterText, fontSize: 8, color: '#475569', marginTop: 4 }}>{strings.yearOfMinistry}</Text>
         </View>
       </Page>
 
@@ -594,34 +891,26 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         {/* Section title */}
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>I.</Text>
-          <Text style={styles.sectionTitle}>Pendahuluan</Text>
+          <Text style={styles.sectionNumber}>{strings.sec1Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec1Title}</Text>
         </View>
 
         {/* Content paragraphs */}
-        <Text style={styles.text}>
-          Kesehatan merupakan kebutuhan dasar yang sangat penting dalam menunjang kualitas hidup masyarakat. Namun, dalam realitas sosial saat ini, masih banyak masyarakat di wilayah Likupang dan Ratahan yang menghadapi keterbatasan akses terhadap layanan kesehatan, baik dari sisi jarak, biaya pemeriksaan, ketersediaan tenaga medis, maupun rendahnya kesadaran pemeriksaan kesehatan secara rutin. Kondisi tersebut berdampak pada meningkatnya risiko penyakit tidak menular maupun penyakit menular, serta masih adanya angka kematian yang dipengaruhi oleh keterlambatan penanganan medis.
-        </Text>
-
-        <Text style={styles.text}>
-          Melalui kegiatan bakti sosial ini, Yayasan Kesehatan GPIB berkomitmen untuk mengambil bagian dalam pelayanan kemanusiaan melalui penyediaan layanan kesehatan gratis yang mencakup pemeriksaan umum, konsultasi dokter, pemeriksaan tekanan darah, pemeriksaan gula darah, kolesterol, asam urat, kesehatan gratis yang mencakup pemeriksaan umum, konsultasi dokter, pemeriksaan tekanan darah, pemeriksaan gula darah, kolesterol, asam urat, edukasi kesehatan, serta pemberian obat dasar sesuai indikasi medis.
-        </Text>
-
-        <Text style={styles.text}>
-          Kegiatan ini diharapkan dapat menjadi bentuk nyata kepedulian terhadap masyarakat, sekaligus mendukung program pemerintah dalam peningkatan derajat kesehatan masyarakat di wilayah-wilayah terpencil di Provinsi Sulawesi Utara. Sinergi antara Yayasan Kesehatan GPIB dan Sinode GMIM menjadi bukti kebersamaan gerejawi untuk melayani sesama manusia tanpa membedakan latar belakang sosial dan golongan.
-        </Text>
+        <Text style={styles.text}>{strings.sec1P1}</Text>
+        <Text style={styles.text}>{strings.sec1P2}</Text>
+        <Text style={styles.text}>{strings.sec1P3}</Text>
 
         {data.message && (
           <View style={{ marginTop: 20, padding: 12, backgroundColor: '#fffbeb', borderLeftWidth: 3, borderLeftColor: '#d97706', borderRadius: 4 }}>
@@ -633,8 +922,8 @@ export const ProposalPDF = ({ data }: { data: any }) => {
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 2 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(2, 9)}</Text>
         </View>
       </Page>
 
@@ -649,50 +938,48 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>II.</Text>
-          <Text style={styles.sectionTitle}>Profil Organisasi Sinergi</Text>
+          <Text style={styles.sectionNumber}>{strings.sec2Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec2Title}</Text>
         </View>
 
         {/* Organisasi 1: GPIB */}
         <View style={styles.orgContainer}>
-          <Text style={styles.orgTitle}>Gereja Protestan di Indonesia bagian Barat (GPIB)</Text>
-          <Text style={styles.text}>
-            Gereja Protestan di Indonesia bagian Barat (disingkat GPIB) adalah persekutuan orang percaya Kristen Protestan di Indonesia dimana Tuhan Yesus Kristus menjadi dasar dan kepalanya. GPIB melaksanakan panggilan dan pengutusan-Nya melalui persekutuan, pelayanan dan kesaksian yang dituangkan dalam Pokok-pokok Kebijakan Umum Pelayanan dan Kesaksian (PKUPPG). GPIB merupakan bagian dari Gereja Protestan di Indonesia (GPI) yang pada zaman Hindia Belanda bernama De Protestantsche Kerk in Nederlandsch-Indie atau Indische Kerk. Pelembagaan dan pembentukan GPIB sebagai gereja bagian mandiri keempat di lingkungan GPI, disetujui dan diputuskan melalui Surat Keputusan Wakil Tinggi Kerajaan Belanda di Indonesia No. 2, tanggal 1 Desember 1948.
-          </Text>
+          <Text style={styles.orgTitle}>{strings.gpibTitle}</Text>
+          <Text style={styles.text}>{strings.gpibDesc}</Text>
           <View style={styles.visimisiBlock}>
-            <Text style={styles.visimisiLabel}>Visi</Text>
-            <Text style={{ ...styles.text, marginBottom: 5 }}>GPIB menjadi gereja yang mewujudkan damai sejahtera bagi seluruh ciptaan-Nya.</Text>
-            <Text style={styles.visimisiLabel}>Misi</Text>
+            <Text style={styles.visimisiLabel}>{strings.visi}</Text>
+            <Text style={{ ...styles.text, marginBottom: 5 }}>{strings.gpibVisi}</Text>
+            <Text style={styles.visimisiLabel}>{strings.misi}</Text>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>1.</Text>
-              <Text style={styles.bulletText}>Menjadi Gereja yang terus menerus diperbaharui dengan bertolak dari Firman Allah, yang terwujud dalam perilaku kehidupan warga gereja, baik dalam persekutuan, maupun dalam hidup bermasyarakat.</Text>
+              <Text style={styles.bulletText}>{strings.gpibMisi1}</Text>
             </View>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>2.</Text>
-              <Text style={styles.bulletText}>Menjadi gereja yang hadir sebagai contoh kehidupan, yang terwujud melalui inisiatif dan partisipasi dalam kesetiakawanan sosial serta kerukunan dalam masyarakat, dengan berbasis pada perilaku kehidupan keluarga yang kuat dan sejahtera.</Text>
+              <Text style={styles.bulletText}>{strings.gpibMisi2}</Text>
             </View>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>3.</Text>
-              <Text style={styles.bulletText}>Menjadi Gereja yang membangun keutuhan ciptaan yang terwujud melalui perhatian terhadap lingkungan hidup, semangat keesaan dan semangat persatuan dan kesatuan warga Gereja sebagai warga masyarakat.</Text>
+              <Text style={styles.bulletText}>{strings.gpibMisi3}</Text>
             </View>
           </View>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 3 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(3, 9)}</Text>
         </View>
       </Page>
 
@@ -707,80 +994,70 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         {/* Organisasi 2: GMIM */}
         <View style={styles.orgContainerGold}>
-          <Text style={styles.orgTitle}>Gereja Masehi Injili di Minahasa (GMIM)</Text>
-          <Text style={styles.text}>
-            Gereja Masehi Injili di Minahasa (GMIM) adalah persekutuan orang-orang Minahasa dan suku lain serta ras lain, yang ada di tanah Minahasa dan di luar tanah Minahasa, yang percaya kepada Yesus Kristus untuk memberitakan perbuatan-perbuatan besar Tuhan Allah dan menjadi berkat bagi orang banyak di manapun dan kapanpun. Dengan bersumber dari kesaksian Alkitab maka dalam Tata Gereja 2021, GMIM merumuskan panggilannya dalam 3 bentuk yakni terpanggil untuk bersekutu, bersaksi, dan melayani.
-          </Text>
+          <Text style={styles.orgTitle}>{strings.gmimTitle}</Text>
+          <Text style={styles.text}>{strings.gmimDesc}</Text>
           <View style={styles.visimisiBlock}>
-            <Text style={styles.visimisiLabel}>Visi</Text>
-            <Text style={{ ...styles.text, marginBottom: 5 }}>GMIM Yang Kudus, Am dan Rasuli (Yang Kudus dipahami sebagai persekutuan orang-orang kudus yang telah dibenarkan dan ditebus; Am dipahami karena pekerjaan Yesus Kristus; Rasuli dipahami karena gereja diutus untuk memberitakan keselamatan).</Text>
-            <Text style={styles.visimisiLabel}>Misi</Text>
+            <Text style={styles.visimisiLabel}>{strings.visi}</Text>
+            <Text style={{ ...styles.text, marginBottom: 5 }}>{strings.gmimVisi}</Text>
+            <Text style={styles.visimisiLabel}>{strings.misi}</Text>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>1.</Text>
-              <Text style={styles.bulletText}>Meningkatkan kualitas karakter dan spiritualitas Kristiani warga Gereja.</Text>
+              <Text style={styles.bulletText}>{strings.gmimMisi1}</Text>
             </View>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>2.</Text>
-              <Text style={styles.bulletText}>Meningkatkan pelayanan misi yang holistik bagi keadilan, perdamaian dan kesejahteraan sosial yang menjamin keberlangsungan keutuhan ciptaan.</Text>
+              <Text style={styles.bulletText}>{strings.gmimMisi2}</Text>
             </View>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>3.</Text>
-              <Text style={styles.bulletText}>Meningkatkan keesaan bersama Gereja-Gereja di Indonesia dan di seluruh dunia secara oikumenis.</Text>
+              <Text style={styles.bulletText}>{strings.gmimMisi3}</Text>
             </View>
             <View style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>4.</Text>
-              <Text style={styles.bulletText}>Meningkatkan kapasitas kelembagaan GMIM dalam presbiterial sinodal sebagai upaya mewujudkan amanat amanat agung Kristus.</Text>
+              <Text style={styles.bulletText}>{strings.gmimMisi4}</Text>
             </View>
           </View>
         </View>
 
         {/* Section title */}
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>III.</Text>
-          <Text style={styles.sectionTitle}>Waktu Dan Tempat Pelaksanaan</Text>
+          <Text style={styles.sectionNumber}>{strings.sec3Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec3Title}</Text>
         </View>
 
-        <Text style={styles.text}>
-          Bakti Sosial Lintas Sinodal ini akan diselenggarakan secara maraton pada tanggal <Text style={styles.boldText}>14 s.d. 18 September 2026</Text> dengan membagi tim medis ke dalam tiga wilayah koordinasi pelayanan utama, yaitu:
-        </Text>
+        <Text style={styles.text}>{strings.sec3Text}</Text>
 
         <View style={styles.grid2}>
           <View style={styles.gridCol}>
-            <Text style={styles.gridColTitle}>Titik A (Mitra)</Text>
-            <Text style={{ ...styles.text, fontSize: 8.5, marginBottom: 0 }}>
-              Desa Tondanouw, Kec. Touluaan, Kabupaten Minahasa Tenggara
-            </Text>
+            <Text style={styles.gridColTitle}>{strings.pointA}</Text>
+            <Text style={{ ...styles.text, fontSize: 8.5, marginBottom: 0 }}>{strings.pointADesc}</Text>
           </View>
           <View style={styles.gridCol}>
-            <Text style={styles.gridColTitle}>Titik B (Minut)</Text>
-            <Text style={{ ...styles.text, fontSize: 8.5, marginBottom: 0 }}>
-              Kecamatan Likupang, Kabupaten Minahasa Utara (Pusat Sunatan Massal)
-            </Text>
+            <Text style={styles.gridColTitle}>{strings.pointB}</Text>
+            <Text style={{ ...styles.text, fontSize: 8.5, marginBottom: 0 }}>{strings.pointBDesc}</Text>
           </View>
           <View style={styles.gridCol}>
-            <Text style={styles.gridColTitle}>Titik C (Minahasa)</Text>
-            <Text style={{ ...styles.text, fontSize: 8.5, marginBottom: 0 }}>
-              Desa Lolah, Kecamatan Tombariri Timur, Kabupaten Minahasa
-            </Text>
+            <Text style={styles.gridColTitle}>{strings.pointC}</Text>
+            <Text style={{ ...styles.text, fontSize: 8.5, marginBottom: 0 }}>{strings.pointCDesc}</Text>
           </View>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 4 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(4, 9)}</Text>
         </View>
       </Page>
 
@@ -795,76 +1072,88 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>IV.</Text>
-          <Text style={styles.sectionTitle}>Letak Geografis & Demografi Lokasi</Text>
+          <Text style={styles.sectionNumber}>{strings.sec4Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec4Title}</Text>
         </View>
 
         <View style={styles.grid2}>
           <View style={styles.gridCol}>
-            <Text style={styles.gridColTitle}>Desa Tondanouw (Mitra)</Text>
-            <Text style={{ ...styles.text, fontSize: 8, lineHeight: 1.5 }}>
-              Tondanouw berada di Kecamatan Touluaan, Kabupaten Minahasa Tenggara pada ketinggian ±272 mdpl. Dengan jumlah penduduk ±1.500 jiwa, masyarakat hidup rukun dalam gotong royong yang kuat. Mayoritas bekerja di bidang pertanian padi sawah (sentra produksi padi) dan perkebunan tanaman pangan/hortikultura.
-            </Text>
+            <Text style={styles.gridColTitle}>{strings.tondanouwTitle}</Text>
+            <Text style={{ ...styles.text, fontSize: 8, lineHeight: 1.5 }}>{strings.tondanouwDesc}</Text>
           </View>
           <View style={styles.gridCol}>
-            <Text style={styles.gridColTitle}>Kawasan Likupang (Minut)</Text>
-            <Text style={{ ...styles.text, fontSize: 8, lineHeight: 1.5 }}>
-              Likupang berjarak ±60 km dari Kota Manado di ujung utara Pulau Sulawesi. Secara administrasi terbagi menjadi: Likupang Barat (±16.988 jiwa), Likupang Timur (±16.519 jiwa), dan Likupang Selatan (±4.958 jiwa) dengan total populasi kawasan sekitar ±38.000 jiwa yang sebagian besar bermata pencaharian sebagai nelayan dan berkebun.
-            </Text>
+            <Text style={styles.gridColTitle}>{strings.likupangTitle}</Text>
+            <Text style={{ ...styles.text, fontSize: 8, lineHeight: 1.5 }}>{strings.likupangDesc}</Text>
           </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>V.</Text>
-          <Text style={styles.sectionTitle}>Bentuk Kegiatan Pelayanan</Text>
+          <Text style={styles.sectionNumber}>{strings.sec5Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec5Title}</Text>
         </View>
 
-        <Text style={styles.text}>
-          Pelayanan kesehatan diselenggarakan secara komprehensif oleh tim dokter spesialis, dokter umum, dokter gigi, perawat, apoteker, dan analis lab dengan bentuk layanan meliputi:
-        </Text>
+        <Text style={styles.text}>{strings.sec5Intro}</Text>
 
         <View style={{ paddingLeft: 10 }}>
           <View style={styles.bulletPoint}>
             <Text style={styles.bulletDot}>•</Text>
-            <Text style={styles.bulletText}><Text style={styles.boldText}>Pemeriksaan & Pengobatan Umum:</Text> Pemeriksaan fisik mendalam, konsultasi medis, serta penanganan keluhan penyakit menular dan tidak menular.</Text>
+            <Text style={styles.bulletText}>
+              <Text style={styles.boldText}>{strings.service1Title}</Text>
+              {strings.service1Desc}
+            </Text>
           </View>
           <View style={styles.bulletPoint}>
             <Text style={styles.bulletDot}>•</Text>
-            <Text style={styles.bulletText}><Text style={styles.boldText}>Pemeriksaan & Pengobatan Gigi:</Text> Pemeriksaan gigi dasar, penambalan, pembersihan karang gigi (scaling), dan ekstraksi/pencabutan gigi sesuai indikasi.</Text>
+            <Text style={styles.bulletText}>
+              <Text style={styles.boldText}>{strings.service2Title}</Text>
+              {strings.service2Desc}
+            </Text>
           </View>
           <View style={styles.bulletPoint}>
             <Text style={styles.bulletDot}>•</Text>
-            <Text style={styles.bulletText}><Text style={styles.boldText}>Bedah Minor (Minor Surgery):</Text> Operasi kecil untuk mengangkat kista, lipoma, keloid, atau penanganan luka yang membutuhkan penjahitan.</Text>
+            <Text style={styles.bulletText}>
+              <Text style={styles.boldText}>{strings.service3Title}</Text>
+              {strings.service3Desc}
+            </Text>
           </View>
           <View style={styles.bulletPoint}>
             <Text style={styles.bulletDot}>•</Text>
-            <Text style={styles.bulletText}><Text style={styles.boldText}>Laboratorium Darah Sederhana:</Text> Skrining instan kadar Gula Darah, Asam Urat, dan Kolesterol untuk mendeteksi risiko metabolik secara dini.</Text>
+            <Text style={styles.bulletText}>
+              <Text style={styles.boldText}>{strings.service4Title}</Text>
+              {strings.service4Desc}
+            </Text>
           </View>
           <View style={styles.bulletPoint}>
             <Text style={styles.bulletDot}>•</Text>
-            <Text style={styles.bulletText}><Text style={styles.boldText}>Pemberian Kacamata Baca:</Text> Pengujian visus (ketajaman penglihatan) dan pembagian kacamata baca gratis bagi penderita presbiopia usia lanjut.</Text>
+            <Text style={styles.bulletText}>
+              <Text style={styles.boldText}>{strings.service5Title}</Text>
+              {strings.service5Desc}
+            </Text>
           </View>
           <View style={styles.bulletPoint}>
             <Text style={styles.bulletDot}>•</Text>
-            <Text style={styles.bulletText}><Text style={styles.boldText}>Sunatan Massal (Khusus Likupang):</Text> Tindakan sirkumsisi gratis menggunakan metode bedah standar medis steril bagi anak-anak keluarga prasejahtera.</Text>
+            <Text style={styles.bulletText}>
+              <Text style={styles.boldText}>{strings.service6Title}</Text>
+              {strings.service6Desc}
+            </Text>
           </View>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 5 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(5, 9)}</Text>
         </View>
       </Page>
 
@@ -879,105 +1168,105 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>VI.</Text>
-          <Text style={styles.sectionTitle}>Rancangan Anggaran Belanja (RAB)</Text>
+          <Text style={styles.sectionNumber}>{strings.sec6Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec6Title}</Text>
         </View>
 
         {/* Tabel Pengeluaran */}
-        <Text style={{ ...styles.boldText, fontSize: 10, marginBottom: 4, textTransform: 'uppercase' }}>1. Rencana Pengeluaran (Alokasi Dana)</Text>
+        <Text style={{ ...styles.boldText, fontSize: 10, marginBottom: 4, textTransform: 'uppercase' }}>{strings.expenditurePlan}</Text>
         <View style={styles.table}>
           <View style={styles.tableRowHeader}>
-            <Text style={{ ...styles.tableColHeader, width: '10%' }}>No</Text>
-            <Text style={{ ...styles.tableColHeader, width: '60%' }}>Pos Anggaran & Keterangan</Text>
-            <Text style={{ ...styles.tableColHeader, width: '30%', textAlign: 'right' }}>Jumlah Nominal</Text>
+            <Text style={{ ...styles.tableColHeader, width: '10%' }}>{strings.no}</Text>
+            <Text style={{ ...styles.tableColHeader, width: '60%' }}>{strings.budgetDesc}</Text>
+            <Text style={{ ...styles.tableColHeader, width: '30%', textAlign: 'right' }}>{strings.amount}</Text>
           </View>
           
           <View style={styles.tableRow}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>1</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>Pelayanan Kesehatan:</Text> Pembelian obat-obatan, kacamata baca, bahan habis pakai medis, dan instrumen sirkumsisi.</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[0].title}</Text>{strings.budgetItems[0].text}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(100000000)}</Text>
           </View>
 
           <View style={styles.tableRowAlternating}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>2</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>Transportasi Udara:</Text> Tiket pesawat Jakarta - Manado (PP) untuk tim dokter spesialis dan paramedis.</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[1].title}</Text>{strings.budgetItems[1].text}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(420000000)}</Text>
           </View>
 
           <View style={styles.tableRow}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>3</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>Akomodasi & Penginapan:</Text> Penginapan tim medis selama 5 hari pelaksanaan baksos di 3 titik.</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[2].title}</Text>{strings.budgetItems[2].text}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(90000000)}</Text>
           </View>
 
           <View style={styles.tableRowAlternating}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>4</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>Transportasi Darat & Bus:</Text> Sewa bus operasional dan mobil logistik di lokasi pelayanan.</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[3].title}</Text>{strings.budgetItems[3].text}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(70000000)}</Text>
           </View>
 
           <View style={styles.tableRow}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>5</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>Konsumsi & Logistik Lapangan:</Text> Konsumsi makan berat dan snack tim medis & panitia lokal.</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[4].title}</Text>{strings.budgetItems[4].text}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(56700000)}</Text>
           </View>
 
           <View style={styles.tableRowAlternating}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>6</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>Sekretariat & Transport Bandara:</Text> Pembuatan dokumen, sertifikat penghargaan, bagasi, dan transport bandara.</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[5].title}</Text>{strings.budgetItems[5].text}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(37800000)}</Text>
           </View>
 
           <View style={styles.tableRowTotal}>
             <Text style={{ ...styles.tableColBold, width: '10%' }}></Text>
-            <Text style={{ ...styles.tableColBold, width: '60%' }}>TOTAL PENGELUARAN KESELURUHAN</Text>
+            <Text style={{ ...styles.tableColBold, width: '60%' }}>{strings.totalExp}</Text>
             <Text style={{ ...styles.tableColBold, width: '30%', textAlign: 'right', color: '#b45309' }}>{formatIDR(774500000)}</Text>
           </View>
         </View>
 
         {/* Tabel Pemasukan */}
-        <Text style={{ ...styles.boldText, fontSize: 10, marginBottom: 4, marginTop: 12, textTransform: 'uppercase' }}>2. Rencana Pemasukan (Sumber Dana)</Text>
+        <Text style={{ ...styles.boldText, fontSize: 10, marginBottom: 4, marginTop: 12, textTransform: 'uppercase' }}>{strings.incomePlan}</Text>
         <View style={styles.table}>
           <View style={styles.tableRowHeader}>
-            <Text style={{ ...styles.tableColHeader, width: '10%' }}>No</Text>
-            <Text style={{ ...styles.tableColHeader, width: '60%' }}>Sumber Pendanaan</Text>
-            <Text style={{ ...styles.tableColHeader, width: '30%', textAlign: 'right' }}>Jumlah Nominal</Text>
+            <Text style={{ ...styles.tableColHeader, width: '10%' }}>{strings.no}</Text>
+            <Text style={{ ...styles.tableColHeader, width: '60%' }}>{strings.fundingSource}</Text>
+            <Text style={{ ...styles.tableColHeader, width: '30%', textAlign: 'right' }}>{strings.amount}</Text>
           </View>
           
           <View style={styles.tableRow}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>1</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}>Alokasi Kas Majelis Sinode GPIB</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}>{strings.incomeItems[0]}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(50000000)}</Text>
           </View>
 
           <View style={styles.tableRowAlternating}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>2</Text>
-            <Text style={{ ...styles.tableCol, width: '60%' }}>Pencarian Dana Kemitraan (Proposal & Kartu Sahabat)</Text>
+            <Text style={{ ...styles.tableCol, width: '60%' }}>{strings.incomeItems[1]}</Text>
             <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(724500000)}</Text>
           </View>
 
           <View style={styles.tableRowTotal}>
             <Text style={{ ...styles.tableColBold, width: '10%' }}></Text>
-            <Text style={{ ...styles.tableColBold, width: '60%' }}>TOTAL RENCANA PEMASUKAN</Text>
+            <Text style={{ ...styles.tableColBold, width: '60%' }}>{strings.totalIncome}</Text>
             <Text style={{ ...styles.tableColBold, width: '30%', textAlign: 'right', color: '#b45309' }}>{formatIDR(774500000)}</Text>
           </View>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 6 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(6, 9)}</Text>
         </View>
       </Page>
 
@@ -992,88 +1281,88 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>VII.</Text>
-          <Text style={styles.sectionTitle}>Susunan Kepanitiaan Lintas Sinode</Text>
+          <Text style={styles.sectionNumber}>{strings.sec7Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec7Title}</Text>
         </View>
 
         {/* Pengarah */}
         <View style={styles.committeeSection}>
-          <Text style={styles.committeeGroupTitle}>Dewan Pengarah</Text>
+          <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.pengarah}</Text>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua II Majelis Sinode GPIB</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.gpibSinode}</Text>
             <Text style={styles.committeeName}>Pdt. Semuel A. Z. Karinda, M.Si.</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua Yayasan Kesehatan GPIB</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.gpibYankes}</Text>
             <Text style={styles.committeeName}>dr. Griselda P. S. Aer, Sp.KP</Text>
           </View>
         </View>
 
         {/* Pelaksana Inti */}
         <View style={styles.committeeSection}>
-          <Text style={styles.committeeGroupTitle}>Pelaksana Harian (Inti)</Text>
+          <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.harian}</Text>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua Pelaksana</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.ketua}</Text>
             <Text style={styles.committeeName}>Pdt. Jan Jona Lumanauw</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua I (Seksi Acara)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.ketua1}</Text>
             <Text style={styles.committeeName}>Pnt. Inno Wiesje Subagyono Logor (Jkt) / Ibu Desye Syul L. (Mdo)</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua II (Seksi Dana)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.ketua2}</Text>
             <Text style={styles.committeeName}>Pnt. Reni Kanter</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua III (Kesehatan)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.ketua3}</Text>
             <Text style={styles.committeeName}>drg. Lanny Ranti</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua IV (Transp. & Akom.)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.ketua4}</Text>
             <Text style={styles.committeeName}>Pnt. Tommy Masinambouw</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Ketua V (Hubungan Antar Agama)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.ketua5}</Text>
             <Text style={styles.committeeName}>Dkn. Denny Tewu</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Sekretaris & Wkl. Sekretaris</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.sekretaris}</Text>
             <Text style={styles.committeeName}>Pnt. Adri Manafe / Dkn. Inang M. K. Kaloke / Sdri. Anggita C. F.</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Bendahara & Wkl. Bendahara</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.bendahara}</Text>
             <Text style={styles.committeeName}>Ibu Yetje Sumual / Dkn. Lady Tangkere-Sondakh / Ibu Karema Rumambi</Text>
           </View>
         </View>
 
         {/* Sie Acara & Sie Dana */}
         <View style={styles.committeeSection}>
-          <Text style={styles.committeeGroupTitle}>Seksi Acara & Seksi Dana</Text>
+          <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.acaraDana}</Text>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Sie. Acara (Koordinator & Anggota)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.acaraRole}</Text>
             <Text style={styles.committeeName}>Pdt. Marthen Leiwakabessy (Koord) / Pdt. Danny Titaley / Ibu Marcela Lantang</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Sie. Dana (Koordinator & Anggota)</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.danaRole}</Text>
             <Text style={styles.committeeName}>Dkn. Yvone Wakkary (Koord) / Pnt. Antje Kanter / Pnt. Max Roring / Dkn. Ellen Tahalele / Ibu Nancy R. Damping / Dkn. Vicora Van der Muur / Ibu Diana Johanes / Ibu Tine Sigarlaki</Text>
           </View>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 7 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(7, 9)}</Text>
         </View>
       </Page>
 
@@ -1088,63 +1377,63 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         {/* Seksi Pendukung */}
         <View style={styles.committeeSection}>
-          <Text style={styles.committeeGroupTitle}>Seksi Pendukung Operasional</Text>
+          <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.ops}</Text>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Sie. Transportasi & Akomodasi</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.transRole}</Text>
             <Text style={styles.committeeName}>Bpk. Edward Kanter (Koord) / Ibu Esther Polii / Dkn. Daniel F. Lolo / Dkn. Okta Friyanto / Pnt. Heince Tumewu / Bpk. Agus Patty</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Sie. Logistik & Sie. Konsumsi</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.logRole}</Text>
             <Text style={styles.committeeName}>Pnt. Sahat Sianipar (Logistik Koord) / Ibu Revny Longkutoy (Konsumsi Koord) / Dkn. Wulan Sanggelorang</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Tim Pastoral & Tim Doa</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.pastoralRole}</Text>
             <Text style={styles.committeeName}>Pdt. Johny A. Lontoh (Koord) / Pdt. Sealthiel Izaak / Pdt. Asachristo</Text>
           </View>
         </View>
 
         {/* Panitia Lokal */}
         <View style={styles.committeeSection}>
-          <Text style={styles.committeeGroupTitle}>Seksi / Panitia Lokal Sulawesi Utara</Text>
+          <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.local}</Text>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Panitia Lokal Minahasa Utara</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.localMinut}</Text>
             <Text style={styles.committeeName}>Bpk. Edwien Moniaga / Ibu Yanny Siraya S. P., SIP / Bpk. Saldy Jacob, S.Pd / Bpk. Butje F. Maramis / Bpk. Edward Sumual / Ibu Wulan Badahura / Tim Medis Setempat</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Panitia Lokal Minahasa</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.localMin}</Text>
             <Text style={styles.committeeName}>Ibu Gracia Y. Oroh / Ibu Paula Makalew / Ibu Josephin I. Rompas / Tim Medis Setempat</Text>
           </View>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Panitia Lokal Minahasa Tenggara</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.localMitra}</Text>
             <Text style={styles.committeeName}>Bpk. Raymond Sumual, S.TEOL / Ibu Vanda Rantung / Bpk. Arther Runturambi / Bpk. Chris Rumansi / Ibu Yanti Tumbol / Bpk. Ezra Sengkey / Bpk. Rio Lembong / Bpk. Lando Sumarauw / Ibu Priscillia Warouw / Ibu Yulita C. Mangundap / Ibu Nathalia KM Mamoto / Tim Medis Setempat</Text>
           </View>
         </View>
 
         {/* Sie Kesehatan */}
         <View style={styles.committeeSection}>
-          <Text style={styles.committeeGroupTitle}>Seksi Kesehatan & Tim Medis Inti</Text>
+          <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.healthRoleTitle}</Text>
           <View style={styles.committeeRow}>
-            <Text style={styles.committeeRole}>Sie. Kesehatan & Medis</Text>
+            <Text style={styles.committeeRole}>{strings.committeeRoles.healthRole}</Text>
             <Text style={styles.committeeName}>Dkn. dr. Netty Selanno (Koord) / Pnt. dr. Clevy P. / drg. Iphighenia M. / drg. Feylia / dr. Theo Resilowi / Bpk. Toni Irawan / Dkn. Nancy Wehantouw</Text>
           </View>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 8 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(8, 9)}</Text>
         </View>
       </Page>
 
@@ -1159,76 +1448,72 @@ export const ProposalPDF = ({ data }: { data: any }) => {
           <View style={styles.headerLeft}>
             <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" style={styles.headerLogo} />
             <View>
-              <Text style={styles.headerTitle}>Bakti Sosial Lintas Sinodal</Text>
-              <Text style={styles.headerSubtitle}>YANKES GPIB & GMIM 2026</Text>
+              <Text style={styles.headerTitle}>{strings.headerTitle}</Text>
+              <Text style={styles.headerSubtitle}>{strings.headerSubtitle}</Text>
             </View>
           </View>
           <View style={styles.headerMeta}>
-            <Text style={styles.headerMetaText}>No: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
-            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>Proposal Donasi</Text></Text>
+            <Text style={styles.headerMetaText}>{strings.noLabel}: <Text style={styles.headerMetaVal}>{data.proposal_number}</Text></Text>
+            <Text style={styles.headerMetaText}>Hal: <Text style={styles.headerMetaVal}>{strings.donationProposal}</Text></Text>
           </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionNumber}>VIII.</Text>
-          <Text style={styles.sectionTitle}>Saluran Partisipasi & Donasi Resmi</Text>
+          <Text style={styles.sectionNumber}>{strings.sec8Num}</Text>
+          <Text style={styles.sectionTitle}>{strings.sec8Title}</Text>
         </View>
 
-        <Text style={styles.text}>
-          Sebagai wujud kepedulian bersama untuk menghadirkan pelayanan kesehatan gratis bagi saudara-saudara kita di pelosok Sulawesi Utara, kami mengundang Bapak/Ibu/Saudara/i untuk melimpahkan kasih melalui dukungan donasi secara resmi. Partisipasi dapat disalurkan melalui rekening panitia pusat berikut:
-        </Text>
+        <Text style={styles.text}>{strings.sec8P1}</Text>
 
         {/* Box Rekening Mandiri */}
         <View style={styles.donationBox}>
-          <Text style={styles.donationTitle}>REKENING RESMI DONASI BAKSOS</Text>
+          <Text style={styles.donationTitle}>{strings.officialAccountBox}</Text>
           <View style={styles.donationDetailsRow}>
             <View style={styles.donationDetailItem}>
-              <Text style={styles.donationDetailLabel}>Nama Bank</Text>
+              <Text style={styles.donationDetailLabel}>{strings.bankName}</Text>
               <Text style={styles.donationDetailVal}>Bank Mandiri</Text>
             </View>
             <View style={styles.donationDetailItem}>
-              <Text style={styles.donationDetailLabel}>Nomor Rekening</Text>
+              <Text style={styles.donationDetailLabel}>{strings.accNum}</Text>
               <Text style={{ ...styles.donationDetailVal, letterSpacing: 1.5 }}>115-00-0240902-6</Text>
             </View>
             <View style={styles.donationDetailItem}>
-              <Text style={styles.donationDetailLabel}>Atas Nama Penerima</Text>
+              <Text style={styles.donationDetailLabel}>{strings.beneficiary}</Text>
               <Text style={styles.donationDetailVal}>YAYASAN KESEHATAN GPIB (Bakti Sosial)</Text>
             </View>
           </View>
         </View>
 
-        <Text style={styles.text}>
-          Demikian proposal donasi kemitraan ini kami sampaikan. Kami mengucapkan terima kasih yang sebesar-besarnya atas doa, perhatian, dan partisipasi aktif Bapak/Ibu/Saudara/i. Kiranya Tuhan Yesus Kristus senantiasa melimpahkan berkat kesehatan, damai sejahtera, serta melancarkan segala karya dan usaha Bapak/Ibu beserta keluarga. Amin.
-        </Text>
+        <Text style={styles.text}>{strings.sec8P2}</Text>
 
         {/* Tanda Tangan */}
         <View style={styles.signatureSection}>
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureRoleHeader}>Mengetahui, Dewan Pengarah</Text>
+            <Text style={styles.signatureRoleHeader}>{strings.knowPengarah}</Text>
             <View style={styles.signatureLine} />
             <Text style={styles.signatureName}>dr. Griselda P. S. Aer, Sp.KP</Text>
-            <Text style={styles.signatureRole}>Ketua Yayasan Kesehatan GPIB</Text>
+            <Text style={styles.signatureRole}>{lang === 'id' ? "Ketua Yayasan Kesehatan GPIB" : "Chairperson of GPIB Health Foundation"}</Text>
           </View>
           
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureRoleHeader}>Mengetahui, Dewan Pengarah</Text>
+            <Text style={styles.signatureRoleHeader}>{strings.knowPengarah}</Text>
             <View style={styles.signatureLine} />
             <Text style={styles.signatureName}>Pdt. Semuel A. Z. Karinda, M.Si.</Text>
-            <Text style={styles.signatureRole}>Ketua II Majelis Sinode GPIB</Text>
+            <Text style={styles.signatureRole}>{lang === 'id' ? "Ketua II Majelis Sinode GPIB" : "Vice Chairman II of the GPIB Synod Board"}</Text>
           </View>
 
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureRoleHeader}>Hormat Kami, Pelaksana Harian</Text>
+            <Text style={styles.signatureRoleHeader}>{strings.regardsHarian}</Text>
             <View style={styles.signatureLine} />
             <Text style={styles.signatureName}>Pdt. Jan Jona Lumanauw</Text>
-            <Text style={styles.signatureRole}>Ketua Pelaksana Panitia Baksos 2026</Text>
+            <Text style={styles.signatureRole}>{lang === 'id' ? "Ketua Pelaksana Panitia Baksos 2026" : "Chairman of Baksos Committee 2026"}</Text>
           </View>
 
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureRoleHeader}>Tim Penggalangan Dana, PIC</Text>
+            <Text style={styles.signatureRoleHeader}>{strings.fundraisingPic}</Text>
             <View style={styles.signatureLine} />
-            <Text style={styles.signatureName}>{data.committee_name || 'Panitia Pelaksana'}</Text>
-            <Text style={styles.signatureRole}>PIC / Tim Penggalangan Dana Lapangan</Text>
+            <Text style={styles.signatureName}>{data.committee_name || (lang === 'id' ? 'Panitia Pelaksana' : 'Organizing Committee')}</Text>
+            <Text style={styles.signatureRole}>{strings.fundraisingPicRole}</Text>
           </View>
         </View>
 
@@ -1238,16 +1523,16 @@ export const ProposalPDF = ({ data }: { data: any }) => {
             src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://baksos-yankes.id/verify/${data.proposal_number}&color=0f172a&bgcolor=ffffff`} 
             style={styles.qrCode} 
           />
-          <Text style={{ ...styles.signatureName, fontSize: 8.5 }}>Otentikasi Dokumen Digital Resmi</Text>
-          <Text style={styles.qrLabel}>Pindai kode QR untuk memvalidasi keabsahan data proposal ini secara online di sistem baksos.</Text>
+          <Text style={{ ...styles.signatureName, fontSize: 8.5 }}>{strings.officialAuth}</Text>
+          <Text style={styles.qrLabel}>{strings.qrLabel}</Text>
         </View>
 
         {/* Footer template */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>Dokumen resmi Panitia Bakti Sosial Lintas Sinodal 2026</Text>
-          <Text style={styles.footerText}>Halaman 9 dari 9</Text>
+          <Text style={styles.footerText}>{strings.docTitle}</Text>
+          <Text style={styles.footerText}>{strings.pageOf(9, 9)}</Text>
         </View>
       </Page>
     </Document>
   );
-}
+};

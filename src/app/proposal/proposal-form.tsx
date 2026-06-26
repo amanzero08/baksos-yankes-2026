@@ -33,6 +33,7 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [proposalData, setProposalData] = useState<any>(null)
   const [error, setError] = useState('')
+  const [waLang, setWaLang] = useState<'id' | 'en'>('id')
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
     resolver: zodResolver(schema)
@@ -42,11 +43,16 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
     setIsSubmitting(true)
     setError('')
     try {
-      const result = await createProposal(data)
-      if (result.success) {
-        setProposalData(result.data)
+      const res = await createProposal({
+        donorName: data.donorName,
+        institution: data.institution || '',
+        committeeName: data.committeeName,
+        message: data.message || '',
+      })
+      if (res.success) {
+        setProposalData(res.data)
       } else {
-        setError(result.error || 'Terjadi kesalahan saat membuat proposal')
+        setError(res.error || 'Terjadi kesalahan saat membuat proposal')
       }
     } catch (err: any) {
       setError(err.message)
@@ -55,87 +61,92 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
     }
   }
 
+  // WhatsApp Messages
+  const waMessages = {
+    id: `Syalom ${proposalData?.donor_name},\n\n` +
+        `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
+        `Kami sangat bersyukur atas ketulusan hati dan kepedulian yang senantiasa Bapak/Ibu tunjukkan bagi sesama. Keteladanan Bapak/Ibu senantiasa menjadi inspirasi nyata bagi kami.\n\n` +
+        `Dalam rangka mewujudkan pelayanan kasih, kami dari Panitia Bakti Sosial Lintas Sinodal 2026 (Yankes GPIB & GMIM) bermaksud menyampaikan proposal permohonan donasi untuk pelayanan kesehatan gratis di Likupang & Touluaan, Sulawesi Utara. Rincian program pelayanan ini dapat dilihat pada dokumen PDF terlampir.\n\n` +
+        `Merupakan suatu kehormatan dan sukacita besar bagi kami apabila Bapak/Ibu berkenan untuk melangkah bersama kami, menjadi perpanjangan tangan kasih Tuhan bagi saudara-saudara kita yang membutuhkan.\n\n` +
+        `Terima kasih yang mendalam atas perhatian dan kemurahan hati Bapak/Ibu. Tuhan Yesus senantiasa memberkati kesehatan, keluarga, serta segala usaha dan karya Bapak/Ibu. Amin.`,
+    en: `Shalom ${proposalData?.donor_name},\n\n` +
+        `Warm greetings in the love of our Lord Jesus Christ.\n\n` +
+        `We are deeply grateful for the sincerity of heart and care that you have always shown to others. Your exemplary life continues to be a true inspiration for us.\n\n` +
+        `In order to realize our love ministry, we, the Committee of the 2026 Cross-Synodal Social Mission (Healthcare Services by GPIB & GMIM), intend to submit a partnership donation proposal for free healthcare services in Likupang & Touluaan, North Sulawesi. The details of this service program can be found in the attached PDF document.\n\n` +
+        `It would be a great honor and joy for us if you would walk with us as an extension of God's hand of love for our brothers and sisters in need.\n\n` +
+        `Thank you very much for your attention and generosity. May the Lord Jesus always bless your health, family, and all your work and efforts. Amen.`
+  };
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.6 }}
-      className="w-full max-w-3xl relative z-10"
-    >
+    <div className="space-y-8 w-full max-w-3xl relative z-10">
+      {error && (
+        <div className="p-4 bg-red-900/30 border border-red-900/50 rounded-xl text-red-300 text-sm font-semibold">
+          {error}
+        </div>
+      )}
+
       {!proposalData ? (
-        <Card className="glass-panel border-t-4 border-t-amber-500 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.3)]">
-          <CardHeader className="border-b border-white/5 pb-6 bg-slate-900/30">
-            <CardTitle className="font-heading text-3xl text-amber-400 font-bold">Generator Proposal Donasi</CardTitle>
-            <CardDescription className="text-slate-400 text-base mt-2">
-              Pilih nama Anda sebagai panitia dan isi form di bawah ini untuk membuat proposal resmi.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-8 pb-8">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              
-              <div className="space-y-3">
-                <Label htmlFor="committeeName" className="text-slate-300 font-semibold">Nama Panitia (Anda) <span className="text-amber-500">*</span></Label>
-                <SearchableSelect
-                  options={panitiaList.map((panitia: any) => ({
-                    value: panitia.committee_name,
-                    label: panitia.committee_name,
-                  }))}
-                  value={watch('committeeName') || ''}
-                  onChange={(val) => {
-                    setValue('committeeName', val, { shouldValidate: true })
-                  }}
-                  placeholder="Pilih nama Anda..."
-                  searchPlaceholder="Cari nama panitia..."
-                  noResultsText="Tidak ada panitia yang cocok"
-                />
-                {errors.committeeName && <p className="text-sm text-red-400 font-medium">{errors.committeeName.message}</p>}
-              </div>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
+          <Card className="glass-panel border-t-4 border-t-amber-500 rounded-2xl overflow-hidden shadow-2xl">
+            <CardHeader className="border-b border-white/5 pb-6">
+              <CardTitle className="font-heading text-3xl text-slate-100 font-bold">Buat Proposal Kemitraan</CardTitle>
+              <CardDescription className="text-slate-400 text-base">
+                Lengkapi formulir di bawah ini untuk meng-generate dokumen proposal digital premium.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-8 pb-8">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="donorName" className="text-slate-300 font-semibold">Nama Calon Donatur</Label>
+                    <Input
+                      id="donorName"
+                      placeholder="Contoh: Bpk. John Doe"
+                      className="bg-slate-900 border-white/10 text-slate-100 focus-visible:ring-amber-500 h-12 rounded-lg text-base"
+                      {...register('donorName')}
+                    />
+                    {errors.donorName && <p className="text-red-400 text-sm font-medium mt-1">{errors.donorName.message}</p>}
+                  </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="donorName" className="text-slate-300 font-semibold">Nama Calon Donatur <span className="text-amber-500">*</span></Label>
-                <Input 
-                  id="donorName" 
-                  placeholder="Contoh: Bpk. Yohanes" 
-                  {...register('donorName')} 
-                  className="bg-slate-900/50 border-white/10 text-slate-100 placeholder:text-slate-600 focus-visible:ring-amber-500 h-12"
-                />
-                {errors.donorName && <p className="text-sm text-red-400 font-medium">{errors.donorName.message}</p>}
-              </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="institution" className="text-slate-300 font-semibold">Institusi / Perusahaan (Opsional)</Label>
+                    <Input
+                      id="institution"
+                      placeholder="Contoh: PT. Mulia Jaya"
+                      className="bg-slate-900 border-white/10 text-slate-100 focus-visible:ring-amber-500 h-12 rounded-lg text-base"
+                      {...register('institution')}
+                    />
+                  </div>
+                </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="institution" className="text-slate-300 font-semibold">Institusi / Perusahaan (Opsional)</Label>
-                <Input 
-                  id="institution" 
-                  placeholder="Contoh: PT. Maju Bersama" 
-                  {...register('institution')} 
-                  className="bg-slate-900/50 border-white/10 text-slate-100 placeholder:text-slate-600 focus-visible:ring-amber-500 h-12"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="committeeName" className="text-slate-300 font-semibold">Nama Panitia Pengusul (PIC)</Label>
+                  <SearchableSelect
+                    options={panitiaList.map((p: any) => ({ value: p.committee_name, label: p.committee_name }))}
+                    value={watch('committeeName') || ''}
+                    onChange={(val) => setValue('committeeName', val, { shouldValidate: true })}
+                    placeholder="Ketik untuk mencari nama panitia..."
+                  />
+                  {errors.committeeName && <p className="text-red-400 text-sm font-medium mt-1">{errors.committeeName.message}</p>}
+                </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="message" className="text-slate-300 font-semibold">Pesan Khusus (Opsional)</Label>
-                <Input 
-                  id="message" 
-                  placeholder="Pesan pengantar khusus untuk donatur" 
-                  {...register('message')} 
-                  className="bg-slate-900/50 border-white/10 text-slate-100 placeholder:text-slate-600 focus-visible:ring-amber-500 h-12"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-slate-300 font-semibold">Pesan Khusus Halaman Depan (Opsional)</Label>
+                  <Input
+                    id="message"
+                    placeholder="Contoh: 'Tuhan Yesus memberkati pelayanan kasih Bapak/Ibu.'"
+                    className="bg-slate-900 border-white/10 text-slate-100 focus-visible:ring-amber-500 h-12 rounded-lg text-base"
+                    {...register('message')}
+                  />
+                </div>
 
-              {error && <div className="p-4 bg-red-900/30 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium">{error}</div>}
-
-              <div className="pt-4">
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-slate-900 font-bold text-lg h-14 rounded-xl shadow-[0_0_20px_rgba(253,224,71,0.2)] transition-all hover:scale-[1.02]" 
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Membuat Proposal...' : 'Generate Proposal PDF'}
+                <Button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-lg h-14 rounded-xl shadow-lg transition-all hover:scale-[1.01] mt-4" disabled={isSubmitting}>
+                  {isSubmitting ? 'Memproses Dokumen Premium...' : 'Generate Proposal Kemitraan'}
                 </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
           <Card className="glass-panel border-t-4 border-t-emerald-500 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.2)]">
@@ -150,40 +161,67 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
             </CardHeader>
             <CardContent className="pt-8 pb-8 space-y-8">
               <p className="text-slate-300 text-lg">
-                Dokumen PDF kelas premium telah selesai digenerate. Silakan unduh dokumen di bawah ini dan kirimkan ke donatur Anda.
+                Dokumen PDF kelas premium telah selesai digenerate dalam 2 pilihan bahasa. Silakan unduh versi dokumen yang dibutuhkan di bawah ini:
               </p>
               
               <div className="flex flex-col gap-4">
-                <PDFDownloadLink
-                  document={<ProposalPDF data={proposalData} />}
-                  fileName={`${proposalData.proposal_number}_${proposalData.donor_name.replace(/\s+/g, '_')}.pdf`}
-                  className="w-full"
-                >
-                  {/* @ts-ignore */}
-                  {({ loading }) => (
-                    <Button className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-slate-900 font-bold text-lg h-14 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all hover:scale-[1.02]" disabled={loading}>
-                      {loading ? 'Menyiapkan Dokumen...' : 'Unduh File PDF Resmi'}
-                    </Button>
-                  )}
-                </PDFDownloadLink>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <PDFDownloadLink
+                    document={<ProposalPDF data={proposalData} lang="id" />}
+                    fileName={`${proposalData.proposal_number}_${proposalData.donor_name.replace(/\s+/g, '_')}_ID.pdf`}
+                    className="w-full"
+                  >
+                    {/* @ts-ignore */}
+                    {({ loading }) => (
+                      <Button className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-slate-950 font-bold text-base h-14 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all hover:scale-[1.02]" disabled={loading}>
+                        {loading ? 'Menyiapkan Versi ID...' : 'Unduh Versi Indonesia'}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
 
-                <Button variant="outline" onClick={() => setProposalData(null)} className="w-full border-white/10 text-slate-300 hover:bg-white/5 hover:text-white h-14 rounded-xl font-semibold bg-transparent">
+                  <PDFDownloadLink
+                    document={<ProposalPDF data={proposalData} lang="en" />}
+                    fileName={`${proposalData.proposal_number}_${proposalData.donor_name.replace(/\s+/g, '_')}_EN.pdf`}
+                    className="w-full"
+                  >
+                    {/* @ts-ignore */}
+                    {({ loading }) => (
+                      <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-500 hover:to-indigo-400 text-white font-bold text-base h-14 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all hover:scale-[1.02]" disabled={loading}>
+                        {loading ? 'Preparing Versi EN...' : 'Download English Version'}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+                </div>
+
+                <Button variant="outline" onClick={() => { setProposalData(null); setWaLang('id'); }} className="w-full border-white/10 text-slate-300 hover:bg-white/5 hover:text-white h-14 rounded-xl font-semibold bg-transparent">
                   Buat Proposal Baru
                 </Button>
               </div>
               
               <div className="bg-slate-900/60 p-5 rounded-xl border border-white/5 mt-4 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
-                  <h4 className="font-bold text-amber-500 text-sm tracking-wide uppercase">Contoh Pengantar WhatsApp</h4>
+                  <div className="flex flex-col gap-1">
+                    <h4 className="font-bold text-amber-500 text-sm tracking-wide uppercase">Contoh Pengantar WhatsApp</h4>
+                    <p className="text-[11px] text-slate-400">Pilih bahasa untuk menyesuaikan teks pengantar.</p>
+                  </div>
+                  
+                  <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-white/5">
+                    <button
+                      onClick={() => setWaLang('id')}
+                      className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${waLang === 'id' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      Indonesia
+                    </button>
+                    <button
+                      onClick={() => setWaLang('en')}
+                      className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${waLang === 'en' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      English
+                    </button>
+                  </div>
+
                   <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-                      `Syalom ${proposalData.donor_name},\n\n` +
-                      `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
-                      `Kami sangat bersyukur atas ketulusan hati dan kepedulian yang senantiasa Bapak/Ibu tunjukkan bagi sesama. Keteladanan Bapak/Ibu senantiasa menjadi inspirasi nyata bagi kami.\n\n` +
-                      `Dalam rangka mewujudkan pelayanan kasih, kami dari Panitia Bakti Sosial Lintas Sinodal 2026 (Yankes GPIB & GMIM) bermaksud menyampaikan proposal permohonan donasi untuk pelayanan kesehatan gratis di Likupang & Touluaan, Sulawesi Utara. Rincian program pelayanan ini dapat dilihat pada dokumen PDF terlampir.\n\n` +
-                      `Merupakan suatu kehormatan dan sukacita besar bagi kami apabila Bapak/Ibu berkenan untuk melangkah bersama kami, menjadi perpanjangan tangan kasih Tuhan bagi saudara-saudara kita yang membutuhkan.\n\n` +
-                      `Terima kasih yang mendalam atas perhatian dan kemurahan hati Bapak/Ibu. Tuhan Yesus senantiasa memberkati kesehatan, keluarga, serta segala usaha dan karya Bapak/Ibu. Amin.`
-                    )}`}
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(waMessages[waLang])}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block"
@@ -196,19 +234,14 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
                     </Button>
                   </a>
                 </div>
-                <p className="text-sm text-slate-400 whitespace-pre-wrap leading-relaxed">
-                  Syalom {proposalData.donor_name},{'\n\n'}
-                  Salam sejahtera dalam kasih Tuhan Yesus Kristus.{'\n\n'}
-                  Kami sangat bersyukur atas ketulusan hati dan kepedulian yang senantiasa Bapak/Ibu tunjukkan bagi sesama. Keteladanan Bapak/Ibu senantiasa menjadi inspirasi nyata bagi kami.{'\n\n'}
-                  Dalam rangka mewujudkan pelayanan kasih, kami dari Panitia Bakti Sosial Lintas Sinodal 2026 (Yankes GPIB & GMIM) bermaksud menyampaikan proposal permohonan donasi untuk pelayanan kesehatan gratis di Likupang & Touluaan, Sulawesi Utara. Rincian program pelayanan ini dapat dilihat pada dokumen PDF terlampir.{'\n\n'}
-                  Merupakan suatu kehormatan dan sukacita besar bagi kami apabila Bapak/Ibu berkenan untuk melangkah bersama kami, menjadi perpanjangan tangan kasih Tuhan bagi saudara-saudara kita yang membutuhkan.{'\n\n'}
-                  Terima kasih yang mendalam atas perhatian dan kemurahan hati Bapak/Ibu. Tuhan Yesus senantiasa memberkati kesehatan, keluarga, serta segala usaha dan karya Bapak/Ibu. Amin.
+                <p className="text-sm text-slate-400 whitespace-pre-wrap leading-relaxed font-mono bg-slate-950/40 p-4 rounded-lg border border-white/5">
+                  {waMessages[waLang]}
                 </p>
               </div>
             </CardContent>
           </Card>
         </motion.div>
       )}
-    </motion.div>
+    </div>
   )
 }
