@@ -589,9 +589,11 @@ const t = {
     sec4Num: "IV.",
     sec4Title: "Letak Geografis & Demografi Lokasi",
     tondanouwTitle: "Desa Tondanouw (Mitra)",
-    tondanouwDesc: "Tondanouw berada di Kecamatan Touluaan, Kabupaten Minahasa Tenggara pada ketinggian ±272 mdpl. Dengan jumlah penduduk ±1.500 jiwa, masyarakat hidup rukun dalam gotong royong yang kuat. Mayoritas bekerja di bidang pertanian padi sawah (sentra produksi padi) dan perkebunan tanaman pangan/hortikultura.",
+    tondanouwDesc: "Desa Tondanouw berada di Kecamatan Touluaan, Kabupaten Minahasa Tenggara pada ketinggian ±272 mdpl. Dengan populasi ±1.500 jiwa, masyarakat hidup rukun dalam tradisi gotong royong Mapalus yang kuat. Sebagai salah satu sentra produksi padi utama (lumbung beras) di Minahasa Tenggara, sebagian besar warga berprofesi sebagai petani sawah dan perkebunan.",
     likupangTitle: "Kawasan Likupang (Minut)",
-    likupangDesc: "Likupang berjarak ±60 km dari Kota Manado di ujung utara Pulau Sulawesi. Secara administrasi terbagi menjadi: Likupang Barat (±16.988 jiwa), Likupang Timur (±16.519 jiwa), dan Likupang Selatan (±4.958 jiwa) dengan total populasi kawasan sekitar ±38.000 jiwa yang sebagian besar bermata pencaharian sebagai nelayan dan berkebun.",
+    likupangDesc: "Kawasan Likupang terletak di ujung utara Pulau Sulawesi, berjarak sekitar 60 km dari Kota Manado. Terbagi secara administratif menjadi Likupang Barat, Timur, dan Selatan dengan total populasi ±38.000 jiwa. Sebagian besar masyarakat bekerja sebagai nelayan tradisional dan petani kelapa. Wilayah pesisir strategis ini memiliki tantangan kesehatan tersendiri akibat jarak geografis dari pusat rujukan medis.",
+    lolahTitle: "Desa Lolah (Minahasa)",
+    lolahDesc: "Desa Lolah berada di Kecamatan Tombariri Timur, Kabupaten Minahasa, memadukan potensi agraris subur dan wilayah pesisir. Dihuni oleh sekitar 1.000 jiwa yang kental dengan adat kekeluargaan, desa ini memiliki keunikan warisan sejarah budaya megalitik yang bernilai tinggi seperti situs waruga dan menhir purba, di samping mata pencaharian warga sebagai petani kelapa dan cengkih.",
 
     sec5Num: "V.",
     sec5Title: "Bentuk Kegiatan Pelayanan",
@@ -731,9 +733,11 @@ const t = {
     sec4Num: "IV.",
     sec4Title: "Geographic Location and Demography of Locations",
     tondanouwTitle: "Tondanouw Village (Mitra)",
-    tondanouwDesc: "Tondanouw is located in Touluaan District, Southeast Minahasa Regency, at an altitude of ±272 meters above sea level. With a population of ±1,500 people, the community lives in harmony with strong mutual cooperation. The majority work in rice farming (a rice production center) and food crop/horticulture plantation.",
+    tondanouwDesc: "Tondanouw Village is located in Touluaan District, Southeast Minahasa Regency, at an altitude of ±272 meters above sea level. Inhabited by ±1,500 people, the community maintains strong social cohesion through the Mapalus mutual cooperation tradition. As a primary rice production center in Southeast Minahasa, the majority of residents earn their livelihoods as wetland rice farmers and managers of food crop and horticulture plantations.",
     likupangTitle: "Likupang Region (Minut)",
-    likupangDesc: "Likupang is located ±60 km from Manado at the northern tip of Sulawesi Island. Administratively, it is divided into: West Likupang (±16,988 people), East Likupang (±16,519 people), and South Likupang (±4,958 people) with a total regional population of about ±38,000 people, most of whom work as fishermen and farmers.",
+    likupangDesc: "The Likupang region is situated at the northern tip of Sulawesi Island, approximately 60 km from Manado. It is administratively divided into West, East, and South Likupang with a total population of ±38,000. Most residents rely on traditional fishing and coconut farming. This strategic coastal region faces unique healthcare challenges due to its geographic isolation from major referral hospitals.",
+    lolahTitle: "Lolah Village (Minahasa)",
+    lolahDesc: "Lolah Village is located in East Tombariri District, Minahasa Regency, blending fertile agricultural potential with a coastal environment. Home to approximately 1,000 residents living in close-knit communal harmony, the village is unique for its rich megalithic cultural heritage, including historic waruga (stone graves) and ancient menhirs, alongside residents' livelihoods in coconut and clove farming.",
 
     sec5Num: "V.",
     sec5Title: "Forms of Service Activities",
@@ -1096,6 +1100,10 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
             <Text style={styles.gridColTitle}>{strings.likupangTitle}</Text>
             <Text style={{ ...styles.text, fontSize: 8, lineHeight: 1.5 }}>{strings.likupangDesc}</Text>
           </View>
+          <View style={styles.gridCol}>
+            <Text style={styles.gridColTitle}>{strings.lolahTitle}</Text>
+            <Text style={{ ...styles.text, fontSize: 8, lineHeight: 1.5 }}>{strings.lolahDesc}</Text>
+          </View>
         </View>
 
         <View style={styles.sectionTitleContainer}>
@@ -1195,13 +1203,13 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
           <View style={styles.tableRow}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>1</Text>
             <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[0].title}</Text>{strings.budgetItems[0].text}</Text>
-            <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(100000000)}</Text>
+            <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(420000000)}</Text>
           </View>
 
           <View style={styles.tableRowAlternating}>
             <Text style={{ ...styles.tableCol, width: '10%' }}>2</Text>
             <Text style={{ ...styles.tableCol, width: '60%' }}><Text style={styles.boldText}>{strings.budgetItems[1].title}</Text>{strings.budgetItems[1].text}</Text>
-            <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(420000000)}</Text>
+            <Text style={{ ...styles.tableCol, width: '30%', textAlign: 'right' }}>{formatIDR(100000000)}</Text>
           </View>
 
           <View style={styles.tableRow}>
