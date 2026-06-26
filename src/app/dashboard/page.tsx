@@ -3,17 +3,12 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Target, TrendingUp, Users, Award, FileText } from "lucide-react";
+import CountdownTimer from "@/components/countdown-timer";
 
 export const revalidate = 0;
 
 export default async function DashboardPage() {
   const GLOBAL_TARGET = 774500000;
-
-  const targetDate = new Date("2026-09-14T00:00:00+07:00");
-  const today = new Date();
-  const diffTime = targetDate.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  const daysText = diffDays > 0 ? `${diffDays} Hari Lagi` : diffDays === 0 ? "Hari Ini" : "Sudah Lewat";
 
   // Fetch proposals with donations
   const { data: proposalsList } = await supabaseAdmin
@@ -91,13 +86,13 @@ export default async function DashboardPage() {
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         <div className="text-center">
           <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-slate-100 tracking-tight mt-6">Dasbor Pencapaian</h1>
-          <div className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+          <div className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto">
             <span>Pantauan <span className="italic">real-time</span> penggalangan dana Bakti Sosial Lintas Sinodal 2026.</span>
-            <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-xs font-bold text-amber-400 whitespace-nowrap shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-              ⏳ {daysText}
-            </span>
           </div>
         </div>
+
+        {/* Premium Countdown Component */}
+        <CountdownTimer />
 
         {/* Global Progress Bar */}
         <Card className="glass-panel border-t-4 border-t-emerald-500 rounded-[2.5rem] overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.15)]">

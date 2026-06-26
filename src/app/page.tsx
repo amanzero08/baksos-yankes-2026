@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import CountdownTimer from "@/components/countdown-timer";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -112,66 +113,9 @@ export default function Home() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 1.2 }}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full max-w-5xl px-4 mx-auto z-10 mt-16"
+          className="w-full max-w-5xl px-4 mx-auto z-10 mt-16"
         >
-          {/* Left Card: Countdown to Event */}
-          <div className="lg:col-span-8 bg-[#0c0c0e]/90 backdrop-blur-md border border-white/5 rounded-[1.5rem] p-6 md:p-8 flex flex-col justify-between shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-            <div className="flex items-center gap-2.5 mb-6">
-              <Clock className="w-5 h-5 text-amber-500" />
-              <span className="text-slate-100 font-bold text-base md:text-lg tracking-wide">Countdown Pelayanan Kasih</span>
-            </div>
-
-            <div className="grid grid-cols-4 gap-3 md:gap-4">
-              {[
-                { label: "HARI", value: mounted ? timeLeft.days : 0 },
-                { label: "JAM", value: mounted ? timeLeft.hours : 0 },
-                { label: "MENIT", value: mounted ? timeLeft.minutes : 0 },
-                { label: "DETIK", value: mounted ? timeLeft.seconds : 0 },
-              ].map((item, idx) => (
-                <div 
-                  key={idx} 
-                  className="bg-[#141416] border border-white/5 rounded-2xl py-4 md:py-6 px-2 flex flex-col items-center justify-center transition-all duration-300 hover:border-amber-500/20 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
-                >
-                  <span className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#f59e0b] tracking-tight mb-2 min-w-[2ch] text-center">
-                    {mounted ? String(item.value).padStart(2, '0') : "00"}
-                  </span>
-                  <span className="text-[9px] md:text-xs font-bold text-[#7c7c82] tracking-widest uppercase">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Card: Event Metadata */}
-          <div className="lg:col-span-4 bg-[#0c0c0e]/90 backdrop-blur-md border border-white/5 rounded-[1.5rem] p-6 md:p-8 flex flex-col justify-center space-y-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-            <div>
-              <span className="text-[#56565c] text-[10px] md:text-xs font-bold uppercase tracking-wider block mb-1.5">Tanggal Pelaksanaan</span>
-              <div className="flex items-center gap-3">
-                <Calendar className="w-4.5 h-4.5 text-amber-500 shrink-0" />
-                <span className="font-bold text-slate-200 text-sm md:text-base">Senin, 14 September 2026</span>
-              </div>
-            </div>
-
-            <div>
-              <span className="text-[#56565c] text-[10px] md:text-xs font-bold uppercase tracking-wider block mb-1.5">Waktu / Durasi</span>
-              <div className="flex items-center gap-3">
-                <Clock className="w-4.5 h-4.5 text-amber-500 shrink-0" />
-                <span className="font-bold text-slate-200 text-sm md:text-base">14 - 18 September 2026</span>
-              </div>
-            </div>
-
-            <div>
-              <span className="text-[#56565c] text-[10px] md:text-xs font-bold uppercase tracking-wider block mb-1.5">Lokasi Pelayanan</span>
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4.5 h-4.5 text-amber-500 shrink-0 mt-0.5" />
-                <div className="flex flex-col">
-                  <span className="font-bold text-slate-200 text-sm md:text-base">3 Titik Wilayah</span>
-                  <span className="text-[#7c7c82] text-[10px] md:text-xs font-medium mt-0.5">Tondanouw, Likupang, & Lolah</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CountdownTimer />
         </motion.div>
 
         {/* Trusted By / Logos */}
