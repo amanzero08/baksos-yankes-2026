@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Plus, Edit2, Trash2, Users } from "lucide-react"
+import { Plus, Edit2, Trash2, Users, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { createKartuSahabat, updateKartuSahabat, deleteKartuSahabat } from "@/app/actions"
 
 export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
@@ -22,6 +22,49 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [passcode, setPasscode] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  const [sortField, setSortField] = useState<'committee_name' | 'collected_amount' | 'target_amount' | null>(null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
+  const handleSort = (field: 'committee_name' | 'collected_amount' | 'target_amount') => {
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const renderSortIcon = (field: 'committee_name' | 'collected_amount' | 'target_amount') => {
+    if (sortField !== field) return <ArrowUpDown className="w-3.5 h-3.5 ml-1.5 inline-block opacity-40 group-hover:opacity-75 transition-opacity" />;
+    return sortDirection === 'asc' 
+      ? <ArrowUp className="w-3.5 h-3.5 ml-1.5 inline-block text-blue-400" />
+      : <ArrowDown className="w-3.5 h-3.5 ml-1.5 inline-block text-blue-400" />;
+  }
+
+  const sortedData = React.useMemo(() => {
+    if (!sortField) return initialData;
+
+    return [...initialData].sort((a, b) => {
+      let valA = a[sortField];
+      let valB = b[sortField];
+
+      // Handle nulls / undefineds
+      if (valA === null || valA === undefined) valA = sortField === 'committee_name' ? '' : 0;
+      if (valB === null || valB === undefined) valB = sortField === 'committee_name' ? '' : 0;
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return sortDirection === 'asc' 
+          ? valA.localeCompare(valB) 
+          : valB.localeCompare(valA);
+      } else {
+        // numbers
+        return sortDirection === 'asc' 
+          ? (valA as number) - (valB as number) 
+          : (valB as number) - (valA as number);
+      }
+    });
+  }, [initialData, sortField, sortDirection]);
 
   const handleTargetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, "")
@@ -152,14 +195,38 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
         <Table className="w-full md:min-w-[600px]">
           <TableHeader className="hidden md:table-header-group">
             <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
-              <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4">Panitia</TableHead>
-              <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right">Terkumpul</TableHead>
-              <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 text-right">Target</TableHead>
+              <TableHead 
+                onClick={() => handleSort('committee_name')}
+                className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 cursor-pointer select-none group hover:text-blue-300 transition-colors"
+              >
+                <span className="flex items-center">
+                  Panitia
+                  {renderSortIcon('committee_name')}
+                </span>
+              </TableHead>
+              <TableHead 
+                onClick={() => handleSort('collected_amount')}
+                className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right cursor-pointer select-none group hover:text-blue-300 transition-colors"
+              >
+                <span className="flex items-center justify-end">
+                  Terkumpul
+                  {renderSortIcon('collected_amount')}
+                </span>
+              </TableHead>
+              <TableHead 
+                onClick={() => handleSort('target_amount')}
+                className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 text-right cursor-pointer select-none group hover:text-blue-300 transition-colors"
+              >
+                <span className="flex items-center justify-end">
+                  Target
+                  {renderSortIcon('target_amount')}
+                </span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {initialData && initialData.length > 0 ? (
-              initialData.map((kartu: any) => (
+            {sortedData && sortedData.length > 0 ? (
+              sortedData.map((kartu: any) => (
                 <React.Fragment key={kartu.id}>
                   {/* Desktop View */}
                   <TableRow 
