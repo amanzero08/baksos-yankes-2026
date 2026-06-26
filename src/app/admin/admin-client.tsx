@@ -18,9 +18,16 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
   const [searchQuery, setSearchQuery] = useState("")
   const [showAllProposals, setShowAllProposals] = useState(false)
   const [showAllKartu, setShowAllKartu] = useState(false)
+  const [proposalFilter, setProposalFilter] = useState<'all' | 'confirmed' | 'unconfirmed'>('all')
 
   // 1. Filter Proposals
   const filteredProposals = proposals.filter((prop) => {
+    const hasDonation = prop.donations && prop.donations.length > 0
+    const isVerified = hasDonation && prop.donations.some((d: any) => d.verified)
+
+    if (proposalFilter === 'confirmed' && !isVerified) return false
+    if (proposalFilter === 'unconfirmed' && isVerified) return false
+
     const query = searchQuery.toLowerCase().trim()
     if (!query) return true
 
@@ -86,7 +93,7 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
       {/* Proposals Section */}
       <Card className="glass-panel border-t-4 border-t-amber-500 rounded-[2rem] overflow-hidden">
         <CardHeader className="bg-slate-900/40 border-b border-white/5 pb-6 px-6 sm:px-10 pt-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center items-start justify-start gap-4">
             <div>
               <CardTitle className="text-2xl text-amber-400 font-heading tracking-wide flex items-center">
                 <FileText className="w-6 h-6 mr-3 text-amber-500" />
@@ -96,24 +103,53 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
                 {searchQuery ? "Daftar proposal tersaring." : "Menampilkan proposal yang paling baru dibuat."}
               </CardDescription>
             </div>
-            {filteredProposals.length > 5 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAllProposals(!showAllProposals)}
-                className="bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white rounded-full font-semibold transition-all flex items-center gap-1.5"
-              >
-                {showAllProposals ? (
-                  <>
-                    Tampilkan Lebih Sedikit <ChevronUp className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Tampilkan Semua ({filteredProposals.length}) <ChevronDown className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            )}
+            
+            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto lg:justify-end">
+              {/* Filter Pills */}
+              <div className="flex items-center gap-1 bg-slate-950/60 p-1 rounded-full border border-white/5 text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => setProposalFilter('all')}
+                  className={`px-3.5 py-1.5 rounded-full font-bold transition-all ${proposalFilter === 'all' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Semua
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProposalFilter('confirmed')}
+                  className={`px-3.5 py-1.5 rounded-full font-bold transition-all ${proposalFilter === 'confirmed' ? 'bg-emerald-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Terkonfirmasi
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProposalFilter('unconfirmed')}
+                  className={`px-3.5 py-1.5 rounded-full font-bold transition-all ${proposalFilter === 'unconfirmed' ? 'bg-rose-500 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Belum
+                </button>
+              </div>
+
+              {/* Expand Button */}
+              {filteredProposals.length > 5 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAllProposals(!showAllProposals)}
+                  className="bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white rounded-full font-semibold transition-all flex items-center gap-1.5 h-[34px] px-4"
+                >
+                  {showAllProposals ? (
+                    <>
+                      Tampilkan Lebih Sedikit <ChevronUp className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      Tampilkan Semua ({filteredProposals.length}) <ChevronDown className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
