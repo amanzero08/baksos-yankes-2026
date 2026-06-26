@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Plus, Edit2, Trash2 } from "lucide-react"
+import { Plus, Edit2, Trash2, Users } from "lucide-react"
 import { createKartuSahabat, updateKartuSahabatAmount, deleteKartuSahabat } from "@/app/actions"
 
 export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [isAddOpen, setIsAddOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [selectedKartu, setSelectedKartu] = useState<any>(null)
   
   const [committeeName, setCommitteeName] = useState("")
@@ -65,7 +65,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     
     const res = await updateKartuSahabatAmount(selectedKartu.id, collectedNum, passcode)
     if (res.success) {
-      setIsEditOpen(false)
+      setIsDetailsOpen(false)
       setCollectedAmount("")
       setPasscode("")
     } else {
@@ -75,13 +75,18 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   }
 
   const handleDelete = async (id: string) => {
-    const code = prompt("Masukkan passcode untuk menghapus Kartu Sahabat:")
+    const code = passcode || prompt("Masukkan passcode untuk menghapus Kartu Sahabat:")
     if (!code) return
     
+    setLoading(true)
     const res = await deleteKartuSahabat(id, code)
-    if (!res.success) {
-      alert(res.error)
+    if (res.success) {
+      setIsDetailsOpen(false)
+      setPasscode("")
+    } else {
+      alert(res.error || "Gagal menghapus kartu sahabat")
     }
+    setLoading(false)
   }
 
   return (
@@ -122,8 +127,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
             <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
               <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4">Panitia</TableHead>
               <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right">Terkumpul</TableHead>
-              <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right">Target</TableHead>
-              <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 text-right">Aksi</TableHead>
+              <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 text-right">Target</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -131,45 +135,37 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               initialData.map((kartu: any) => (
                 <React.Fragment key={kartu.id}>
                   {/* Desktop View */}
-                  <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5">
+                  <TableRow 
+                    onClick={() => {
+                      setSelectedKartu(kartu);
+                      const rawVal = kartu.collected_amount?.toString() || "";
+                      setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "");
+                      setPasscode("");
+                      setError("");
+                      setIsDetailsOpen(true);
+                    }}
+                    className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
+                  >
                     <TableCell className="px-6 py-4 font-bold text-slate-200">{kartu.committee_name}</TableCell>
                     <TableCell className="py-4 text-emerald-400 font-bold text-right">{formatIDR(kartu.collected_amount || 0)}</TableCell>
-                    <TableCell className="py-4 text-slate-400 font-medium text-right">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</TableCell>
-                    <TableCell className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { 
-                          setSelectedKartu(kartu); 
-                          const rawVal = kartu.collected_amount?.toString() || "";
-                          setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : ""); 
-                          setIsEditOpen(true); 
-                        }}>
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                    <TableCell className="px-6 py-4 text-slate-400 font-medium text-right">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</TableCell>
                   </TableRow>
 
                   {/* Mobile Card View */}
-                  <TableRow className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors">
+                  <TableRow 
+                    onClick={() => {
+                      setSelectedKartu(kartu);
+                      const rawVal = kartu.collected_amount?.toString() || "";
+                      setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "");
+                      setPasscode("");
+                      setError("");
+                      setIsDetailsOpen(true);
+                    }}
+                    className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors cursor-pointer"
+                  >
                     <td className="block w-full">
-                      <div className="flex justify-between items-center mb-2">
+                      <div className="mb-2">
                         <span className="font-bold text-slate-200 text-base">{kartu.committee_name}</span>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-white/10 hover:bg-white/10 text-slate-300" onClick={() => { 
-                            setSelectedKartu(kartu); 
-                            const rawVal = kartu.collected_amount?.toString() || "";
-                            setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : ""); 
-                            setIsEditOpen(true); 
-                          }}>
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="outline" size="icon" className="h-8 w-8 bg-slate-900 border-red-500/20 hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(kartu.id)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
                       </div>
                       <div className="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-white/5">
                         <div className="flex flex-col">
@@ -183,39 +179,100 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                       </div>
                     </td>
                   </TableRow>
-                  </React.Fragment>
-                ))
+                </React.Fragment>
+              ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-slate-500">Belum ada panitia yang terdaftar.</TableCell>
+                <TableCell colSpan={3} className="text-center py-8 text-slate-500">Belum ada panitia yang terdaftar.</TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
 
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="glass-panel border-white/10 text-slate-200 sm:max-w-md">
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="glass-panel border-white/10 text-slate-200 sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="font-heading text-2xl text-emerald-400">Update Dana Terkumpul</DialogTitle>
+            <DialogTitle className="font-heading text-2xl text-blue-400 flex items-center gap-2">
+              <Users className="w-6 h-6" /> Detail Kartu Sahabat
+            </DialogTitle>
             <DialogDescription className="text-slate-400">
-              Update nominal Kartu Sahabat untuk {selectedKartu?.committee_name}.
+              Informasi pencapaian panitia dan panel tindakan admin.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleEdit} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label>Nominal Terkumpul (Akan Diformat Otomatis)</Label>
-              <Input required type="text" value={collectedAmount} onChange={handleCollectedAmountChange} className="bg-slate-900/50 border-white/10" placeholder="Misal: 1.500.000" />
+
+          {selectedKartu && (
+            <div className="space-y-6 pt-4">
+              {/* Info Cards */}
+              <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5 space-y-4">
+                <div>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Nama Panitia</span>
+                  <span className="text-base font-bold text-slate-200">{selectedKartu.committee_name}</span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Terkumpul</span>
+                    <span className="text-lg font-bold text-emerald-400">{formatIDR(selectedKartu.collected_amount || 0)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Target Pribadi</span>
+                    <span className="text-lg font-bold text-slate-300">
+                      {selectedKartu.target_amount ? formatIDR(selectedKartu.target_amount) : "-"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Update Dana */}
+              <form onSubmit={handleEdit} className="space-y-4 border-t border-white/5 pt-5">
+                <h4 className="text-sm font-bold text-blue-400 tracking-wide">Update Dana Terkumpul</h4>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-400">Nominal Terkumpul (Akan Diformat Otomatis)</Label>
+                  <Input 
+                    required 
+                    type="text" 
+                    value={collectedAmount} 
+                    onChange={handleCollectedAmountChange} 
+                    className="bg-slate-900/50 border-white/10 text-slate-100" 
+                    placeholder="Misal: 1.500.000" 
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-400">Passcode Admin</Label>
+                  <Input 
+                    required 
+                    type="password" 
+                    value={passcode} 
+                    onChange={e => setPasscode(e.target.value)} 
+                    className="bg-slate-900/50 border-white/10 text-slate-100" 
+                  />
+                </div>
+
+                {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
+                
+                <div className="flex gap-3 pt-2">
+                  <Button 
+                    type="submit" 
+                    disabled={loading} 
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-bold"
+                  >
+                    {loading ? "Mengupdate..." : "Update Dana"}
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400 text-red-500 rounded-full font-semibold px-4"
+                    onClick={() => handleDelete(selectedKartu.id)}
+                  >
+                    Hapus
+                  </Button>
+                </div>
+              </form>
             </div>
-            <div className="space-y-2">
-              <Label>Passcode Admin</Label>
-              <Input required type="password" value={passcode} onChange={e => setPasscode(e.target.value)} className="bg-slate-900/50 border-white/10" />
-            </div>
-            {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
-            <Button type="submit" disabled={loading} className="w-full bg-emerald-600 hover:bg-emerald-500">
-              {loading ? "Mengupdate..." : "Update Dana"}
-            </Button>
-          </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>
