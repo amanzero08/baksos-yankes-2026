@@ -9,11 +9,10 @@ export const revalidate = 0;
 export default async function DashboardPage() {
   const GLOBAL_TARGET = 774500000;
 
-  // Fetch verified donations
-  const { data: donations } = await supabaseAdmin
-    .from("donations")
-    .select("amount, donor_name")
-    .eq("verified", true);
+  // Fetch proposals with donations
+  const { data: proposalsList } = await supabaseAdmin
+    .from("proposals")
+    .select("id, donations(amount, verified)");
 
   // Fetch Kartu Sahabat
   const { data: kartuSahabatList } = await supabaseAdmin
@@ -21,12 +20,40 @@ export default async function DashboardPage() {
     .select("*")
     .order("collected_amount", { ascending: false });
 
-  // Calculate totals
-  const totalDonations = donations?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0;
+  // Fetch all verified donations
+  const { data: donations } = await supabaseAdmin
+    .from("donations")
+    .select("amount, proposal_id")
+    .eq("verified", true);
+
+  // Total collected from verified donations that are linked to a proposal
+  const totalProposalDonations = donations
+    ?.filter(d => d.proposal_id)
+    .reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0;
+
+  // Total collected from Kartu Sahabat
   const totalKartuSahabat = kartuSahabatList?.reduce((sum, item) => sum + (Number(item.collected_amount) || 0), 0) || 0;
-  const totalCollected = totalDonations + totalKartuSahabat;
+
+  // Standalone verified donations (donations with no proposal_id, if any)
+  const totalGeneralDonations = donations
+    ?.filter(d => !d.proposal_id)
+    .reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0;
+
+  // Total Collected overall
+  const totalCollected = totalProposalDonations + totalKartuSahabat + totalGeneralDonations;
   
   const progressPercentage = Math.min(100, Math.max(0, (totalCollected / GLOBAL_TARGET) * 100));
+
+  // Proposal counts
+  const totalProposalsCount = proposalsList?.length || 0;
+  const verifiedProposalIds = new Set(
+    donations?.filter(d => d.proposal_id).map(d => d.proposal_id) || []
+  );
+  const confirmedProposalsCount = verifiedProposalIds.size;
+
+  // Kartu Sahabat counts
+  const totalKartuCount = kartuSahabatList?.length || 0;
+  const confirmedKartuCount = kartuSahabatList?.filter(k => (Number(k.collected_amount) || 0) > 0).length || 0;
 
   // Format currency
   const formatIDR = (amount: number) => {
@@ -83,32 +110,121 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="glass-panel rounded-3xl border-t-2 border-t-amber-500 hover:-translate-y-1 transition-all duration-300">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg text-slate-300 flex items-center">
+        <div className={`grid gap-6 ${totalGeneralDonations > 0 ? "lg:grid-cols-3 md:grid-cols-2" : "md:grid-cols-2"}`}>
+          <Card className="glass-panel rounded-[2rem] border-t-4 border-t-amber-500 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full pointer-events-none"></div>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-bold text-slate-300 flex items-center">
                 <FileText className="w-5 h-5 mr-3 text-amber-500" />
                 Donasi via Proposal
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <h3 className="text-3xl font-heading font-bold text-slate-100 mt-2">{formatIDR(totalDonations)}</h3>
-              <p className="text-sm text-slate-500 mt-2 font-medium">Dari {donations?.length || 0} donatur terverifikasi</p>
+            <CardContent className="space-y-6">
+              <div>
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Total Dana Masuk</span>
+                <h3 className="text-4xl font-heading font-bold text-slate-100">{formatIDR(totalProposalDonations)}</h3>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                <div className="bg-slate-900/60 p-3.5 rounded-2xl border border-white/5">
+                  <span className="text-[10px] text-slate-500 font-semibold block mb-1 uppercase tracking-wider">Proposal Keluar</span>
+                  <span className="text-2xl font-bold text-slate-200">{totalProposalsCount}</span>
+                </div>
+                <div className="bg-emerald-950/20 p-3.5 rounded-2xl border border-emerald-900/20">
+                  <span className="text-[10px] text-emerald-500/80 font-semibold block mb-1 uppercase tracking-wider">Terkonfirmasi</span>
+                  <span className="text-2xl font-bold text-emerald-400">{confirmedProposalsCount}</span>
+                </div>
+              </div>
+
+              {/* Progress/Ratio Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span className="text-slate-400">Rasio Konfirmasi</span>
+                  <span className="text-amber-400">
+                    {totalProposalsCount > 0 
+                      ? `${((confirmedProposalsCount / totalProposalsCount) * 100).toFixed(1)}%` 
+                      : '0%'}
+                  </span>
+                </div>
+                <div className="h-2 bg-slate-900/80 rounded-full overflow-hidden border border-white/5">
+                  <div 
+                    className="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full transition-all duration-500"
+                    style={{ width: `${totalProposalsCount > 0 ? (confirmedProposalsCount / totalProposalsCount) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
             </CardContent>
           </Card>
           
-          <Card className="glass-panel rounded-3xl border-t-2 border-t-blue-500 hover:-translate-y-1 transition-all duration-300">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg text-slate-300 flex items-center">
+          <Card className="glass-panel rounded-[2rem] border-t-4 border-t-blue-500 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-full pointer-events-none"></div>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-bold text-slate-300 flex items-center">
                 <Users className="w-5 h-5 mr-3 text-blue-500" />
                 Kartu Sahabat Panitia
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <h3 className="text-3xl font-heading font-bold text-slate-100 mt-2">{formatIDR(totalKartuSahabat)}</h3>
-              <p className="text-sm text-slate-500 mt-2 font-medium">Dari {kartuSahabatList?.length || 0} panitia aktif</p>
+            <CardContent className="space-y-6">
+              <div>
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Total Dana Masuk</span>
+                <h3 className="text-4xl font-heading font-bold text-slate-100">{formatIDR(totalKartuSahabat)}</h3>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                <div className="bg-slate-900/60 p-3.5 rounded-2xl border border-white/5">
+                  <span className="text-[10px] text-slate-500 font-semibold block mb-1 uppercase tracking-wider">Kartu Keluar</span>
+                  <span className="text-2xl font-bold text-slate-200">{totalKartuCount}</span>
+                </div>
+                <div className="bg-emerald-950/20 p-3.5 rounded-2xl border border-emerald-900/20">
+                  <span className="text-[10px] text-emerald-500/80 font-semibold block mb-1 uppercase tracking-wider">Terkonfirmasi</span>
+                  <span className="text-2xl font-bold text-emerald-400">{confirmedKartuCount}</span>
+                </div>
+              </div>
+
+              {/* Progress/Ratio Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span className="text-slate-400">Rasio Partisipasi Aktif</span>
+                  <span className="text-blue-400">
+                    {totalKartuCount > 0 
+                      ? `${((confirmedKartuCount / totalKartuCount) * 100).toFixed(1)}%` 
+                      : '0%'}
+                  </span>
+                </div>
+                <div className="h-2 bg-slate-900/80 rounded-full overflow-hidden border border-white/5">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500"
+                    style={{ width: `${totalKartuCount > 0 ? (confirmedKartuCount / totalKartuCount) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
             </CardContent>
           </Card>
+
+          {totalGeneralDonations > 0 && (
+            <Card className="glass-panel rounded-[2rem] border-t-4 border-t-emerald-500 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full pointer-events-none"></div>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-bold text-slate-300 flex items-center">
+                  <Award className="w-5 h-5 mr-3 text-emerald-500" />
+                  Donasi Umum (Mandiri)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Total Dana Masuk</span>
+                  <h3 className="text-4xl font-heading font-bold text-slate-100">{formatIDR(totalGeneralDonations)}</h3>
+                </div>
+                
+                <div className="bg-slate-900/60 p-4 rounded-2xl border border-white/5">
+                  <span className="text-[10px] text-slate-500 font-semibold block mb-1 uppercase tracking-wider">Donatur Umum</span>
+                  <span className="text-2xl font-bold text-slate-200">
+                    {donations?.filter(d => !d.proposal_id).length || 0}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Kartu Sahabat Leaderboard / List */}

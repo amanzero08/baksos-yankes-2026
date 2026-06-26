@@ -5,10 +5,63 @@ import { submitDonation } from '@/app/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, UploadCloud, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { SearchableSelect } from '@/components/searchable-select'
+
+// Helper function to compress images client-side using HTML5 Canvas
+const compressImage = (file: File, maxW = 1920, maxH = 1920, quality = 0.8): Promise<Blob> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxW) {
+            height = Math.round((height * maxW) / width);
+            width = maxW;
+          }
+        } else {
+          if (height > maxH) {
+            width = Math.round((width * maxH) / height);
+            height = maxH;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(file); // fallback to original file
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              resolve(file);
+            }
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
 
 export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -35,8 +88,62 @@ export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }
     setIsSubmitting(true)
     setError('')
 
-    const formData = new FormData(e.currentTarget)
+    const fileInput = e.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
+    const file = fileInput?.files?.[0];
+
+    if (!file) {
+      setError('Silakan pilih bukti transfer terlebih dahulu')
+      setIsSubmitting(false)
+      return
+    }
+
+    // Limit files to 5MB
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (isPdf && file.size > 5 * 1024 * 1024) {
+      setError('File PDF tidak boleh lebih dari 5MB.')
+      setIsSubmitting(false)
+      return
+    }
+
+    // Build the optimized FormData
+    const formData = new FormData()
     formData.append('proposalId', selectedProposalId)
+    formData.append('notes', (e.currentTarget.querySelector('input[name="notes"]') as HTMLInputElement)?.value || '')
+    
+    // Sesuai dengan submitDonation, nominal donasi diformat dari amountInput
+    formData.append('amount', amountInput)
+
+    if (!isPdf) {
+      // Automatically compress image without user notice
+      try {
+        const compressedBlob = await compressImage(file)
+        
+        // Convert to JPG file keeping clean naming conventions
+        const cleanName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+        const compressedFile = new File([compressedBlob], cleanName, {
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        })
+
+        // Enforce final check of 5MB just in case
+        if (compressedFile.size > 5 * 1024 * 1024) {
+          setError('Ukuran gambar hasil kompresi melebihi 5MB.')
+          setIsSubmitting(false)
+          return
+        }
+
+        formData.append('receipt', compressedFile)
+      } catch (err) {
+        if (file.size > 5 * 1024 * 1024) {
+          setError('File gambar melebihi 5MB dan gagal dikompresi.')
+          setIsSubmitting(false)
+          return
+        }
+        formData.append('receipt', file)
+      }
+    } else {
+      formData.append('receipt', file)
+    }
     
     const result = await submitDonation(formData)
     
@@ -48,6 +155,7 @@ export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }
     
     setIsSubmitting(false)
   }
+
 
   return (
     <motion.div 
@@ -104,30 +212,22 @@ export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }
           <CardContent className="pt-10 pb-10 px-6 sm:px-12">
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
               
-              <div className="space-y-3">
-                <Label htmlFor="proposal" className="text-slate-300 font-semibold">Pilih Proposal Donatur <span className="text-amber-500">*</span></Label>
-                <Select value={selectedProposalId} onValueChange={(val) => setSelectedProposalId(val || '')}>
-                  <SelectTrigger className="bg-slate-900/50 border-white/10 text-slate-100 focus:ring-amber-500 h-14">
-                    <SelectValue placeholder="Pilih proposal dari daftar..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-white/10 text-slate-200 max-h-[350px]">
-                    {pendingProposals.map((prop: any) => (
-                      <SelectItem key={prop.id} value={prop.id} className="py-3 border-b border-white/5 last:border-0">
-                        <div className="flex flex-col">
-                          <span className="font-bold text-amber-400">{prop.proposal_number}</span>
-                          <span className="text-slate-300">{prop.donor_name} {prop.institution && <span className="text-slate-500">({prop.institution})</span>}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                    {pendingProposals.length === 0 && (
-                      <div className="p-4 text-center text-sm text-slate-500">
-                        Tidak ada proposal pending. Buat proposal baru terlebih dahulu.
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-slate-500 ml-1">Hanya menampilkan proposal yang belum dikonfirmasi.</p>
-              </div>
+               <div className="space-y-3">
+                 <Label htmlFor="proposal" className="text-slate-300 font-semibold">Pilih Proposal Donatur <span className="text-amber-500">*</span></Label>
+                 <SearchableSelect
+                   options={pendingProposals.map((prop: any) => ({
+                     value: prop.id,
+                     label: prop.proposal_number,
+                     subLabel: `${prop.donor_name}${prop.institution ? ` (${prop.institution})` : ''}`
+                   }))}
+                   value={selectedProposalId}
+                   onChange={(val) => setSelectedProposalId(val || '')}
+                   placeholder="Pilih proposal dari daftar..."
+                   searchPlaceholder="Cari nomor proposal, nama donatur..."
+                   noResultsText="Tidak ada proposal pending yang cocok"
+                 />
+                 <p className="text-xs text-slate-500 ml-1">Hanya menampilkan proposal yang belum dikonfirmasi.</p>
+               </div>
 
               <div className="space-y-3">
                 <Label htmlFor="amount" className="text-slate-300 font-semibold">Nominal Transfer <span className="text-amber-500">*</span></Label>

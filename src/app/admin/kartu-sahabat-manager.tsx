@@ -86,8 +86,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center px-2">
-        <h3 className="font-heading text-xl font-bold text-slate-100 tracking-wide">Daftar Kartu Sahabat</h3>
+      <div className="flex justify-end items-center px-2">
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full" onClick={() => setIsAddOpen(true)}>
             <Plus className="w-4 h-4 mr-2" /> Tambah Panitia

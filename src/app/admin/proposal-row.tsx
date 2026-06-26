@@ -8,7 +8,7 @@ import { Building2, User, Calendar, MessageSquare, Edit, Trash2, Download, Eye, 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { updateProposal, deleteProposal, verifyDonation } from '@/app/actions'
+import { updateProposal, deleteProposal, verifyDonation, recordInternalPayment } from '@/app/actions'
 import dynamic from 'next/dynamic'
 
 const PDFDownloadLink = dynamic(
@@ -16,6 +16,7 @@ const PDFDownloadLink = dynamic(
   { ssr: false }
 )
 import { ProposalPDF } from '@/components/proposal-pdf'
+import { ThankYouPDF } from '@/components/thank-you-pdf'
 import {
   Dialog,
   DialogContent,
@@ -31,7 +32,7 @@ export function ProposalRow({ prop }: { prop: any }) {
   
   // Action state
   const [isOpen, setIsOpen] = useState(false)
-  const [actionType, setActionType] = useState<'edit' | 'delete' | 'verify' | null>(null)
+  const [actionType, setActionType] = useState<'edit' | 'delete' | 'verify' | 'record_payment' | null>(null)
   const [passcode, setPasscode] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -42,8 +43,10 @@ export function ProposalRow({ prop }: { prop: any }) {
   const [committeeName, setCommitteeName] = useState(prop.committee_name || '')
   const [message, setMessage] = useState(prop.message || '')
   
-  // Verification state
+  // Verification / Recording payment state
   const [verificationAmount, setVerificationAmount] = useState('')
+  const [paymentDate, setPaymentDate] = useState(new Date().toISOString().substring(0, 10))
+  const [receiptFile, setReceiptFile] = useState<File | null>(null)
 
   const handleVerificationAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, "")
@@ -58,10 +61,12 @@ export function ProposalRow({ prop }: { prop: any }) {
   const hasDonation = prop.donations && prop.donations.length > 0;
   const isVerified = hasDonation && prop.donations.some((d: any) => d.verified);
 
-  const handleOpenAction = (type: 'edit' | 'delete' | 'verify') => {
+  const handleOpenAction = (type: 'edit' | 'delete' | 'verify' | 'record_payment') => {
     setActionType(type)
     setPasscode('')
     setError('')
+    setReceiptFile(null)
+    setPaymentDate(new Date().toISOString().substring(0, 10))
     // reset form
     setDonorName(prop.donor_name)
     setInstitution(prop.institution || '')
@@ -72,6 +77,8 @@ export function ProposalRow({ prop }: { prop: any }) {
       const donation = prop.donations[0]
       const rawVal = donation.amount ? donation.amount.toString() : ''
       setVerificationAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : '')
+    } else if (type === 'record_payment') {
+      setVerificationAmount('')
     }
     setIsOpen(true)
   }
@@ -117,6 +124,31 @@ export function ProposalRow({ prop }: { prop: any }) {
           router.refresh()
         } else {
           setError(result.error || 'Gagal memverifikasi donasi')
+        }
+      } else if (actionType === 'record_payment') {
+        const amountNum = parseFloat(verificationAmount.replace(/\D/g,"")) || 0;
+        if (amountNum <= 0) {
+          setError('Nominal donasi harus lebih dari 0')
+          setIsSubmitting(false)
+          return
+        }
+
+        const formData = new FormData()
+        formData.append('proposalId', prop.id)
+        formData.append('amount', verificationAmount)
+        formData.append('paymentDate', paymentDate)
+        formData.append('passcode', passcode)
+        if (receiptFile) {
+          formData.append('receipt', receiptFile)
+        }
+
+        const result = await recordInternalPayment(formData)
+        if (result.success) {
+          setIsOpen(false)
+          setDetailsOpen(false)
+          router.refresh()
+        } else {
+          setError(result.error || 'Gagal merekam pembayaran')
         }
       }
     } catch (err: any) {
@@ -222,7 +254,7 @@ export function ProposalRow({ prop }: { prop: any }) {
 
       {/* Details Modal */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-slate-950 border-white/10 text-slate-200">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-slate-950 border-white/10 text-slate-200">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 font-heading text-2xl text-amber-400">
               <FileText className="w-6 h-6 text-amber-500" />
@@ -267,8 +299,95 @@ export function ProposalRow({ prop }: { prop: any }) {
                 </Button>
               )}
             </PDFDownloadLink>
+
+            {!isVerified ? (
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                  `Syalom ${prop.donor_name},\n\n` +
+                  `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
+                  `Kami sangat bersyukur atas ketulusan hati dan kepedulian yang senantiasa Bapak/Ibu tunjukkan bagi sesama. Keteladanan Bapak/Ibu senantiasa menjadi inspirasi nyata bagi kami.\n\n` +
+                  `Dalam rangka mewujudkan pelayanan kasih, kami dari Panitia Bakti Sosial Lintas Sinodal 2026 (Yankes GPIB & GMIM) bermaksud menyampaikan proposal permohonan donasi untuk pelayanan kesehatan gratis di Likupang & Touluaan, Sulawesi Utara. Rincian program pelayanan ini dapat dilihat pada dokumen PDF terlampir.\n\n` +
+                  `Merupakan suatu kehormatan dan sukacita besar bagi kami apabila Bapak/Ibu berkenan untuk melangkah bersama kami, menjadi perpanjangan tangan kasih Tuhan bagi saudara-saudara kita yang membutuhkan.\n\n` +
+                  `Terima kasih yang mendalam atas perhatian dan kemurahan hati Bapak/Ibu. Tuhan Yesus senantiasa memberkati kesehatan, keluarga, serta segala usaha dan karya Bapak/Ibu. Amin.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-block"
+              >
+                <Button className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-bold border-none transition-all hover:scale-[1.01] h-10">
+                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.5-5.739-1.446L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.863-9.864.001-2.63-1.023-5.101-2.879-6.958C16.6 1.924 14.129.9 11.504.9 6.072.9 1.646 5.321 1.643 10.765c0 1.701.447 3.361 1.294 4.803l-.973 3.556 3.649-.957zm11.597-4.815c-.325-.163-1.926-.95-2.222-1.058-.297-.11-.513-.163-.73.163-.216.325-.838 1.058-1.027 1.275-.19.217-.379.244-.704.082-.325-.162-1.372-.507-2.614-1.613-.966-.862-1.618-1.927-1.807-2.253-.19-.325-.02-.5-.183-.661-.147-.146-.325-.379-.487-.57-.162-.19-.216-.324-.325-.541-.108-.217-.053-.407-.026-.57.027-.162.216-.515.325-.677.108-.162.162-.271.243-.459.082-.19.041-.353-.021-.515-.062-.163-.513-1.246-.704-1.708-.186-.447-.37-.387-.513-.394-.132-.007-.284-.007-.437-.007s-.403.058-.613.285c-.21.228-.802.787-.802 1.918s.82 2.222.934 2.373c.115.151 1.613 2.463 3.908 3.45.546.235.973.376 1.306.482.548.173 1.047.149 1.443.09.44-.066 1.413-.578 1.61-1.139.198-.56.198-1.042.139-1.139-.059-.098-.216-.163-.542-.326z" />
+                  </svg>
+                  Kirim via WhatsApp
+                </Button>
+              </a>
+            ) : (
+              <div className="p-4 rounded-xl border border-emerald-900/50 bg-emerald-950/20 space-y-3 mt-2 text-left">
+                <h4 className="text-sm font-bold text-emerald-400 tracking-wide uppercase flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" /> Ucapkan Terima Kasih
+                </h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Donasi telah diverifikasi. Unduh sertifikat penghargaan resmi PDF dan bagikan apresiasi hangat kepada donatur.
+                </p>
+                
+                <div className="flex flex-col gap-2.5 pt-1">
+                  <PDFDownloadLink
+                    document={<ThankYouPDF data={prop} />}
+                    fileName={`SERTIFIKAT_PENGHARGAAN_${prop.proposal_number}_${prop.donor_name.replace(/\s+/g, '_')}.pdf`}
+                    className="w-full"
+                  >
+                    {/* @ts-ignore */}
+                    {({ loading }) => (
+                      <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm h-11" disabled={loading}>
+                        <Download className="w-4 h-4 mr-2" />
+                        {loading ? 'Menyiapkan Sertifikat...' : 'Unduh Sertifikat Penghargaan PDF'}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+ 
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                      `Syalom ${prop.donor_name},\n\n` +
+                      `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
+                      `Dengan penuh rasa hormat dan sukacita, kami segenap Panitia Bakti Sosial Lintas Sinodal 2026 menyampaikan ucapan terima kasih yang mendalam atas donasi pelayanan kasih sebesar ${
+                        prop.donations && prop.donations.length > 0 ? "Rp " + Math.round(prop.donations[0].amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-"
+                      } yang telah kami terima dan verifikasi.\n\n` +
+                      `Keberadaan dukungan Bapak/Ibu adalah bukti nyata kepedulian yang menghidupkan harapan baru bagi saudara-saudara kita yang membutuhkan layanan kesehatan di pelosok Sulawesi Utara. Kami bersyukur atas ketulusan hati Bapak/Ibu.\n\n` +
+                      `Sebagai bentuk apresiasi resmi dan pertanggungjawaban kami, bersama pesan ini kami lampirkan dokumen digital Sertifikat Penghargaan resmi (silakan unduh file PDF yang kami bagikan ini).\n\n` +
+                      `Doa kami senantiasa, kiranya Tuhan Yesus Kristus melimpahkan kesehatan, damai sejahtera, serta memberkati seluruh karya, usaha, dan keluarga Bapak/Ibu. Amin.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-block"
+                  >
+                    <Button className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-bold border-none transition-all hover:scale-[1.01] h-11 flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.5-5.739-1.446L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.863-9.864.001-2.63-1.023-5.101-2.879-6.958C16.6 1.924 14.129.9 11.504.9 6.072.9 1.646 5.321 1.643 10.765c0 1.701.447 3.361 1.294 4.803l-.973 3.556 3.649-.957zm11.597-4.815c-.325-.163-1.926-.95-2.222-1.058-.297-.11-.513-.163-.73.163-.216.325-.838 1.058-1.027 1.275-.19.217-.379.244-.704.082-.325-.162-1.372-.507-2.614-1.613-.966-.862-1.618-1.927-1.807-2.253-.19-.325-.02-.5-.183-.661-.147-.146-.325-.379-.487-.57-.162-.19-.216-.324-.325-.541-.108-.217-.053-.407-.026-.57.027-.162.216-.515.325-.677.108-.162.162-.271.243-.459.082-.19.041-.353-.021-.515-.062-.163-.513-1.246-.704-1.708-.186-.447-.37-.387-.513-.394-.132-.007-.284-.007-.437-.007s-.403.058-.613.285c-.21.228-.802.787-.802 1.918s.82 2.222.934 2.373c.115.151 1.613 2.463 3.908 3.45.546.235.973.376 1.306.482.548.173 1.047.149 1.443.09.44-.066 1.413-.578 1.61-1.139.198-.56.198-1.042.139-1.139-.059-.098-.216-.163-.542-.326z" />
+                      </svg>
+                      Kirim Terima Kasih via WA
+                    </Button>
+                  </a>
+                </div>
+
+                {/* Panduan Pengiriman */}
+                <div className="p-3.5 bg-slate-900/60 rounded-xl border border-white/5 space-y-2 mt-2">
+                  <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider block">💡 Panduan Kirim Sertifikat (Untuk Panitia)</span>
+                  <div className="space-y-1.5 text-[11px] text-slate-400">
+                    <span className="block">1. Klik tombol <span className="text-emerald-400 font-semibold">"Unduh Sertifikat Penghargaan PDF"</span> di atas untuk mengunduh berkas sertifikat donatur.</span>
+                    <span className="block">2. Klik tombol <span className="text-[#25D366] font-semibold">"Kirim Terima Kasih via WA"</span> untuk membuka WhatsApp donatur dengan teks template yang sudah disiapkan otomatis.</span>
+                    <span className="block">3. Di chat WhatsApp donatur, kirimkan teks tersebut dan <span className="text-slate-200 font-semibold">lampirkan berkas PDF</span> sertifikat yang baru Anda unduh.</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             
             <div className="flex gap-3 pt-2">
+              {!hasDonation && (
+                <Button variant="outline" className="flex-1 text-emerald-400 border-emerald-900/50 hover:bg-emerald-900/30 hover:text-emerald-300 bg-slate-900 font-semibold" onClick={() => handleOpenAction('record_payment')}>
+                  <CheckCircle className="w-4 h-4 mr-2" /> Rekam Bayar
+                </Button>
+              )}
               {hasDonation && !isVerified && (
                 <Button variant="outline" className="flex-1 text-emerald-400 border-emerald-900/50 hover:bg-emerald-900/30 hover:text-emerald-300 bg-slate-900" onClick={() => handleOpenAction('verify')}>
                   <CheckCircle className="w-4 h-4 mr-2" /> Verifikasi
@@ -290,13 +409,21 @@ export function ProposalRow({ prop }: { prop: any }) {
         <DialogContent className="sm:max-w-[425px] bg-slate-950 border-white/10 text-slate-200">
           <DialogHeader>
             <DialogTitle className="text-2xl font-heading text-amber-400">
-              {actionType === 'edit' ? 'Edit Proposal' : actionType === 'verify' ? 'Verifikasi Donasi' : 'Hapus Proposal'}
+              {actionType === 'edit' 
+                ? 'Edit Proposal' 
+                : actionType === 'verify' 
+                ? 'Verifikasi Donasi' 
+                : actionType === 'record_payment'
+                ? 'Rekam Pembayaran'
+                : 'Hapus Proposal'}
             </DialogTitle>
             <DialogDescription className="text-slate-400">
               {actionType === 'edit' 
                 ? 'Ubah data proposal di bawah ini. Masukkan passcode otoritas untuk menyimpan.' 
                 : actionType === 'verify'
                 ? 'Konfirmasi nominal donasi yang ditransfer. Nominal ini akan tercatat di Dasbor.'
+                : actionType === 'record_payment'
+                ? 'Rekam pembayaran donatur secara internal. Donasi akan langsung diverifikasi.'
                 : 'Tindakan ini tidak dapat dibatalkan. Masukkan passcode otoritas untuk menghapus permanen.'}
             </DialogDescription>
           </DialogHeader>
@@ -321,7 +448,7 @@ export function ProposalRow({ prop }: { prop: any }) {
                 </div>
               </>
             )}
-            {actionType === 'verify' && (
+            {(actionType === 'verify' || actionType === 'record_payment') && (
               <div className="space-y-2">
                 <Label htmlFor="verificationAmount" className="text-slate-300">Nominal Donasi (Angka)</Label>
                 <Input 
@@ -332,6 +459,34 @@ export function ProposalRow({ prop }: { prop: any }) {
                   placeholder="Contoh: 1.500.000"
                 />
               </div>
+            )}
+            {actionType === 'record_payment' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentDate" className="text-slate-300">Tanggal Bayar / Transfer</Label>
+                  <Input 
+                    id="paymentDate" 
+                    type="date"
+                    value={paymentDate} 
+                    onChange={(e) => setPaymentDate(e.target.value)} 
+                    className="bg-slate-900 border-white/10 text-slate-100" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="receiptFile" className="text-slate-300 font-semibold">Bukti Transfer (Opsional)</Label>
+                  <Input 
+                    id="receiptFile" 
+                    type="file" 
+                    accept="image/*,.pdf"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setReceiptFile(e.target.files[0])
+                      }
+                    }} 
+                    className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3" 
+                  />
+                </div>
+              </>
             )}
             <div className="space-y-2 mt-2">
               <Label htmlFor="passcode" className="text-red-400 font-semibold tracking-wide">Passcode Otorisasi</Label>
@@ -351,9 +506,17 @@ export function ProposalRow({ prop }: { prop: any }) {
             <Button 
               onClick={handleSubmitAction} 
               disabled={isSubmitting}
-              className={actionType === 'delete' ? 'bg-red-600 hover:bg-red-500 text-white' : actionType === 'verify' ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-amber-600 hover:bg-amber-500 text-slate-900 font-bold'}
+              className={actionType === 'delete' ? 'bg-red-600 hover:bg-red-500 text-white' : (actionType === 'verify' || actionType === 'record_payment') ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-amber-600 hover:bg-amber-500 text-slate-900 font-bold'}
             >
-              {isSubmitting ? 'Memproses...' : actionType === 'edit' ? 'Simpan Perubahan' : actionType === 'verify' ? 'Verifikasi Sekarang' : 'Hapus Permanen'}
+              {isSubmitting 
+                ? 'Memproses...' 
+                : actionType === 'edit' 
+                ? 'Simpan Perubahan' 
+                : actionType === 'verify' 
+                ? 'Verifikasi Sekarang' 
+                : actionType === 'record_payment'
+                ? 'Rekam & Verifikasi'
+                : 'Hapus Permanen'}
             </Button>
           </DialogFooter>
         </DialogContent>

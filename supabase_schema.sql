@@ -16,13 +16,24 @@ CREATE SEQUENCE IF NOT EXISTS proposal_number_seq START 1;
 
 CREATE OR REPLACE FUNCTION set_proposal_number()
 RETURNS TRIGGER AS $$
+DECLARE
+  num_val INTEGER;
+  num_text TEXT;
 BEGIN
   IF NEW.proposal_number IS NULL THEN
     NEW.proposal_number := 'BAKSOS-GPIB-2026-' || LPAD(nextval('proposal_number_seq')::TEXT, 4, '0');
+  ELSE
+    -- Jika format manual sesuai (contoh: BAKSOS-GPIB-2026-0003), singkronkan sequence
+    IF NEW.proposal_number ~ '^BAKSOS-GPIB-2026-[0-9]{4}$' THEN
+      num_text := SUBSTRING(NEW.proposal_number FROM '[0-9]{4}$');
+      num_val := CAST(num_text AS INTEGER);
+      PERFORM setval('proposal_number_seq', num_val);
+    END IF;
   END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 DROP TRIGGER IF EXISTS trigger_set_proposal_number ON proposals;
 CREATE TRIGGER trigger_set_proposal_number

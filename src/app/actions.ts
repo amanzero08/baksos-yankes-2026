@@ -259,3 +259,73 @@ export async function verifyDonation(id: string, amount: number, passcode: strin
     return { success: false, error: error.message }
   }
 }
+
+export async function recordInternalPayment(formData: FormData) {
+  try {
+    const proposalId = formData.get('proposalId') as string
+    const amountStr = formData.get('amount') as string
+    const paymentDateStr = formData.get('paymentDate') as string
+    const passcode = formData.get('passcode') as string
+    const file = formData.get('receipt') as File | null
+
+    if (passcode !== '2906') throw new Error('Passcode salah.')
+    if (!proposalId) throw new Error('Proposal wajib dipilih')
+
+    const amount = amountStr ? parseFloat(amountStr.replace(/\D/g,"")) : 0;
+    if (amount <= 0) throw new Error('Nominal donasi harus lebih dari 0')
+
+    // Get donor_name from proposal
+    const { data: prop } = await supabaseAdmin.from('proposals').select('donor_name').eq('id', proposalId).single()
+    if (!prop) throw new Error('Proposal tidak ditemukan')
+    const donorName = prop.donor_name;
+
+    // Handle receipt file
+    let receiptPath = 'internal-by-admin'
+    if (file && file.size > 0) {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      
+      const arrayBuffer = await file.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+
+      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+        .from('receipts')
+        .upload(fileName, buffer, {
+          contentType: file.type,
+        })
+
+      if (uploadError) throw new Error(uploadError.message)
+      receiptPath = uploadData.path
+    }
+
+    // Set custom payment date
+    // paymentDateStr is formatted as YYYY-MM-DD
+    const paymentTimestamp = paymentDateStr 
+      ? new Date(`${paymentDateStr}T12:00:00`).toISOString()
+      : new Date().toISOString();
+
+    const { data: donation, error: insertError } = await supabaseAdmin
+      .from('donations')
+      .insert({
+        donor_name: donorName,
+        proposal_id: proposalId,
+        notes: 'Direkam secara internal oleh Admin',
+        amount: amount,
+        receipt_url: receiptPath,
+        verified: true,
+        created_at: paymentTimestamp
+      })
+      .select()
+      .single()
+
+    if (insertError) throw new Error(insertError.message)
+
+    revalidatePath('/dashboard')
+    revalidatePath('/admin')
+    
+    return { success: true, data: donation }
+  } catch (error: any) {
+    console.error('Error recording internal payment:', error)
+    return { success: false, error: error.message }
+  }
+}
