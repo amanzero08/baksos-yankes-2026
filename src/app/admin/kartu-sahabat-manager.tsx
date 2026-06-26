@@ -204,74 +204,70 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       </div>
 
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="glass-panel border-white/10 text-slate-200 sm:max-w-md max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="font-heading text-2xl text-blue-400 flex items-center gap-2">
-              <Users className="w-6 h-6" /> Detail Kartu Sahabat
+        <DialogContent className="glass-panel border-white/10 text-slate-200 sm:max-w-md max-h-[95vh] overflow-y-auto p-6">
+          <DialogHeader className="space-y-1">
+            <DialogTitle className="font-heading text-xl text-blue-400 flex items-center gap-2">
+              <Users className="w-5 h-5" /> Detail Kartu Sahabat
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Informasi pencapaian panitia dan panel tindakan admin.
+            <DialogDescription className="text-xs text-slate-400">
+              Pencapaian & pembaruan data panitia.
             </DialogDescription>
           </DialogHeader>
 
           {selectedKartu && (
-            <div className="space-y-6 pt-4">
-              {/* Info Cards */}
-              <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5 space-y-4">
+            <div className="space-y-4 pt-2">
+              {/* Info Panel */}
+              <div className="bg-slate-900/40 border border-white/5 rounded-xl p-4 space-y-3">
                 <div>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Nama Panitia</span>
-                  <span className="text-base font-bold text-slate-200">{selectedKartu.committee_name}</span>
+                  <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Nama Panitia</span>
+                  <span className="text-sm font-bold text-slate-200">{selectedKartu.committee_name}</span>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/5 pt-3">
                   <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Terkumpul</span>
-                    <span className="text-lg font-bold text-emerald-400">{formatIDR(selectedKartu.collected_amount || 0)}</span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Terkumpul</span>
+                    <span className="text-base font-bold text-emerald-400">{formatIDR(selectedKartu.collected_amount || 0)}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Target Pribadi</span>
-                    <span className="text-lg font-bold text-slate-300">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Target</span>
+                    <span className="text-base font-bold text-slate-300">
                       {selectedKartu.target_amount ? formatIDR(selectedKartu.target_amount) : "-"}
                     </span>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/5">
                   <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Tanggal Terima</span>
-                    <span className="text-sm font-medium text-slate-200">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Tanggal Terima</span>
+                    <span className="text-xs font-semibold text-slate-200">
                       {selectedKartu.received_at 
-                        ? new Date(selectedKartu.received_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
-                        : "Belum diterima"}
+                        ? new Date(selectedKartu.received_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                        : "Belum"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Lampiran Kartu</span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Lampiran</span>
                     {selectedKartu.photo_url ? (
-                      <span className="text-sm font-semibold text-blue-400">Ada lampiran</span>
+                      <span className="text-xs font-semibold text-blue-400">Tersedia</span>
                     ) : (
-                      <span className="text-sm text-slate-500 italic">Belum ada</span>
+                      <span className="text-xs text-slate-500 italic">Belum ada</span>
                     )}
                   </div>
                 </div>
 
                 {selectedKartu.photo_url && (
                   <div className="pt-2 border-t border-white/5">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Pratinjau Lampiran</span>
-                    <div className="relative group overflow-hidden rounded-xl border border-white/10 bg-slate-950/40">
+                    <div className="relative group overflow-hidden rounded-lg border border-white/5 bg-slate-950/40">
                       <img 
                         src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${selectedKartu.photo_url}`} 
                         alt="Lampiran Kartu Sahabat" 
-                        className="w-full max-h-48 object-contain transition-all duration-300 group-hover:scale-[1.02]"
+                        className="w-full max-h-32 object-contain transition-all duration-300 group-hover:scale-[1.02]"
                       />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <a 
                           href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${selectedKartu.photo_url}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-bold transition-all shadow-md transform translate-y-2 group-hover:translate-y-0 duration-300"
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-[10px] font-bold transition-all shadow"
                         >
-                          Buka Tab Baru
+                          Buka Lampiran
                         </a>
                       </div>
                     </div>
@@ -279,35 +275,35 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                 )}
               </div>
 
-              {/* Form Update Dana */}
-              <form onSubmit={handleEdit} className="space-y-4 border-t border-white/5 pt-5">
-                <h4 className="text-sm font-bold text-blue-400 tracking-wide">Update Data Kartu Sahabat</h4>
+              {/* Form Update */}
+              <form onSubmit={handleEdit} className="space-y-3.5 border-t border-white/5 pt-4">
+                <h4 className="text-[10px] font-bold text-blue-400 tracking-wider uppercase">Pembaruan Data</h4>
                 
-                <div className="space-y-2">
-                  <Label className="text-xs text-slate-400">Nominal Terkumpul (Akan Diformat Otomatis)</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Dana Terkumpul</Label>
                   <Input 
                     required 
                     type="text" 
                     value={collectedAmount} 
                     onChange={handleCollectedAmountChange} 
-                    className="bg-slate-900/50 border-white/10 text-slate-100" 
-                    placeholder="Misal: 1.500.000" 
+                    className="bg-slate-900/50 border-white/10 text-slate-100 h-9 text-sm" 
+                    placeholder="Contoh: 1.500.000" 
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs text-slate-400">Tanggal Terima</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Tanggal Terima</Label>
                     <Input 
                       type="date" 
                       value={receivedAt} 
                       onChange={e => setReceivedAt(e.target.value)} 
-                      className="bg-slate-900/50 border-white/10 text-slate-100 text-sm" 
+                      className="bg-slate-900/50 border-white/10 text-slate-100 text-xs h-9" 
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label className="text-xs text-slate-400">Foto Kartu Sahabat (Lampiran Baru)</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Unggah Foto Kartu</Label>
                     <Input 
                       type="file" 
                       accept="image/*"
@@ -316,36 +312,36 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                           setPhotoFile(e.target.files[0])
                         }
                       }}
-                      className="bg-slate-900/50 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 text-xs" 
+                      className="bg-slate-900/50 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-2 file:py-1 file:mr-2 text-[10px] h-9 flex items-center" 
                     />
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label className="text-xs text-slate-400">Passcode Admin</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Passcode Admin</Label>
                   <Input 
                     required 
                     type="password" 
                     value={passcode} 
                     onChange={e => setPasscode(e.target.value)} 
-                    className="bg-slate-900/50 border-white/10 text-slate-100" 
+                    className="bg-slate-900/50 border-white/10 text-slate-100 h-9 text-sm" 
                   />
                 </div>
 
-                {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
+                {error && <p className="text-red-400 text-xs font-medium">{error}</p>}
                 
-                <div className="flex gap-3 pt-2">
+                <div className="flex gap-2.5 pt-2">
                   <Button 
                     type="submit" 
                     disabled={loading} 
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-bold"
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold h-9 text-xs"
                   >
-                    {loading ? "Mengupdate..." : "Update Data"}
+                    {loading ? "Menyimpan..." : "Simpan Perubahan"}
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline"
-                    className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400 text-red-500 rounded-full font-semibold px-4"
+                    className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400 text-red-500 rounded-full font-semibold px-4 h-9 text-xs"
                     onClick={() => handleDelete(selectedKartu.id)}
                   >
                     Hapus
