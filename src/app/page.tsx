@@ -17,6 +17,12 @@ const stagger: Variants = {
 }
 
 export default function Home() {
+  const targetDate = new Date("2026-09-14T00:00:00+07:00");
+  const today = new Date();
+  const diffTime = targetDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const daysText = diffDays > 0 ? `• ${diffDays} Hari Lagi` : diffDays === 0 ? "• Hari Ini" : "";
+
   return (
     <main className="flex flex-col min-h-screen bg-slate-950 text-slate-200 selection:bg-amber-500/30 selection:text-amber-200 pb-24 sm:pb-0 overflow-hidden relative">
       
@@ -43,7 +49,7 @@ export default function Home() {
         >
           <motion.div variants={fadeUp} className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 backdrop-blur-md px-5 py-2 text-sm font-medium text-amber-200 mb-8 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
             <Sparkles className="w-4 h-4 mr-2 text-amber-400" />
-            <span className="tracking-wide">Pelayanan Kasih 14 - 18 September 2026</span>
+            <span className="tracking-wide">Pelayanan Kasih 14 - 18 September 2026 {daysText}</span>
           </motion.div>
           
           <motion.div variants={fadeUp}>

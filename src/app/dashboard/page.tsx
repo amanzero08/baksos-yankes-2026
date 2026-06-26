@@ -9,6 +9,12 @@ export const revalidate = 0;
 export default async function DashboardPage() {
   const GLOBAL_TARGET = 774500000;
 
+  const targetDate = new Date("2026-09-14T00:00:00+07:00");
+  const today = new Date();
+  const diffTime = targetDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const daysText = diffDays > 0 ? `${diffDays} Hari Lagi` : diffDays === 0 ? "Hari Ini" : "Sudah Lewat";
+
   // Fetch proposals with donations
   const { data: proposalsList } = await supabaseAdmin
     .from("proposals")
@@ -42,6 +48,20 @@ export default async function DashboardPage() {
   // Total Collected overall
   const totalCollected = totalProposalDonations + totalKartuSahabat + totalGeneralDonations;
   
+  // Fetch 5 most recent proposals with donation status
+  const { data: recentProposals } = await supabaseAdmin
+    .from("proposals")
+    .select("id, proposal_number, donor_name, institution, created_at, donations(amount, verified)")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  // Fetch 5 most recent kartu sahabat
+  const { data: recentKartuSahabat } = await supabaseAdmin
+    .from("kartu_sahabat")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(5);
+  
   const progressPercentage = Math.min(100, Math.max(0, (totalCollected / GLOBAL_TARGET) * 100));
 
   // Proposal counts
@@ -71,7 +91,12 @@ export default async function DashboardPage() {
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         <div className="text-center">
           <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-slate-100 tracking-tight mt-6">Dasbor Pencapaian</h1>
-          <p className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto">Pantauan <span className="italic">real-time</span> penggalangan dana Bakti Sosial Lintas Sinodal 2026 melalui Proposal dan Kartu Sahabat.</p>
+          <div className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+            <span>Pantauan <span className="italic">real-time</span> penggalangan dana Bakti Sosial Lintas Sinodal 2026.</span>
+            <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-xs font-bold text-amber-400 whitespace-nowrap shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+              ⏳ {daysText}
+            </span>
+          </div>
         </div>
 
         {/* Global Progress Bar */}
@@ -225,81 +250,113 @@ export default async function DashboardPage() {
               </CardContent>
             </Card>
           )}
-        </div>
+        </div>        <div className="grid lg:grid-cols-2 gap-8 relative z-10">
+          {/* Proposal Terupdate (5 Terbaru) */}
+          <Card className="glass-panel border-t-4 border-t-amber-500 rounded-[2rem] overflow-hidden">
+            <CardHeader className="bg-slate-900/40 border-b border-white/5 pb-6 px-6 sm:px-8 pt-8">
+              <CardTitle className="text-xl text-amber-500 font-heading tracking-wide flex items-center">
+                <FileText className="w-5.5 h-5.5 mr-2.5" />
+                5 Proposal Terupdate
+              </CardTitle>
+              <CardDescription className="text-slate-400 mt-1">Daftar proposal yang baru-baru ini dibuat atau diverifikasi.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {recentProposals && recentProposals.length > 0 ? (
+                <div className="overflow-x-auto hide-scrollbar">
+                  <Table className="w-full">
+                    <TableHeader>
+                      <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
+                        <TableHead className="font-bold text-amber-500 uppercase text-[10px] tracking-wider px-6 py-4">Nomor</TableHead>
+                        <TableHead className="font-bold text-amber-500 uppercase text-[10px] tracking-wider py-4">Tujuan / Donatur</TableHead>
+                        <TableHead className="font-bold text-amber-500 uppercase text-[10px] tracking-wider px-6 py-4 text-right">Donasi / Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recentProposals.map((prop: any) => {
+                        const hasDon = prop.donations && prop.donations.length > 0;
+                        const isVer = hasDon && prop.donations.some((d: any) => d.verified);
+                        const donAmt = hasDon ? prop.donations[0].amount : 0;
+                        return (
+                          <TableRow key={prop.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <TableCell className="px-6 py-4 font-bold text-amber-500 text-xs tracking-wide">
+                              {prop.proposal_number}
+                            </TableCell>
+                            <TableCell className="py-4">
+                              <div className="flex flex-col">
+                                <span className="font-semibold text-slate-200 text-xs">{prop.donor_name}</span>
+                                {prop.institution && (
+                                  <span className="text-[10px] text-slate-400 font-medium truncate max-w-[150px]">{prop.institution}</span>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="px-6 py-4 text-right text-xs">
+                              {isVer ? (
+                                <span className="text-emerald-400 font-bold">{formatIDR(donAmt)}</span>
+                              ) : hasDon ? (
+                                <span className="text-amber-400 font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 text-[10px]">Review</span>
+                              ) : (
+                                <span className="text-slate-500 text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-white/5">Belum Ada</span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="p-10 text-center">
+                  <p className="text-slate-500 text-sm font-medium">Belum ada data proposal.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-        {/* Kartu Sahabat Leaderboard / List */}
-        <Card className="glass-panel border-t-4 border-t-blue-500 rounded-[2rem] overflow-hidden">
-          <CardHeader className="bg-slate-900/40 border-b border-white/5 pb-6 px-6 sm:px-10 pt-8">
-            <CardTitle className="text-2xl text-blue-400 font-heading tracking-wide flex items-center">
-              <Award className="w-6 h-6 mr-3" />
-              Pencapaian Kartu Sahabat
-            </CardTitle>
-            <CardDescription className="text-slate-400 mt-1">Daftar panitia beserta dana yang telah terkumpul melalui Kartu Sahabat masing-masing.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            {kartuSahabatList && kartuSahabatList.length > 0 ? (
-              <div className="overflow-x-auto hide-scrollbar">
-                <Table className="w-full md:min-w-[600px]">
-                  <TableHeader className="hidden md:table-header-group">
-                    <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
-                      <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 sm:px-10 py-6">Peringkat</TableHead>
-                      <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-6">Nama Panitia</TableHead>
-                      <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest py-6 text-right">Terkumpul</TableHead>
-                      <TableHead className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 sm:px-10 py-6 text-right">Target Pribadi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {kartuSahabatList.map((kartu: any, idx: number) => (
-                      <React.Fragment key={kartu.id}>
-                        {/* Desktop View */}
-                        <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors group">
-                          <TableCell className="px-6 sm:px-10 py-5 font-bold text-slate-400 group-hover:text-amber-400">
-                            #{idx + 1}
-                          </TableCell>
-                          <TableCell className="py-5 font-bold text-slate-200">
+          {/* Kartu Sahabat Terupdate (5 Terbaru) */}
+          <Card className="glass-panel border-t-4 border-t-blue-500 rounded-[2rem] overflow-hidden">
+            <CardHeader className="bg-slate-900/40 border-b border-white/5 pb-6 px-6 sm:px-8 pt-8">
+              <CardTitle className="text-xl text-blue-400 font-heading tracking-wide flex items-center">
+                <Award className="w-5.5 h-5.5 mr-2.5" />
+                5 Kartu Sahabat Terupdate
+              </CardTitle>
+              <CardDescription className="text-slate-400 mt-1">Daftar kartu sahabat dengan pembaruan data atau pembagian terbaru.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {recentKartuSahabat && recentKartuSahabat.length > 0 ? (
+                <div className="overflow-x-auto hide-scrollbar">
+                  <Table className="w-full">
+                    <TableHeader>
+                      <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
+                        <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider px-6 py-4">Nama Panitia</TableHead>
+                        <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider py-4 text-right">Terkumpul</TableHead>
+                        <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider px-6 py-4 text-right">Target</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recentKartuSahabat.map((kartu: any) => (
+                        <TableRow key={kartu.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <TableCell className="px-6 py-4 font-semibold text-slate-200 text-xs">
                             {kartu.committee_name}
                           </TableCell>
-                          <TableCell className="py-5 text-emerald-400 font-bold text-right text-lg">
+                          <TableCell className="py-4 text-emerald-400 font-bold text-right text-xs">
                             {formatIDR(kartu.collected_amount || 0)}
                           </TableCell>
-                          <TableCell className="px-6 sm:px-10 py-5 text-slate-400 font-medium text-right">
+                          <TableCell className="px-6 py-4 text-slate-400 font-medium text-right text-xs">
                             {kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}
                           </TableCell>
                         </TableRow>
-
-                        {/* Mobile Card View */}
-                        <TableRow className="md:hidden block border-b border-white/5 p-5 hover:bg-white/5 transition-colors group">
-                          <td className="block w-full">
-                            <div className="flex justify-between items-center mb-3">
-                              <span className="font-bold text-slate-200 text-lg flex items-center gap-3">
-                                <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md text-sm">#{idx + 1}</span>
-                                {kartu.committee_name}
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                              <div className="flex flex-col">
-                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Terkumpul</span>
-                                <span className="text-emerald-400 font-bold text-lg">{formatIDR(kartu.collected_amount || 0)}</span>
-                              </div>
-                              <div className="flex flex-col text-right">
-                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Target Pribadi</span>
-                                <span className="text-slate-400 font-medium">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</span>
-                              </div>
-                            </div>
-                          </td>
-                        </TableRow>
-                      </React.Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <div className="p-16 text-center">
-                <p className="text-slate-500 font-medium">Belum ada data Kartu Sahabat.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="p-10 text-center">
+                  <p className="text-slate-500 text-sm font-medium">Belum ada data Kartu Sahabat.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </main>
   );
