@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Plus, Edit2, Trash2, Users } from "lucide-react"
-import { createKartuSahabat, updateKartuSahabatAmount, deleteKartuSahabat } from "@/app/actions"
+import { createKartuSahabat, updateKartuSahabat, deleteKartuSahabat } from "@/app/actions"
 
 export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [isAddOpen, setIsAddOpen] = useState(false)
@@ -17,6 +17,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [committeeName, setCommitteeName] = useState("")
   const [targetAmount, setTargetAmount] = useState("")
   const [collectedAmount, setCollectedAmount] = useState("")
+  const [receivedAt, setReceivedAt] = useState("")
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [passcode, setPasscode] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -56,22 +58,47 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     setLoading(false)
   }
 
+  const handleOpenDetails = (kartu: any) => {
+    setSelectedKartu(kartu)
+    const rawVal = kartu.collected_amount?.toString() || ""
+    setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "")
+    setReceivedAt(kartu.received_at || "")
+    setPhotoFile(null)
+    setPasscode("")
+    setError("")
+    setIsDetailsOpen(true)
+  }
+
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
     
-    const collectedNum = collectedAmount ? parseFloat(collectedAmount.replace(/\D/g,"")) : 0;
-    
-    const res = await updateKartuSahabatAmount(selectedKartu.id, collectedNum, passcode)
-    if (res.success) {
-      setIsDetailsOpen(false)
-      setCollectedAmount("")
-      setPasscode("")
-    } else {
-      setError(res.error || "Gagal mengupdate dana")
+    try {
+      const formData = new FormData()
+      formData.append("id", selectedKartu.id)
+      formData.append("collectedAmount", collectedAmount)
+      formData.append("receivedAt", receivedAt)
+      formData.append("passcode", passcode)
+      if (photoFile) {
+        formData.append("photo", photoFile)
+      }
+      
+      const res = await updateKartuSahabat(formData)
+      if (res.success) {
+        setIsDetailsOpen(false)
+        setCollectedAmount("")
+        setReceivedAt("")
+        setPhotoFile(null)
+        setPasscode("")
+      } else {
+        setError(res.error || "Gagal mengupdate data")
+      }
+    } catch (err: any) {
+      setError(err.message || "Terjadi kesalahan")
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const handleDelete = async (id: string) => {
@@ -136,14 +163,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                 <React.Fragment key={kartu.id}>
                   {/* Desktop View */}
                   <TableRow 
-                    onClick={() => {
-                      setSelectedKartu(kartu);
-                      const rawVal = kartu.collected_amount?.toString() || "";
-                      setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "");
-                      setPasscode("");
-                      setError("");
-                      setIsDetailsOpen(true);
-                    }}
+                    onClick={() => handleOpenDetails(kartu)}
                     className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <TableCell className="px-6 py-4 font-bold text-slate-200">{kartu.committee_name}</TableCell>
@@ -153,14 +173,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
 
                   {/* Mobile Card View */}
                   <TableRow 
-                    onClick={() => {
-                      setSelectedKartu(kartu);
-                      const rawVal = kartu.collected_amount?.toString() || "";
-                      setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "");
-                      setPasscode("");
-                      setError("");
-                      setIsDetailsOpen(true);
-                    }}
+                    onClick={() => handleOpenDetails(kartu)}
                     className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <td className="block w-full">
@@ -222,11 +235,53 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     </span>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/5">
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Tanggal Terima</span>
+                    <span className="text-sm font-medium text-slate-200">
+                      {selectedKartu.received_at 
+                        ? new Date(selectedKartu.received_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                        : "Belum diterima"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Lampiran Kartu</span>
+                    {selectedKartu.photo_url ? (
+                      <span className="text-sm font-semibold text-blue-400">Ada lampiran</span>
+                    ) : (
+                      <span className="text-sm text-slate-500 italic">Belum ada</span>
+                    )}
+                  </div>
+                </div>
+
+                {selectedKartu.photo_url && (
+                  <div className="pt-2 border-t border-white/5">
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Pratinjau Lampiran</span>
+                    <div className="relative group overflow-hidden rounded-xl border border-white/10 bg-slate-950/40">
+                      <img 
+                        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${selectedKartu.photo_url}`} 
+                        alt="Lampiran Kartu Sahabat" 
+                        className="w-full max-h-48 object-contain transition-all duration-300 group-hover:scale-[1.02]"
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <a 
+                          href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${selectedKartu.photo_url}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-bold transition-all shadow-md transform translate-y-2 group-hover:translate-y-0 duration-300"
+                        >
+                          Buka Tab Baru
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Form Update Dana */}
               <form onSubmit={handleEdit} className="space-y-4 border-t border-white/5 pt-5">
-                <h4 className="text-sm font-bold text-blue-400 tracking-wide">Update Dana Terkumpul</h4>
+                <h4 className="text-sm font-bold text-blue-400 tracking-wide">Update Data Kartu Sahabat</h4>
                 
                 <div className="space-y-2">
                   <Label className="text-xs text-slate-400">Nominal Terkumpul (Akan Diformat Otomatis)</Label>
@@ -238,6 +293,32 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     className="bg-slate-900/50 border-white/10 text-slate-100" 
                     placeholder="Misal: 1.500.000" 
                   />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-slate-400">Tanggal Terima</Label>
+                    <Input 
+                      type="date" 
+                      value={receivedAt} 
+                      onChange={e => setReceivedAt(e.target.value)} 
+                      className="bg-slate-900/50 border-white/10 text-slate-100 text-sm" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-xs text-slate-400">Foto Kartu Sahabat (Lampiran Baru)</Label>
+                    <Input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={e => {
+                        if (e.target.files && e.target.files[0]) {
+                          setPhotoFile(e.target.files[0])
+                        }
+                      }}
+                      className="bg-slate-900/50 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 text-xs" 
+                    />
+                  </div>
                 </div>
                 
                 <div className="space-y-2">
@@ -259,7 +340,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     disabled={loading} 
                     className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-bold"
                   >
-                    {loading ? "Mengupdate..." : "Update Dana"}
+                    {loading ? "Mengupdate..." : "Update Data"}
                   </Button>
                   <Button 
                     type="button" 

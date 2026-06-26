@@ -200,16 +200,45 @@ export async function createKartuSahabat(data: { committeeName: string, targetAm
   }
 }
 
-export async function updateKartuSahabatAmount(id: string, collectedAmount: number, passcode: string) {
+export async function updateKartuSahabat(formData: FormData) {
   try {
+    const id = formData.get('id') as string
+    const collectedAmountStr = formData.get('collectedAmount') as string
+    const receivedAtStr = formData.get('receivedAt') as string // YYYY-MM-DD
+    const passcode = formData.get('passcode') as string
+    const file = formData.get('photo') as File | null
+
     if (passcode !== '2906') throw new Error('Passcode salah.')
-    
-    // Poka-Yoke: Cegah angka negatif
+    if (!id) throw new Error('ID Kartu Sahabat tidak ditemukan.')
+
+    const collectedAmount = collectedAmountStr ? parseFloat(collectedAmountStr.replace(/\D/g,"")) : 0
     if (collectedAmount < 0) throw new Error('Nominal tidak boleh negatif')
+
+    const updateData: any = {
+      collected_amount: collectedAmount,
+      received_at: receivedAtStr || null
+    }
+
+    if (file && file.size > 0) {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      
+      const arrayBuffer = await file.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+
+      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+        .from('receipts')
+        .upload(`kartu-sahabat/${fileName}`, buffer, {
+          contentType: file.type,
+        })
+
+      if (uploadError) throw new Error(uploadError.message)
+      updateData.photo_url = uploadData.path
+    }
 
     const { data: updated, error } = await supabaseAdmin
       .from('kartu_sahabat')
-      .update({ collected_amount: collectedAmount })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single()

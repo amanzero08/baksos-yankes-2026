@@ -68,6 +68,8 @@ CREATE TABLE IF NOT EXISTS kartu_sahabat (
   committee_name TEXT NOT NULL,
   collected_amount NUMERIC DEFAULT 0,
   target_amount NUMERIC,
+  received_at DATE,
+  photo_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
