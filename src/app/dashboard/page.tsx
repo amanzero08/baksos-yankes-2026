@@ -32,7 +32,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // Fetch all verified donations
   const { data: donations } = await supabaseAdmin
     .from("donations")
-    .select("amount, proposal_id")
+    .select("amount, proposal_id, created_at")
     .eq("verified", true);
 
   // Total collected from verified donations that are linked to a proposal
@@ -68,6 +68,86 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     .limit(5);
   
   const progressPercentage = Math.min(100, Math.max(0, (totalCollected / GLOBAL_TARGET) * 100));
+
+  // Process chart data: cumulative growth per week
+  const transactions: { date: Date; amount: number }[] = [];
+  
+  donations?.forEach(d => {
+    if (d.created_at) {
+      transactions.push({
+        date: new Date(d.created_at),
+        amount: Number(d.amount) || 0
+      });
+    }
+  });
+
+  kartuSahabatList?.forEach(k => {
+    const d = k.received_at ? new Date(k.received_at) : k.created_at ? new Date(k.created_at) : null;
+    const amount = Number(k.collected_amount) || 0;
+    if (d && amount > 0) {
+      transactions.push({
+        date: d,
+        amount: amount
+      });
+    }
+  });
+
+  // Sort transactions by date ascending
+  transactions.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  // Determine starting date: go back 5 weeks from now
+  const now = new Date();
+  let startDate = new Date();
+  startDate.setDate(now.getDate() - 35); // Default to last 5 weeks
+
+  if (transactions.length > 0) {
+    startDate = new Date(transactions[0].date);
+  }
+  // Align to Sunday
+  startDate.setHours(0, 0, 0, 0);
+  const dayOffset = startDate.getDay();
+  startDate.setDate(startDate.getDate() - dayOffset);
+
+  // Generate 6 weeks of intervals
+  const weeksData: { label: string; cumulative: number }[] = [];
+  let runningSum = 0;
+  let currentTxIndex = 0;
+
+  for (let i = 0; i < 6; i++) {
+    const weekEnd = new Date(startDate);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+    
+    while (currentTxIndex < transactions.length && transactions[currentTxIndex].date <= weekEnd) {
+      runningSum += transactions[currentTxIndex].amount;
+      currentTxIndex++;
+    }
+
+    const monthLabel = weekEnd.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    weeksData.push({
+      label: monthLabel,
+      cumulative: runningSum
+    });
+
+    startDate.setDate(startDate.getDate() + 7);
+  }
+
+  const maxVal = Math.max(...weeksData.map(w => w.cumulative), 10000000);
+
+  const formatShortIDR = (val: number) => {
+    if (val === 0) return "Rp 0";
+    if (val >= 1000000000) return "Rp " + (val / 1000000000).toFixed(1) + "M";
+    if (val >= 1000000) return "Rp " + (val / 1000000).toFixed(0) + "jt";
+    return "Rp " + val.toLocaleString('id-ID');
+  };
+
+  const points = weeksData.map((w, idx) => {
+    const x = 35 + (idx / (weeksData.length - 1)) * (500 - 70);
+    const y = 160 - (maxVal > 0 ? (w.cumulative / maxVal) * 110 : 0);
+    return { x, y, label: w.label, cumulative: w.cumulative };
+  });
+
+  const lineD = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const areaD = `${lineD} L ${points[points.length - 1].x} 170 L ${points[0].x} 170 Z`;
 
   // Proposal counts
   const totalProposalsCount = proposalsList?.length || 0;
@@ -162,6 +242,78 @@ export default async function DashboardPage({ searchParams }: PageProps) {
               <span className="text-slate-400">0%</span>
               <span className="text-emerald-400 text-base">{progressPercentage.toFixed(1)}% Tercapai</span>
               <span className="text-slate-400">100%</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Trend Keuangan Card */}
+        <Card className="glass-panel border-t-4 border-t-emerald-500 rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.1)]">
+          <CardHeader className="pb-2 px-6 sm:px-10 pt-8">
+            <CardTitle className="text-xl font-bold text-slate-200 flex items-center">
+              <TrendingUp className="w-5 h-5 mr-3 text-emerald-500" />
+              Tren Pertumbuhan Dana Masuk (Kumulatif)
+            </CardTitle>
+            <CardDescription className="text-slate-400">
+              Pertumbuhan akumulasi dana masuk mingguan dari gabungan proposal kemitraan dan kartu sahabat.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-6 sm:px-10 pb-8 pt-4">
+            <div className="w-full bg-slate-950/50 rounded-2xl border border-white/5 p-4 relative overflow-hidden flex flex-col items-center">
+              <svg className="w-full h-[180px]" viewBox="0 0 500 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                  </linearGradient>
+                  <linearGradient id="lineGlow" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#059669" />
+                    <stop offset="50%" stopColor="#10b981" />
+                    <stop offset="100%" stopColor="#34d399" />
+                  </linearGradient>
+                </defs>
+                <style>{`
+                  @keyframes pathDraw {
+                    to {
+                      stroke-dashoffset: 0;
+                    }
+                  }
+                  .animate-path {
+                    stroke-dasharray: 1000;
+                    stroke-dashoffset: 1000;
+                    animation: pathDraw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                  }
+                `}</style>
+                
+                {/* Horizontal Dotted Grid Lines */}
+                <line x1="35" y1="50" x2="465" y2="50" stroke="#ffffff" strokeOpacity="0.05" strokeDasharray="3,3" />
+                <line x1="35" y1="105" x2="465" y2="105" stroke="#ffffff" strokeOpacity="0.05" strokeDasharray="3,3" />
+                <line x1="35" y1="160" x2="465" y2="160" stroke="#ffffff" strokeOpacity="0.05" strokeDasharray="3,3" />
+
+                {/* Area Gradient Fill */}
+                <path d={areaD} fill="url(#chartGradient)" />
+
+                {/* Line Plot */}
+                <path d={lineD} fill="none" stroke="url(#lineGlow)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="animate-path" />
+
+                {/* Points & Value Badges */}
+                {points.map((p, idx) => (
+                  <g key={idx}>
+                    {/* Pulsing ring for the last dot */}
+                    {idx === points.length - 1 && (
+                      <circle cx={p.x} cy={p.y} r="5" fill="none" stroke="#10b981" strokeWidth="1.5">
+                        <animate attributeName="r" values="5;12;5" dur="3s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.8;0;0.8" dur="3s" repeatCount="indefinite" />
+                      </circle>
+                    )}
+                    {/* Plot Dot */}
+                    <circle cx={p.x} cy={p.y} r="4.5" fill="#10b981" stroke="#0f172a" strokeWidth="2" />
+                    {/* Value label above dot */}
+                    <text x={p.x} y={p.y - 12} fill="#34d399" fontSize="8.5" fontWeight="700" textAnchor="middle">{formatShortIDR(p.cumulative)}</text>
+                    {/* Date label below chart */}
+                    <text x={p.x} y="185" fill="#64748b" fontSize="8" fontWeight="600" textAnchor="middle">{p.label}</text>
+                  </g>
+                ))}
+              </svg>
             </div>
           </CardContent>
         </Card>
