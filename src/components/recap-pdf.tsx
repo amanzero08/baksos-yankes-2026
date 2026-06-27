@@ -252,6 +252,7 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
     }, 0) || 0;
 
   const totalKartuSahabat = kartuSahabat?.reduce((sum, item) => sum + (Number(item.collected_amount) || 0), 0) || 0;
+  const totalTargetKartu = kartuSahabat?.reduce((sum, item) => sum + (Number(item.target_amount) || 0), 0) || 0;
   const totalCollected = totalProposalDonations + totalKartuSahabat;
   const remainingAmount = Math.max(0, GLOBAL_TARGET - totalCollected);
   const progressPercent = (totalCollected / GLOBAL_TARGET) * 100;
@@ -440,6 +441,31 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
           )}
         </View>
 
+        {/* Summary Info Box */}
+        <View style={{
+          backgroundColor: '#f8fafc',
+          borderWidth: 1,
+          borderColor: '#e2e8f0',
+          borderRadius: 6,
+          padding: 10,
+          marginTop: 10,
+          flexDirection: 'row',
+          justifyContent: 'space-between'
+        }}>
+          <View style={{ width: '30%' }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Proposal Dikirim</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{totalProposals} Dokumen</Text>
+          </View>
+          <View style={{ width: '35%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 12 }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Proposal Terisi (Lunas)</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#047857' }}>{confirmedProposals} Dokumen</Text>
+          </View>
+          <View style={{ width: '35%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 12 }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Total Dana Terkonfirmasi</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#047857' }}>{formatCurrency(totalProposalDonations)}</Text>
+          </View>
+        </View>
+
         {/* Footer */}
         <View style={styles.footer} fixed>
           <Text>Laporan Rekapitulasi LPJ Dana Baksos Lintas Sinodal 2026</Text>
@@ -510,6 +536,35 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
               <Text style={{ ...styles.tableCol, width: '100%', textAlign: 'center', paddingVertical: 10 }}>Belum ada data kartu sahabat.</Text>
             </View>
           )}
+        </View>
+
+        {/* Summary Info Box */}
+        <View style={{
+          backgroundColor: '#f8fafc',
+          borderWidth: 1,
+          borderColor: '#e2e8f0',
+          borderRadius: 6,
+          padding: 10,
+          marginTop: 10,
+          flexDirection: 'row',
+          justifyContent: 'space-between'
+        }}>
+          <View style={{ width: '22%' }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Kartu Edar</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{totalKartu} Lembar</Text>
+          </View>
+          <View style={{ width: '25%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 10 }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Kartu Terisi ({">"} 0)</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#b45309' }}>{activeKartu} Lembar</Text>
+          </View>
+          <View style={{ width: '26%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 10 }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Total Target Dana</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{formatCurrency(totalTargetKartu)}</Text>
+          </View>
+          <View style={{ width: '27%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 10 }}>
+            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Total Dana Himpun</Text>
+            <Text style={{ fontSize: 11, fontWeight: 700, color: '#047857' }}>{formatCurrency(totalKartuSahabat)}</Text>
+          </View>
         </View>
 
         {/* Footer */}
