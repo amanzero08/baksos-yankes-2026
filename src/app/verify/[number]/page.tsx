@@ -146,7 +146,7 @@ export default async function VerifyProposalPage({ params }: PageProps) {
             {/* Footer Note */}
             <div className="px-8 sm:px-10 py-6 bg-slate-950/60 border-t border-white/5 text-center">
               <p className="text-[10px] text-slate-500 leading-relaxed">
-                Sertifikasi Digital ini diterbitkan oleh panitia **Bakti Sosial Lintas Sinodal 2026** (GPIB & GMIM). Dokumen ini sah dan terdaftar resmi secara hukum di dalam server database kami.
+                Sertifikasi Digital ini diterbitkan oleh panitia <strong className="font-bold text-slate-400">Bakti Sosial Lintas Sinodal 2026</strong> (GPIB & GMIM). Dokumen ini sah dan terdaftar resmi secara hukum di dalam server database kami.
               </p>
             </div>
           </div>
