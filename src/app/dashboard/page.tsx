@@ -69,25 +69,26 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   
   const progressPercentage = Math.min(100, Math.max(0, (totalCollected / GLOBAL_TARGET) * 100));
 
-  // Process chart data: cumulative growth per week
-  const transactions: { date: Date; amount: number }[] = [];
+  // Process chart data: cumulative growth over individual milestones
+  const transactions: { date: Date; amount: number; label: string }[] = [];
   
   donations?.forEach(d => {
-    if (d.created_at) {
+    if (d.amount) {
       transactions.push({
-        date: new Date(d.created_at),
-        amount: Number(d.amount) || 0
+        date: d.created_at ? new Date(d.created_at) : new Date(),
+        amount: Number(d.amount) || 0,
+        label: "Proposal"
       });
     }
   });
 
   kartuSahabatList?.forEach(k => {
-    const d = k.received_at ? new Date(k.received_at) : k.created_at ? new Date(k.created_at) : null;
     const amount = Number(k.collected_amount) || 0;
-    if (d && amount > 0) {
+    if (amount > 0) {
       transactions.push({
-        date: d,
-        amount: amount
+        date: k.received_at ? new Date(k.received_at) : k.created_at ? new Date(k.created_at) : new Date(),
+        amount: amount,
+        label: "Kartu Sahabat"
       });
     }
   });
@@ -95,43 +96,52 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // Sort transactions by date ascending
   transactions.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  // Determine starting date: go back 5 weeks from now
-  const now = new Date();
-  let startDate = new Date();
-  startDate.setDate(now.getDate() - 35); // Default to last 5 weeks
-
-  if (transactions.length > 0) {
-    startDate = new Date(transactions[0].date);
-  }
-  // Align to Sunday
-  startDate.setHours(0, 0, 0, 0);
-  const dayOffset = startDate.getDay();
-  startDate.setDate(startDate.getDate() - dayOffset);
-
-  // Generate 6 weeks of intervals
-  const weeksData: { label: string; cumulative: number }[] = [];
+  // Generate milestone cumulative points
+  const milestones: { label: string; cumulative: number }[] = [];
   let runningSum = 0;
-  let currentTxIndex = 0;
 
-  for (let i = 0; i < 6; i++) {
-    const weekEnd = new Date(startDate);
-    weekEnd.setDate(weekEnd.getDate() + 7);
+  if (transactions.length === 0) {
+    for (let i = 0; i < 6; i++) {
+      milestones.push({ label: "-", cumulative: 0 });
+    }
+  } else {
+    // Generate running sum milestones
+    const allMilestones: { label: string; cumulative: number }[] = [];
     
-    while (currentTxIndex < transactions.length && transactions[currentTxIndex].date <= weekEnd) {
-      runningSum += transactions[currentTxIndex].amount;
-      currentTxIndex++;
+    // Add starting point (0)
+    if (transactions.length > 0) {
+      const firstTxDate = transactions[0].date;
+      const prevDate = new Date(firstTxDate);
+      prevDate.setDate(prevDate.getDate() - 1);
+      allMilestones.push({
+        label: prevDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+        cumulative: 0
+      });
     }
 
-    const monthLabel = weekEnd.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-    weeksData.push({
-      label: monthLabel,
-      cumulative: runningSum
+    transactions.forEach(t => {
+      runningSum += t.amount;
+      const dateStr = t.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+      allMilestones.push({
+        label: dateStr,
+        cumulative: runningSum
+      });
     });
 
-    startDate.setDate(startDate.getDate() + 7);
+    if (allMilestones.length < 6) {
+      // Pad with initial 0s at the start
+      const padCount = 6 - allMilestones.length;
+      for (let i = 0; i < padCount; i++) {
+        milestones.push({ label: "-", cumulative: 0 });
+      }
+      milestones.push(...allMilestones);
+    } else {
+      // Take the last 6 milestones to show the progression leading up to the final total
+      milestones.push(...allMilestones.slice(-6));
+    }
   }
 
-  const maxVal = Math.max(...weeksData.map(w => w.cumulative), 10000000);
+  const maxVal = Math.max(...milestones.map(m => m.cumulative), 10000000);
 
   const formatShortIDR = (val: number) => {
     if (val === 0) return "Rp 0";
@@ -140,10 +150,10 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     return "Rp " + val.toLocaleString('id-ID');
   };
 
-  const points = weeksData.map((w, idx) => {
-    const x = 35 + (idx / (weeksData.length - 1)) * (500 - 70);
-    const y = 160 - (maxVal > 0 ? (w.cumulative / maxVal) * 110 : 0);
-    return { x, y, label: w.label, cumulative: w.cumulative };
+  const points = milestones.map((m, idx) => {
+    const x = 35 + (idx / (milestones.length - 1)) * (500 - 70);
+    const y = 160 - (maxVal > 0 ? (m.cumulative / maxVal) * 110 : 0);
+    return { x, y, label: m.label, cumulative: m.cumulative };
   });
 
   const lineD = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
@@ -251,10 +261,10 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <CardHeader className="pb-2 px-6 sm:px-10 pt-8">
             <CardTitle className="text-xl font-bold text-slate-200 flex items-center">
               <TrendingUp className="w-5 h-5 mr-3 text-emerald-500" />
-              Tren Pertumbuhan Dana Masuk (Kumulatif)
+              Tren Akumulasi Dana Masuk
             </CardTitle>
             <CardDescription className="text-slate-400">
-              Pertumbuhan akumulasi dana masuk mingguan dari gabungan proposal kemitraan dan kartu sahabat.
+              Langkah akumulasi dana masuk dari transaksi proposal kemitraan dan kartu sahabat secara kronologis.
             </CardDescription>
           </CardHeader>
           <CardContent className="px-6 sm:px-10 pb-8 pt-4">
