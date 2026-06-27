@@ -51,10 +51,11 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false })
     .limit(5);
 
-  // Fetch 5 most recent kartu sahabat
+  // Fetch 5 kartu sahabat, prioritizing those that have results (collected_amount > 0)
   const { data: recentKartuSahabat } = await supabaseAdmin
     .from("kartu_sahabat")
     .select("*")
+    .order("collected_amount", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(5);
   
