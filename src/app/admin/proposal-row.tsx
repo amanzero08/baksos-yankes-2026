@@ -26,7 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-export function ProposalRow({ prop }: { prop: any }) {
+export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (msg: string) => void }) {
   const router = useRouter()
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [waLang, setWaLang] = useState<'id' | 'en'>('id')
@@ -101,6 +101,7 @@ export function ProposalRow({ prop }: { prop: any }) {
           setIsOpen(false)
           setDetailsOpen(false)
           router.refresh()
+          onShowToast("Proposal berhasil dihapus!")
         } else {
           setError(result.error || 'Gagal menghapus proposal')
         }
@@ -120,6 +121,7 @@ export function ProposalRow({ prop }: { prop: any }) {
         if (result.success) {
           setIsOpen(false)
           router.refresh()
+          onShowToast("Proposal berhasil diperbarui!")
         } else {
           setError(result.error || 'Gagal mengupdate proposal')
         }
@@ -130,6 +132,7 @@ export function ProposalRow({ prop }: { prop: any }) {
           setIsOpen(false)
           setDetailsOpen(false)
           router.refresh()
+          onShowToast("Donasi proposal berhasil diverifikasi!")
         } else {
           setError(result.error || 'Gagal memverifikasi donasi')
         }
@@ -155,6 +158,7 @@ export function ProposalRow({ prop }: { prop: any }) {
           setIsOpen(false)
           setDetailsOpen(false)
           router.refresh()
+          onShowToast("Pembayaran internal berhasil direkam!")
         } else {
           setError(result.error || 'Gagal merekam pembayaran')
         }

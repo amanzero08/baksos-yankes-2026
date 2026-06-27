@@ -141,6 +141,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
         setPhotoFile(null)
         setPasscode("")
         router.refresh()
+        setSuccessToast("Kartu Sahabat berhasil diperbarui!")
+        setTimeout(() => setSuccessToast(""), 4000)
       } else {
         setError(res.error || "Gagal mengupdate data")
       }
@@ -171,6 +173,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       setIsDetailsOpen(false)
       setDeletePasscode("")
       router.refresh()
+      setSuccessToast("Kartu Sahabat berhasil dihapus!")
+      setTimeout(() => setSuccessToast(""), 4000)
     } else {
       setDeleteError(res.error || "Gagal menghapus kartu sahabat")
     }
@@ -191,6 +195,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       setIsDetailsOpen(false)
       setPaymentDeletePasscode("")
       router.refresh()
+      setSuccessToast("Transaksi setoran berhasil dihapus!")
+      setTimeout(() => setSuccessToast(""), 4000)
     } else {
       setPaymentDeleteError(res.error || "Gagal menghapus transaksi")
     }

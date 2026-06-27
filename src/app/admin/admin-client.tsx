@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, FileText, Users, MapPin, ChevronDown, ChevronUp, Download } from "lucide-react"
+import { Search, FileText, Users, MapPin, ChevronDown, ChevronUp, Download, CheckCircle } from "lucide-react"
 import { ProposalRow } from "./proposal-row"
 import { KartuSahabatManager } from "./kartu-sahabat-manager"
 import { RecapPDF } from "@/components/recap-pdf"
@@ -28,6 +28,12 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
   const [showAllKartu, setShowAllKartu] = useState(false)
   const [proposalFilter, setProposalFilter] = useState<'all' | 'confirmed' | 'unconfirmed'>('all')
   const [kartuFilter, setKartuFilter] = useState<'with_card' | 'all'>('with_card')
+  const [successToast, setSuccessToast] = useState("")
+
+  const showToast = (msg: string) => {
+    setSuccessToast(msg)
+    setTimeout(() => setSuccessToast(""), 4000)
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -184,7 +190,7 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
                 </TableHeader>
                 <TableBody>
                   {displayedProposals.map((prop: any) => (
-                    <ProposalRow key={prop.id} prop={prop} />
+                    <ProposalRow key={prop.id} prop={prop} onShowToast={showToast} />
                   ))}
                 </TableBody>
               </Table>
@@ -326,6 +332,12 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
               </Button>
             )}
           </PDFDownloadLink>
+        </div>
+      )}
+      {successToast && (
+        <div className="fixed top-5 right-5 z-50 bg-emerald-950/90 text-emerald-400 border border-emerald-500/20 px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-[0_0_30px_rgba(16,185,129,0.2)] backdrop-blur-md animate-fade-in">
+          <CheckCircle className="w-5 h-5 text-emerald-400" />
+          <span className="text-xs font-bold tracking-wide">{successToast}</span>
         </div>
       )}
     </div>
