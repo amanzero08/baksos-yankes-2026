@@ -59,10 +59,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     .order("created_at", { ascending: false })
     .limit(5);
 
-  // Fetch 5 kartu sahabat, prioritizing those that have results (collected_amount > 0)
+  // Fetch 5 kartu sahabat, prioritizing those that have results (collected_amount > 0) and have card numbers
   const { data: recentKartuSahabat } = await supabaseAdmin
     .from("kartu_sahabat")
     .select("*")
+    .not("card_number", "is", null)
+    .neq("card_number", "")
     .order("collected_amount", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(5);
