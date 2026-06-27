@@ -151,7 +151,7 @@ export async function updateProposal(id: string, data: {
 
 export async function deleteProposal(id: string, passcode: string) {
   try {
-    if (passcode !== '7777') throw new Error('Passcode salah. Khusus untuk penghapusan permanen, gunakan passcode 7777.')
+    if (passcode !== '7777') throw new Error('Passcode salah. Anda tidak memiliki izin untuk menghapus data.')
 
     // Deleting the associated donations first to bypass verification/foreign key locks
     const { error: donationError } = await supabaseAdmin.from('donations').delete().eq('proposal_id', id)
@@ -252,7 +252,7 @@ export async function updateKartuSahabat(formData: FormData) {
 
 export async function deleteKartuSahabat(id: string, passcode: string) {
   try {
-    if (passcode !== '7777') throw new Error('Passcode salah. Khusus penghapusan data, gunakan passcode 7777.')
+    if (passcode !== '7777') throw new Error('Passcode salah.')
 
     const { error } = await supabaseAdmin.from('kartu_sahabat').delete().eq('id', id)
     if (error) throw new Error(error.message)
