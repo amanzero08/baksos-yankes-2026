@@ -77,17 +77,17 @@ export default async function DashboardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 pt-24 sm:pt-32 pb-24 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
+    <main className="min-h-screen bg-slate-950 pt-24 sm:pt-32 pb-28 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
       {/* Ambient Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto space-y-12 relative z-10">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-12 relative z-10">
         <div className="text-center">
-          <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-slate-100 tracking-tight mt-6">Dasbor Pencapaian</h1>
-          <div className="text-slate-400 mt-4 text-lg max-w-2xl mx-auto">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-100 tracking-tight mt-6">Dasbor Pencapaian</h1>
+          <div className="text-slate-400 mt-4 text-base sm:text-lg max-w-2xl mx-auto">
             <span>Pantauan <span className="italic">real-time</span> penggalangan dana Bakti Sosial Lintas Sinodal 2026.</span>
           </div>
         </div>
@@ -96,25 +96,25 @@ export default async function DashboardPage() {
         <CountdownTimer simple={true} />
 
         {/* Global Progress Bar */}
-        <Card className="glass-panel border-t-4 border-t-emerald-500 rounded-[2.5rem] overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.15)]">
-          <CardContent className="p-8 sm:p-12">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-6">
+        <Card className="glass-panel border-t-4 border-t-emerald-500 rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.15)]">
+          <CardContent className="p-6 sm:p-12">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-6">
               <div>
-                <p className="text-emerald-400 font-bold tracking-widest uppercase text-sm mb-2 flex items-center">
+                <p className="text-emerald-400 font-bold tracking-widest uppercase text-xs sm:text-sm mb-2 flex items-center">
                   <TrendingUp className="w-4 h-4 mr-2" /> Total Terkumpul
                 </p>
-                <h2 className="text-5xl md:text-6xl font-heading font-bold text-slate-100 tracking-tight">
+                <h2 className="text-3xl sm:text-5xl md:text-6xl font-heading font-bold text-slate-100 tracking-tight whitespace-nowrap">
                   {formatIDR(totalCollected)}
                 </h2>
               </div>
-              <div className="text-left md:text-right flex flex-row sm:flex-row md:flex-col gap-x-6 gap-y-3">
-                <div>
+              <div className="grid grid-cols-2 gap-3 w-full md:w-auto sm:flex sm:flex-row md:flex-col sm:gap-x-6 sm:gap-y-3 mt-4 md:mt-0">
+                <div className="bg-slate-950/40 p-3.5 md:p-0 md:bg-transparent rounded-2xl border border-white/5 md:border-0">
                   <p className="text-slate-400 font-medium text-[10px] md:text-xs mb-1 uppercase tracking-wider">Target Dana</p>
-                  <p className="text-lg md:text-xl font-bold text-slate-300">{formatIDR(GLOBAL_TARGET)}</p>
+                  <p className="text-sm sm:text-base md:text-xl font-bold text-slate-300 whitespace-nowrap">{formatIDR(GLOBAL_TARGET)}</p>
                 </div>
-                <div>
+                <div className="bg-slate-950/40 p-3.5 md:p-0 md:bg-transparent rounded-2xl border border-white/5 md:border-0">
                   <p className="text-amber-500/80 font-medium text-[10px] md:text-xs mb-1 uppercase tracking-wider">Sisa Kekurangan</p>
-                  <p className="text-lg md:text-xl font-bold text-amber-400">{formatIDR(remainingAmount)}</p>
+                  <p className="text-sm sm:text-base md:text-xl font-bold text-amber-400 whitespace-nowrap">{formatIDR(remainingAmount)}</p>
                 </div>
               </div>
             </div>
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
             <CardContent className="space-y-6">
               <div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Total Dana Masuk</span>
-                <h3 className="text-4xl font-heading font-bold text-slate-100">{formatIDR(totalProposalDonations)}</h3>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-slate-100 whitespace-nowrap">{formatIDR(totalProposalDonations)}</h3>
               </div>
               
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
@@ -194,7 +194,7 @@ export default async function DashboardPage() {
             <CardContent className="space-y-6">
               <div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Total Dana Masuk</span>
-                <h3 className="text-4xl font-heading font-bold text-slate-100">{formatIDR(totalKartuSahabat)}</h3>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-slate-100 whitespace-nowrap">{formatIDR(totalKartuSahabat)}</h3>
               </div>
               
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
@@ -240,7 +240,7 @@ export default async function DashboardPage() {
               <CardContent className="space-y-6">
                 <div>
                   <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Total Dana Masuk</span>
-                  <h3 className="text-4xl font-heading font-bold text-slate-100">{formatIDR(totalGeneralDonations)}</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-slate-100 whitespace-nowrap">{formatIDR(totalGeneralDonations)}</h3>
                 </div>
                 
                 <div className="bg-slate-900/60 p-4 rounded-2xl border border-white/5">
