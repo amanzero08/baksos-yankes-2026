@@ -357,6 +357,16 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
             <Text style={styles.sigRole}>Ketua Pelaksana</Text>
           </View>
 
+          {/* QR Sign Verification */}
+          <View style={{ ...styles.sigBlock, width: '20%', alignItems: 'center' }}>
+            <Image 
+              src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://baksos-yankes-2026.vercel.app/dashboard&color=0f172a&bgcolor=ffffff" 
+              style={{ width: 45, height: 45, marginBottom: 4 }} 
+            />
+            <Text style={{ fontSize: 6, fontWeight: 700, color: '#0f172a', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>DIGITAL SIGNATURE</Text>
+            <Text style={{ fontSize: 5, color: '#64748b', textAlign: 'center', marginTop: 1 }}>Pindai untuk Validasi Real-time</Text>
+          </View>
+
           <View style={styles.sigBlock}>
             <Text style={styles.sigTitle}>Disiapkan Oleh,{"\n"}Bendahara Pelaksana Panitia Baksos</Text>
             <Text style={styles.sigName}>Ibu Yetje Sumual</Text>
