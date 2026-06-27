@@ -292,11 +292,11 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
             {({ loading }) => (
               <Button
                 disabled={loading}
-                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-5 sm:px-6 h-14 rounded-2xl font-bold shadow-[0_10px_30px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_40px_rgba(245,158,11,0.5)] transition-all duration-300 flex items-center gap-2 border border-amber-400/20 active:scale-95 group text-sm sm:text-base cursor-pointer"
+                title="Unduh Rekapitulasi LPJ (PDF)"
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_4px_20px_rgba(245,158,11,0.25)] hover:shadow-[0_8px_30px_rgba(245,158,11,0.4)] transition-all duration-300 flex items-center justify-center active:scale-95 cursor-pointer border border-amber-400/20 w-14 h-14 rounded-full sm:w-auto sm:h-12 sm:px-5 sm:rounded-full sm:gap-2"
               >
-                <Download className="w-5 h-5 shrink-0 group-hover:animate-bounce" />
-                <span className="hidden sm:inline">Unduh Rekapitulasi LPJ (PDF)</span>
-                <span className="inline sm:hidden">Unduh Rekap LPJ</span>
+                <Download className="w-5.5 h-5.5 sm:w-5 sm:h-5 shrink-0" />
+                <span className="hidden sm:inline text-sm font-bold">Rekap LPJ</span>
               </Button>
             )}
           </PDFDownloadLink>
