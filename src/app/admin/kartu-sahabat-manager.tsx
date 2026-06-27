@@ -18,6 +18,10 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [deletePasscode, setDeletePasscode] = useState("")
   const [deleteError, setDeleteError] = useState("")
+  const [isDeletePaymentOpen, setIsDeletePaymentOpen] = useState(false)
+  const [paymentToDelete, setPaymentToDelete] = useState<any>(null)
+  const [paymentDeletePasscode, setPaymentDeletePasscode] = useState("")
+  const [paymentDeleteError, setPaymentDeleteError] = useState("")
   const [successToast, setSuccessToast] = useState("")
   
   const [committeeName, setCommitteeName] = useState("")
@@ -169,6 +173,26 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       router.refresh()
     } else {
       setDeleteError(res.error || "Gagal menghapus kartu sahabat")
+    }
+    setLoading(false)
+  }
+
+  const handleDeletePayment = async () => {
+    if (!paymentDeletePasscode) {
+      setPaymentDeleteError("Passcode wajib diisi")
+      return
+    }
+
+    setLoading(true)
+    setPaymentDeleteError("")
+    const res = await deleteKartuSahabatPayment(paymentToDelete.id, paymentDeletePasscode)
+    if (res.success) {
+      setIsDeletePaymentOpen(false)
+      setIsDetailsOpen(false)
+      setPaymentDeletePasscode("")
+      router.refresh()
+    } else {
+      setPaymentDeleteError(res.error || "Gagal menghapus transaksi")
     }
     setLoading(false)
   }
@@ -336,20 +360,11 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                           )}
                           <button 
                             type="button"
-                            onClick={async () => {
-                              const pass = prompt("Masukkan Passcode Admin (2906) untuk menghapus setoran ini:");
-                              if (!pass) return;
-                              if (pass !== '2906') {
-                                alert("Passcode salah!");
-                                return;
-                              }
-                              const res = await deleteKartuSahabatPayment(pmt.id, pass);
-                              if (res.success) {
-                                setIsDetailsOpen(false);
-                                router.refresh();
-                              } else {
-                                alert(res.error || "Gagal menghapus transaksi");
-                              }
+                            onClick={() => {
+                              setPaymentToDelete(pmt);
+                              setPaymentDeletePasscode("");
+                              setPaymentDeleteError("");
+                              setIsDeletePaymentOpen(true);
                             }}
                             className="p-1 hover:bg-white/5 rounded text-red-400 hover:text-red-300 transition-colors"
                             title="Hapus Transaksi"
@@ -506,6 +521,68 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               type="button"
               disabled={loading}
               onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold px-4 shadow-[0_4px_20px_rgba(239,68,68,0.25)]"
+            >
+              {loading ? "Menghapus..." : "Hapus Permanen"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Action Delete Payment Passcode Modal */}
+      <Dialog open={isDeletePaymentOpen} onOpenChange={setIsDeletePaymentOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-slate-950 border-white/10 text-slate-200">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-heading text-red-500 flex items-center gap-2">
+              <Trash2 className="w-5.5 h-5.5 text-red-500" /> Hapus Setoran Perolehan
+            </DialogTitle>
+            <DialogDescription className="text-slate-400 mt-1">
+              Apakah Anda yakin ingin menghapus transaksi setoran sebesar{" "}
+              <span className="text-emerald-400 font-bold">
+                {paymentToDelete ? formatIDR(paymentToDelete.amount) : "Rp 0"}
+              </span>{" "}
+              pada tanggal{" "}
+              <span className="text-slate-300 font-semibold">
+                {paymentToDelete
+                  ? new Date(paymentToDelete.received_at).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : ""}
+              </span>{" "}
+              secara permanen?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-5 py-6">
+            <div className="space-y-2">
+              <Label htmlFor="paymentDeletePasscode" className="text-slate-300">Passcode Otorisasi</Label>
+              <Input 
+                id="paymentDeletePasscode" 
+                type="password" 
+                value={paymentDeletePasscode} 
+                onChange={(e) => setPaymentDeletePasscode(e.target.value)} 
+                className="bg-slate-900 border-white/10 text-slate-100" 
+                placeholder="Masukkan passcode admin"
+              />
+            </div>
+            {paymentDeleteError && (
+              <p className="text-red-400 text-xs font-medium">{paymentDeleteError}</p>
+            )}
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsDeletePaymentOpen(false)}
+              className="text-slate-400 hover:text-slate-300 font-semibold"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={handleDeletePayment}
               className="bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold px-4 shadow-[0_4px_20px_rgba(239,68,68,0.25)]"
             >
               {loading ? "Menghapus..." : "Hapus Permanen"}
