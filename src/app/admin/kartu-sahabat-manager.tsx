@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Plus, Edit2, Trash2, Users, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { createKartuSahabat, updateKartuSahabat, deleteKartuSahabat } from "@/app/actions"
@@ -13,6 +13,9 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [selectedKartu, setSelectedKartu] = useState<any>(null)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [deletePasscode, setDeletePasscode] = useState("")
+  const [deleteError, setDeleteError] = useState("")
   
   const [committeeName, setCommitteeName] = useState("")
   const [targetAmount, setTargetAmount] = useState("")
@@ -144,17 +147,27 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    const code = passcode || prompt("Masukkan passcode untuk menghapus Kartu Sahabat:")
-    if (!code) return
+  const triggerDelete = () => {
+    setDeletePasscode("")
+    setDeleteError("")
+    setIsDeleteOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (!deletePasscode) {
+      setDeleteError("Passcode wajib diisi")
+      return
+    }
     
     setLoading(true)
-    const res = await deleteKartuSahabat(id, code)
+    setDeleteError("")
+    const res = await deleteKartuSahabat(selectedKartu.id, deletePasscode)
     if (res.success) {
+      setIsDeleteOpen(false)
       setIsDetailsOpen(false)
-      setPasscode("")
+      setDeletePasscode("")
     } else {
-      alert(res.error || "Gagal menghapus kartu sahabat")
+      setDeleteError(res.error || "Gagal menghapus kartu sahabat")
     }
     setLoading(false)
   }
@@ -409,7 +422,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     type="button" 
                     variant="outline"
                     className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400 text-red-500 rounded-full font-semibold px-4 h-9 text-xs"
-                    onClick={() => handleDelete(selectedKartu.id)}
+                    onClick={triggerDelete}
                   >
                     Hapus
                   </Button>
@@ -417,6 +430,53 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               </form>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Action Delete Passcode Modal */}
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-slate-950 border-white/10 text-slate-200">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-heading text-amber-400">
+              Hapus Kartu Sahabat
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Tindakan ini tidak dapat dibatalkan. Masukkan passcode otorisasi untuk menghapus permanen.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-5 py-6">
+            <div className="space-y-2">
+              <Label htmlFor="deletePasscode" className="text-slate-300">Passcode Otorisasi</Label>
+              <Input 
+                id="deletePasscode" 
+                type="password" 
+                value={deletePasscode} 
+                onChange={(e) => setDeletePasscode(e.target.value)} 
+                className="bg-slate-900 border-white/10 text-slate-100" 
+              />
+            </div>
+            {deleteError && (
+              <p className="text-red-400 text-xs font-medium">{deleteError}</p>
+            )}
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsDeleteOpen(false)}
+              className="text-slate-400 hover:text-slate-300 font-semibold"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold px-4 shadow-[0_4px_20px_rgba(239,68,68,0.25)]"
+            >
+              {loading ? "Menghapus..." : "Hapus Permanen"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
