@@ -257,9 +257,9 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent className="p-0">
               {recentProposals && recentProposals.length > 0 ? (
-                <div className="overflow-x-auto hide-scrollbar">
+                <div className="w-full">
                   <Table className="w-full">
-                    <TableHeader>
+                    <TableHeader className="hidden md:table-header-group">
                       <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
                         <TableHead className="font-bold text-amber-500 uppercase text-[10px] tracking-wider px-6 py-4">Nomor</TableHead>
                         <TableHead className="font-bold text-amber-500 uppercase text-[10px] tracking-wider py-4">Tujuan / Donatur</TableHead>
@@ -272,28 +272,55 @@ export default async function DashboardPage() {
                         const isVer = hasDon && prop.donations.some((d: any) => d.verified);
                         const donAmt = hasDon ? prop.donations[0].amount : 0;
                         return (
-                          <TableRow key={prop.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                            <TableCell className="px-6 py-4 font-bold text-amber-500 text-xs tracking-wide">
-                              {prop.proposal_number}
-                            </TableCell>
-                            <TableCell className="py-4">
-                              <div className="flex flex-col">
-                                <span className="font-semibold text-slate-200 text-xs">{prop.donor_name}</span>
-                                {prop.institution && (
-                                  <span className="text-[10px] text-slate-400 font-medium truncate max-w-[150px]">{prop.institution}</span>
+                          <React.Fragment key={prop.id}>
+                            {/* Desktop Row */}
+                            <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors">
+                              <TableCell className="px-6 py-4 font-bold text-amber-500 text-xs tracking-wide">
+                                {prop.proposal_number}
+                              </TableCell>
+                              <TableCell className="py-4">
+                                <div className="flex flex-col">
+                                  <span className="font-semibold text-slate-200 text-xs">{prop.donor_name}</span>
+                                  {prop.institution && (
+                                    <span className="text-[10px] text-slate-400 font-medium truncate max-w-[150px]">{prop.institution}</span>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="px-6 py-4 text-right text-xs">
+                                {isVer ? (
+                                  <span className="text-emerald-400 font-bold">{formatIDR(donAmt)}</span>
+                                ) : hasDon ? (
+                                  <span className="text-amber-400 font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 text-[10px]">Review</span>
+                                ) : (
+                                  <span className="text-slate-500 text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-white/5">Belum Ada</span>
                                 )}
-                              </div>
-                            </TableCell>
-                            <TableCell className="px-6 py-4 text-right text-xs">
-                              {isVer ? (
-                                <span className="text-emerald-400 font-bold">{formatIDR(donAmt)}</span>
-                              ) : hasDon ? (
-                                <span className="text-amber-400 font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 text-[10px]">Review</span>
-                              ) : (
-                                <span className="text-slate-500 text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-white/5">Belum Ada</span>
-                              )}
-                            </TableCell>
-                          </TableRow>
+                              </TableCell>
+                            </TableRow>
+
+                            {/* Mobile Card Row */}
+                            <TableRow className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors">
+                              <td className="block w-full">
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="font-bold text-amber-500 text-xs tracking-wide">{prop.proposal_number}</span>
+                                  <div>
+                                    {isVer ? (
+                                      <span className="text-emerald-400 font-bold text-xs">{formatIDR(donAmt)}</span>
+                                    ) : hasDon ? (
+                                      <span className="text-amber-400 font-medium bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 text-[10px]">Review</span>
+                                    ) : (
+                                      <span className="text-slate-500 text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-white/5">Belum Ada</span>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="font-semibold text-slate-200 text-xs">{prop.donor_name}</span>
+                                  {prop.institution && (
+                                    <span className="text-[10px] text-slate-400 font-medium truncate mt-0.5">{prop.institution}</span>
+                                  )}
+                                </div>
+                              </td>
+                            </TableRow>
+                          </React.Fragment>
                         );
                       })}
                     </TableBody>
@@ -318,9 +345,9 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent className="p-0">
               {recentKartuSahabat && recentKartuSahabat.length > 0 ? (
-                <div className="overflow-x-auto hide-scrollbar">
+                <div className="w-full">
                   <Table className="w-full">
-                    <TableHeader>
+                    <TableHeader className="hidden md:table-header-group">
                       <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
                         <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider px-6 py-4">Nama Panitia</TableHead>
                         <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider py-4 text-right">Terkumpul</TableHead>
@@ -329,17 +356,39 @@ export default async function DashboardPage() {
                     </TableHeader>
                     <TableBody>
                       {recentKartuSahabat.map((kartu: any) => (
-                        <TableRow key={kartu.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <TableCell className="px-6 py-4 font-semibold text-slate-200 text-xs">
-                            {kartu.committee_name}
-                          </TableCell>
-                          <TableCell className="py-4 text-emerald-400 font-bold text-right text-xs">
-                            {formatIDR(kartu.collected_amount || 0)}
-                          </TableCell>
-                          <TableCell className="px-6 py-4 text-slate-400 font-medium text-right text-xs">
-                            {kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}
-                          </TableCell>
-                        </TableRow>
+                        <React.Fragment key={kartu.id}>
+                          {/* Desktop Row */}
+                          <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <TableCell className="px-6 py-4 font-semibold text-slate-200 text-xs">
+                              {kartu.committee_name}
+                            </TableCell>
+                            <TableCell className="py-4 text-emerald-400 font-bold text-right text-xs">
+                              {formatIDR(kartu.collected_amount || 0)}
+                            </TableCell>
+                            <TableCell className="px-6 py-4 text-slate-400 font-medium text-right text-xs">
+                              {kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}
+                            </TableCell>
+                          </TableRow>
+
+                          {/* Mobile Card Row */}
+                          <TableRow className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors">
+                            <td className="block w-full">
+                              <div className="mb-2">
+                                <span className="font-semibold text-slate-200 text-xs">{kartu.committee_name}</span>
+                              </div>
+                              <div className="flex justify-between items-center bg-slate-900/40 p-2.5 rounded-xl border border-white/5 text-xs">
+                                <div className="flex flex-col">
+                                  <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Terkumpul</span>
+                                  <span className="text-emerald-400 font-bold">{formatIDR(kartu.collected_amount || 0)}</span>
+                                </div>
+                                <div className="flex flex-col text-right">
+                                  <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Target</span>
+                                  <span className="text-slate-400 font-medium">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</span>
+                                </div>
+                              </div>
+                            </td>
+                          </TableRow>
+                        </React.Fragment>
                       ))}
                     </TableBody>
                   </Table>
