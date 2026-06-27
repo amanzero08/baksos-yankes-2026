@@ -151,13 +151,13 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   };
 
   const points = milestones.map((m, idx) => {
-    const x = 35 + (idx / (milestones.length - 1)) * (500 - 70);
-    const y = 160 - (maxVal > 0 ? (m.cumulative / maxVal) * 110 : 0);
+    const x = (idx / (milestones.length - 1)) * 100;
+    const y = 80 - (maxVal > 0 ? (m.cumulative / maxVal) * 60 : 0);
     return { x, y, label: m.label, cumulative: m.cumulative };
   });
 
   const lineD = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-  const areaD = `${lineD} L ${points[points.length - 1].x} 170 L ${points[0].x} 170 Z`;
+  const areaD = `${lineD} L 100 100 L 0 100 Z`;
 
   // Proposal counts
   const totalProposalsCount = proposalsList?.length || 0;
@@ -268,62 +268,91 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-6 sm:px-10 pb-8 pt-4">
-            <div className="w-full bg-slate-950/50 rounded-2xl border border-white/5 p-4 relative overflow-hidden flex flex-col items-center">
-              <svg className="w-full h-auto max-h-[220px]" viewBox="0 0 500 200">
-                <defs>
-                  <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                  </linearGradient>
-                  <linearGradient id="lineGlow" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#059669" />
-                    <stop offset="50%" stopColor="#10b981" />
-                    <stop offset="100%" stopColor="#34d399" />
-                  </linearGradient>
-                </defs>
-                <style>{`
-                  @keyframes pathDraw {
-                    to {
-                      stroke-dashoffset: 0;
+            <div className="w-full bg-slate-950/50 rounded-2xl border border-white/5 p-6 pb-12 relative overflow-hidden flex flex-col items-center">
+              <div className="relative w-full h-[140px]">
+                {/* SVG Line and Area - preserveAspectRatio="none" stretches them perfectly */}
+                <svg className="absolute inset-x-6 top-0 w-[calc(100%-3rem)] h-[110px]" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.2" />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                    </linearGradient>
+                    <linearGradient id="lineGlow" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#059669" />
+                      <stop offset="50%" stopColor="#10b981" />
+                      <stop offset="100%" stopColor="#34d399" />
+                    </linearGradient>
+                  </defs>
+                  <style>{`
+                    @keyframes pathDraw {
+                      to {
+                        stroke-dashoffset: 0;
+                      }
                     }
-                  }
-                  .animate-path {
-                    stroke-dasharray: 1000;
-                    stroke-dashoffset: 1000;
-                    animation: pathDraw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-                  }
-                `}</style>
-                
-                {/* Horizontal Dotted Grid Lines */}
-                <line x1="35" y1="50" x2="465" y2="50" stroke="#ffffff" strokeOpacity="0.05" strokeDasharray="3,3" />
-                <line x1="35" y1="105" x2="465" y2="105" stroke="#ffffff" strokeOpacity="0.05" strokeDasharray="3,3" />
-                <line x1="35" y1="160" x2="465" y2="160" stroke="#ffffff" strokeOpacity="0.05" strokeDasharray="3,3" />
+                    .animate-path {
+                      stroke-dasharray: 1000;
+                      stroke-dashoffset: 1000;
+                      animation: pathDraw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                    }
+                  `}</style>
+                  
+                  {/* Horizontal Grid Lines */}
+                  <line x1="0" y1="20" x2="100" y2="20" stroke="#ffffff" strokeOpacity="0.04" strokeDasharray="3,3" />
+                  <line x1="0" y1="50" x2="100" y2="50" stroke="#ffffff" strokeOpacity="0.04" strokeDasharray="3,3" />
+                  <line x1="0" y1="80" x2="100" y2="80" stroke="#ffffff" strokeOpacity="0.04" strokeDasharray="3,3" />
 
-                {/* Area Gradient Fill */}
-                <path d={areaD} fill="url(#chartGradient)" />
+                  {/* Area Gradient Fill */}
+                  <path d={areaD} fill="url(#chartGradient)" />
 
-                {/* Line Plot */}
-                <path d={lineD} fill="none" stroke="url(#lineGlow)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="animate-path" />
+                  {/* Line Plot */}
+                  <path d={lineD} fill="none" stroke="url(#lineGlow)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="animate-path" />
+                </svg>
 
-                {/* Points & Value Badges */}
-                {points.map((p, idx) => (
-                  <g key={idx}>
-                    {/* Pulsing ring for the last dot */}
-                    {idx === points.length - 1 && (
-                      <circle cx={p.x} cy={p.y} r="5" fill="none" stroke="#10b981" strokeWidth="1.5">
-                        <animate attributeName="r" values="5;12;5" dur="3s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" values="0.8;0;0.8" dur="3s" repeatCount="indefinite" />
-                      </circle>
-                    )}
-                    {/* Plot Dot */}
-                    <circle cx={p.x} cy={p.y} r="4.5" fill="#10b981" stroke="#0f172a" strokeWidth="2" />
-                    {/* Value label above dot */}
-                    <text x={p.x} y={p.y - 12} fill="#34d399" fontSize="10" fontWeight="800" textAnchor="middle">{formatShortIDR(p.cumulative)}</text>
-                    {/* Date label below chart */}
-                    <text x={p.x} y="185" fill="#ffffff" fontSize="9.5" fontWeight="700" textAnchor="middle">{p.label}</text>
-                  </g>
-                ))}
-              </svg>
+                {/* HTML Overlay: Dots & Value Badges are perfectly circular & crisp divisions positioned absolutely */}
+                <div className="absolute inset-x-6 top-0 w-[calc(100%-3rem)] h-[110px] pointer-events-none">
+                  {points.map((p, idx) => {
+                    const leftPct = (idx / (points.length - 1)) * 100;
+                    const topPct = p.y; // Y value from 0 to 100 percentage
+
+                    return (
+                      <div 
+                        key={idx} 
+                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                        style={{ left: `${leftPct}%`, top: `${topPct}%` }}
+                      >
+                        {/* Value Label above dot */}
+                        <div className="absolute bottom-3.5 text-[10px] sm:text-xs font-extrabold text-emerald-400 whitespace-nowrap bg-slate-950/90 px-2 py-0.5 rounded-md border border-emerald-500/20 shadow-lg backdrop-blur-sm">
+                          {formatShortIDR(p.cumulative)}
+                        </div>
+
+                        {/* Circular Dot */}
+                        <div className="relative w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950 shadow-md">
+                          {/* Pulsing ring for the last dot */}
+                          {idx === points.length - 1 && (
+                            <div className="absolute -inset-1 rounded-full border border-emerald-400 animate-ping"></div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* HTML Overlay: Dates row aligned perfectly at the bottom */}
+                <div className="absolute inset-x-6 bottom-0 w-[calc(100%-3rem)] h-6 pointer-events-none">
+                  {points.map((p, idx) => {
+                    const leftPct = (idx / (points.length - 1)) * 100;
+                    return (
+                      <div 
+                        key={idx} 
+                        className="absolute -translate-x-1/2 text-[10px] sm:text-xs font-bold text-slate-100 whitespace-nowrap"
+                        style={{ left: `${leftPct}%` }}
+                      >
+                        {p.label}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
