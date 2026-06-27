@@ -386,6 +386,17 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                   </div>
                 </div>
                 
+                {photoFile && (
+                  <div className="space-y-1.5 border border-white/5 bg-slate-900/40 p-2.5 rounded-xl flex flex-col items-center animate-fade-in">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block self-start mb-1">Preview Foto Baru</span>
+                    <img 
+                      src={URL.createObjectURL(photoFile)} 
+                      alt="Preview Foto Baru" 
+                      className="w-full max-h-32 object-contain rounded-lg border border-white/10"
+                    />
+                  </div>
+                )}
+                
                 <div className="space-y-1.5">
                   <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Nomor Kartu (Format: XXX-KS-2026)</Label>
                   <Input 

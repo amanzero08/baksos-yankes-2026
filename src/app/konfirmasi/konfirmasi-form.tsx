@@ -68,6 +68,7 @@ export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState('')
   const [fileName, setFileName] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [amountInput, setAmountInput] = useState('')
   const [selectedProposalId, setSelectedProposalId] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
@@ -191,6 +192,7 @@ export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }
                   setSelectedProposalId('')
                   setAmountInput('')
                   setFileName('')
+                  setSelectedFile(null)
                   formRef.current?.reset()
                 }} 
                 variant="outline" 
@@ -269,10 +271,25 @@ export function KonfirmasiForm({ pendingProposals }: { pendingProposals: any[] }
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
                         setFileName(e.target.files[0].name)
+                        setSelectedFile(e.target.files[0])
+                      } else {
+                        setFileName('')
+                        setSelectedFile(null)
                       }
                     }}
                   />
                 </div>
+
+                {selectedFile && selectedFile.type.startsWith('image/') && (
+                  <div className="mt-4 border border-white/5 bg-slate-900/40 p-3.5 rounded-2xl flex flex-col items-center animate-fade-in">
+                    <span className="text-xs font-semibold text-slate-400 mb-2 block self-start">Preview Bukti Transfer</span>
+                    <img 
+                      src={URL.createObjectURL(selectedFile)} 
+                      alt="Preview Bukti Transfer" 
+                      className="max-h-48 object-contain rounded-xl border border-white/10"
+                    />
+                  </div>
+                )}
               </div>
 
               {error && <div className="p-4 bg-red-900/30 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium text-center">{error}</div>}

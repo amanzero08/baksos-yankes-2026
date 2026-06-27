@@ -320,6 +320,28 @@ export function ProposalRow({ prop }: { prop: any }) {
               <span className="text-sm font-semibold text-slate-500">Pesan Khusus</span>
               <span className="col-span-2 text-slate-300 italic">{prop.message || '-'}</span>
             </div>
+            {hasDonation && prop.donations[0].receipt_url && (
+              <div className="flex flex-col gap-1.5 border-b border-white/5 pb-4">
+                <span className="text-sm font-semibold text-slate-500">Bukti Transfer</span>
+                <div className="relative group overflow-hidden rounded-lg border border-white/5 bg-slate-950/40 mt-1 max-w-[200px]">
+                  <img 
+                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
+                    alt="Bukti Transfer Donatur" 
+                    className="w-full max-h-32 object-contain transition-all duration-300 group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <a 
+                      href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[10px] font-bold transition-all shadow"
+                    >
+                      Buka Bukti
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-3 mt-2">
@@ -555,6 +577,16 @@ export function ProposalRow({ prop }: { prop: any }) {
                 />
               </div>
             )}
+            {actionType === 'verify' && hasDonation && prop.donations[0].receipt_url && (
+              <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
+                <span className="text-xs font-semibold text-slate-400 block self-start">Bukti Transfer Donatur</span>
+                <img 
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
+                  alt="Bukti Transfer Donatur" 
+                  className="w-full max-h-48 object-contain rounded-lg border border-white/10"
+                />
+              </div>
+            )}
             {actionType === 'record_payment' && (
               <>
                 <div className="space-y-2">
@@ -581,6 +613,16 @@ export function ProposalRow({ prop }: { prop: any }) {
                     className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3" 
                   />
                 </div>
+                {receiptFile && receiptFile.type.startsWith('image/') && (
+                  <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
+                    <span className="text-xs font-semibold text-slate-400 block self-start">Preview Bukti Baru</span>
+                    <img 
+                      src={URL.createObjectURL(receiptFile)} 
+                      alt="Preview Bukti Baru" 
+                      className="w-full max-h-48 object-contain rounded-lg border border-white/10"
+                    />
+                  </div>
+                )}
               </>
             )}
             <div className="space-y-2 mt-2">
