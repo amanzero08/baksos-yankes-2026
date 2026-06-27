@@ -269,7 +269,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           </CardHeader>
           <CardContent className="px-6 sm:px-10 pb-8 pt-4">
             <div className="w-full bg-slate-950/50 rounded-2xl border border-white/5 p-4 relative overflow-hidden flex flex-col items-center">
-              <svg className="w-full h-[180px]" viewBox="0 0 500 200" preserveAspectRatio="none">
+              <svg className="w-full h-auto max-h-[220px]" viewBox="0 0 500 200">
                 <defs>
                   <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
@@ -318,9 +318,9 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                     {/* Plot Dot */}
                     <circle cx={p.x} cy={p.y} r="4.5" fill="#10b981" stroke="#0f172a" strokeWidth="2" />
                     {/* Value label above dot */}
-                    <text x={p.x} y={p.y - 12} fill="#34d399" fontSize="8.5" fontWeight="700" textAnchor="middle">{formatShortIDR(p.cumulative)}</text>
+                    <text x={p.x} y={p.y - 12} fill="#34d399" fontSize="10" fontWeight="800" textAnchor="middle">{formatShortIDR(p.cumulative)}</text>
                     {/* Date label below chart */}
-                    <text x={p.x} y="185" fill="#64748b" fontSize="8" fontWeight="600" textAnchor="middle">{p.label}</text>
+                    <text x={p.x} y="185" fill="#ffffff" fontSize="9.5" fontWeight="700" textAnchor="middle">{p.label}</text>
                   </g>
                 ))}
               </svg>
