@@ -14,6 +14,7 @@ export default async function AdminDashboard() {
   const { data: kartuSahabatData } = await supabaseAdmin
     .from("kartu_sahabat")
     .select("*")
+    .order("collected_amount", { ascending: false })
     .order("created_at", { ascending: false });
 
   if (error) {
