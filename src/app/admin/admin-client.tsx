@@ -1,13 +1,20 @@
 'use client'
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, FileText, Users, MapPin, ChevronDown, ChevronUp } from "lucide-react"
+import { Search, FileText, Users, MapPin, ChevronDown, ChevronUp, Download } from "lucide-react"
 import { ProposalRow } from "./proposal-row"
 import { KartuSahabatManager } from "./kartu-sahabat-manager"
+import { RecapPDF } from "@/components/recap-pdf"
+import dynamic from "next/dynamic"
+
+const PDFDownloadLink = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+  { ssr: false }
+)
 
 interface AdminDashboardClientProps {
   proposals: any[]
@@ -15,10 +22,15 @@ interface AdminDashboardClientProps {
 }
 
 export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashboardClientProps) {
+  const [mounted, setMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showAllProposals, setShowAllProposals] = useState(false)
   const [showAllKartu, setShowAllKartu] = useState(false)
   const [proposalFilter, setProposalFilter] = useState<'all' | 'confirmed' | 'unconfirmed'>('all')
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // 1. Filter Proposals
   const filteredProposals = proposals.filter((prop) => {
@@ -271,6 +283,27 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
           )}
         </CardContent>
       </Card>
+
+      {/* Floating Download Button */}
+      {mounted && (
+        <div className="fixed bottom-24 md:bottom-8 right-6 z-50">
+          <PDFDownloadLink
+            document={<RecapPDF proposals={proposals} kartuSahabat={kartuSahabatData} />}
+            fileName="Rekapitulasi_LPJ_Baksos_Yankes_2026.pdf"
+          >
+            {({ loading }) => (
+              <Button
+                disabled={loading}
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-5 sm:px-6 h-14 rounded-2xl font-bold shadow-[0_10px_30px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_40px_rgba(245,158,11,0.5)] transition-all duration-300 flex items-center gap-2 border border-amber-400/20 active:scale-95 group text-sm sm:text-base cursor-pointer"
+              >
+                <Download className="w-5 h-5 shrink-0 group-hover:animate-bounce" />
+                <span className="hidden sm:inline">Unduh Rekapitulasi LPJ (PDF)</span>
+                <span className="inline sm:hidden">Unduh Rekap LPJ</span>
+              </Button>
+            )}
+          </PDFDownloadLink>
+        </div>
+      )}
     </div>
   )
 }
