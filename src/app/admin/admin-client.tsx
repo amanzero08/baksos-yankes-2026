@@ -27,6 +27,7 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
   const [showAllProposals, setShowAllProposals] = useState(false)
   const [showAllKartu, setShowAllKartu] = useState(false)
   const [proposalFilter, setProposalFilter] = useState<'all' | 'confirmed' | 'unconfirmed'>('all')
+  const [kartuFilter, setKartuFilter] = useState<'with_card' | 'all'>('with_card')
 
   useEffect(() => {
     setMounted(true)
@@ -60,6 +61,10 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
 
   // 2. Filter Kartu Sahabat
   const filteredKartu = kartuSahabatData.filter((kartu) => {
+    if (kartuFilter === 'with_card' && (!kartu.card_number || kartu.card_number.trim() === '')) {
+      return false
+    }
+
     const query = searchQuery.toLowerCase().trim()
     if (!query) return true
 
@@ -224,34 +229,55 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
       {/* Kartu Sahabat Section */}
       <Card className="glass-panel border-t-4 border-t-blue-500 rounded-[2rem] overflow-hidden">
         <CardHeader className="bg-slate-900/40 border-b border-white/5 pb-6 px-6 sm:px-10 pt-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <CardTitle className="text-2xl text-blue-400 font-heading tracking-wide flex items-center">
-                <Users className="w-6 h-6 mr-3 text-blue-500" />
-                Manajemen Kartu Sahabat
-              </CardTitle>
-              <CardDescription className="text-slate-400 mt-1">
-                {searchQuery ? "Daftar Kartu Sahabat tersaring." : "Kelola data perolehan dana dari Kartu Sahabat masing-masing panitia."}
-              </CardDescription>
-            </div>
-            {filteredKartu.length > 5 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAllKartu(!showAllKartu)}
-                className="bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white rounded-full font-semibold transition-all flex items-center gap-1.5"
-              >
-                {showAllKartu ? (
-                  <>
-                    Tampilkan Lebih Sedikit <ChevronUp className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Tampilkan Semua ({filteredKartu.length}) <ChevronDown className="w-4 h-4" />
-                  </>
+            <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center items-start justify-start gap-4">
+              <div>
+                <CardTitle className="text-2xl text-blue-400 font-heading tracking-wide flex items-center">
+                  <Users className="w-6 h-6 mr-3 text-blue-500" />
+                  Manajemen Kartu Sahabat
+                </CardTitle>
+                <CardDescription className="text-slate-400 mt-1">
+                  {searchQuery ? "Daftar Kartu Sahabat tersaring." : "Kelola data perolehan dana dari Kartu Sahabat masing-masing panitia."}
+                </CardDescription>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto xl:justify-end">
+                {/* Filter Pills */}
+                <div className="flex items-center gap-1 bg-slate-950/60 p-1 rounded-full border border-white/5 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setKartuFilter('with_card')}
+                    className={`px-3.5 py-1.5 rounded-full font-bold transition-all ${kartuFilter === 'with_card' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  >
+                    Hanya dengan Kartu
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setKartuFilter('all')}
+                    className={`px-3.5 py-1.5 rounded-full font-bold transition-all ${kartuFilter === 'all' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  >
+                    Semua Panitia
+                  </button>
+                </div>
+
+                {filteredKartu.length > 5 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAllKartu(!showAllKartu)}
+                    className="bg-slate-900 border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white rounded-full font-semibold transition-all flex items-center gap-1.5 h-9"
+                  >
+                    {showAllKartu ? (
+                      <>
+                        Tampilkan Lebih Sedikit <ChevronUp className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        Tampilkan Semua ({filteredKartu.length}) <ChevronDown className="w-4 h-4" />
+                      </>
+                    )}
+                  </Button>
                 )}
-              </Button>
-            )}
+              </div>
           </div>
         </CardHeader>
         <CardContent className="p-6 sm:p-10">
