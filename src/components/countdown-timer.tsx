@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react";
 import { Clock, Calendar, MapPin } from "lucide-react";
 
-export default function CountdownTimer() {
+interface CountdownTimerProps {
+  simple?: boolean;
+}
+
+export default function CountdownTimer({ simple = false }: CountdownTimerProps) {
   const [mounted, setMounted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -31,6 +35,38 @@ export default function CountdownTimer() {
 
     return () => clearInterval(timer);
   }, []);
+
+  if (simple) {
+    return (
+      <div className="w-full bg-[#0c0c0e]/90 backdrop-blur-md border border-white/5 rounded-[1.5rem] p-6 md:p-8 flex flex-col justify-between shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-3xl mx-auto z-10">
+        <div className="flex items-center gap-2.5 mb-6 justify-center">
+          <Clock className="w-5 h-5 text-amber-500 animate-pulse" />
+          <span className="text-slate-100 font-bold text-base md:text-lg tracking-wide">Countdown Pelayanan Kasih</span>
+        </div>
+
+        <div className="grid grid-cols-4 gap-3 md:gap-4 max-w-xl mx-auto w-full">
+          {[
+            { label: "HARI", value: mounted ? timeLeft.days : 0 },
+            { label: "JAM", value: mounted ? timeLeft.hours : 0 },
+            { label: "MENIT", value: mounted ? timeLeft.minutes : 0 },
+            { label: "DETIK", value: mounted ? timeLeft.seconds : 0 },
+          ].map((item, idx) => (
+            <div 
+              key={idx} 
+              className="bg-[#141416] border border-white/5 rounded-2xl py-3 md:py-5 px-2 flex flex-col items-center justify-center transition-all duration-300 hover:border-amber-500/20 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
+            >
+              <span className="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#f59e0b] tracking-tight mb-1.5 min-w-[2ch] text-center">
+                {mounted ? String(item.value).padStart(2, '0') : "00"}
+              </span>
+              <span className="text-[8px] md:text-[10px] font-bold text-[#7c7c82] tracking-widest uppercase">
+                {item.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full z-10">

@@ -92,7 +92,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Premium Countdown Component */}
-        <CountdownTimer />
+        <CountdownTimer simple={true} />
 
         {/* Global Progress Bar */}
         <Card className="glass-panel border-t-4 border-t-emerald-500 rounded-[2.5rem] overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.15)]">
