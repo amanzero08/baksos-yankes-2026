@@ -241,6 +241,9 @@ const styles = StyleSheet.create({
 export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuSahabat: any[] }) => {
   const GLOBAL_TARGET = 774500000;
 
+  // Filter kartuSahabat to include only those who have a card number
+  const filteredKartuSahabat = (kartuSahabat || []).filter(k => k.card_number && k.card_number.trim() !== '');
+
   // Calculators
   const totalProposalDonations = proposals
     ?.filter(p => p.donations && p.donations.length > 0)
@@ -251,8 +254,7 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
       return sum + verifiedAmount;
     }, 0) || 0;
 
-  const totalKartuSahabat = kartuSahabat?.reduce((sum, item) => sum + (Number(item.collected_amount) || 0), 0) || 0;
-  const totalTargetKartu = kartuSahabat?.reduce((sum, item) => sum + (Number(item.target_amount) || 0), 0) || 0;
+  const totalKartuSahabat = filteredKartuSahabat?.reduce((sum, item) => sum + (Number(item.collected_amount) || 0), 0) || 0;
   const totalCollected = totalProposalDonations + totalKartuSahabat;
   const remainingAmount = Math.max(0, GLOBAL_TARGET - totalCollected);
   const progressPercent = (totalCollected / GLOBAL_TARGET) * 100;
@@ -264,8 +266,8 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
   const emptyProposals = totalProposals - confirmedProposals - pendingProposals;
 
   // Kartu Sahabat Stats
-  const totalKartu = kartuSahabat.length;
-  const activeKartu = kartuSahabat.filter(k => (Number(k.collected_amount) || 0) > 0).length;
+  const totalKartu = filteredKartuSahabat.length;
+  const activeKartu = filteredKartuSahabat.filter(k => (Number(k.collected_amount) || 0) > 0).length;
 
   const formatCurrency = (amount: number) => {
     return "Rp " + Math.round(amount).toLocaleString('id-ID');
@@ -507,46 +509,37 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
 
         <Text style={styles.sectionTitle}>Rincian Perolehan Dana: Jalur Kartu Sahabat Panitia</Text>
         <Text style={{ fontSize: 8, color: '#64748b', marginBottom: 8 }}>
-          Tabel di bawah ini menampilkan rincian target dan nominal dana terhimpun dari masing-masing pemegang kartu sahabat.
+          Tabel di bawah ini menampilkan rincian nominal dana terhimpun dari masing-masing pemegang kartu sahabat yang telah memiliki nomor kartu resmi.
         </Text>
 
         {/* Table of Kartu Sahabat */}
         <View style={styles.table}>
           <View style={styles.tableRowHeader}>
-            <Text style={{ ...styles.tableColHeader, width: '10%' }}>No</Text>
-            <Text style={{ ...styles.tableColHeader, width: '35%' }}>Nama Pemegang Kartu (Panitia)</Text>
-            <Text style={{ ...styles.tableColHeader, width: '20%', textAlign: 'right' }}>Target Dana (Rp)</Text>
-            <Text style={{ ...styles.tableColHeader, width: '20%', textAlign: 'right' }}>Terkumpul (Rp)</Text>
-            <Text style={{ ...styles.tableColHeader, width: '15%', textAlign: 'right' }}>Pencapaian (%)</Text>
+            <Text style={{ ...styles.tableColHeader, width: '8%' }}>No</Text>
+            <Text style={{ ...styles.tableColHeader, width: '22%' }}>Nomor Kartu</Text>
+            <Text style={{ ...styles.tableColHeader, width: '45%' }}>Nama Pemegang Kartu (Panitia)</Text>
+            <Text style={{ ...styles.tableColHeader, width: '25%', textAlign: 'right' }}>Terkumpul (Rp)</Text>
           </View>
 
-          {kartuSahabat.length > 0 ? (
-            kartuSahabat.map((kartu, idx) => {
+          {filteredKartuSahabat.length > 0 ? (
+            filteredKartuSahabat.map((kartu, idx) => {
               const collected = Number(kartu.collected_amount) || 0;
-              const target = Number(kartu.target_amount) || 0;
-              const pct = target > 0 ? (collected / target) * 100 : 0;
               const isAlternating = idx % 2 === 1;
 
               return (
                 <View key={kartu.id} style={isAlternating ? styles.tableRowAlternating : styles.tableRow}>
-                  <Text style={{ ...styles.tableCol, width: '10%' }}>{idx + 1}</Text>
-                  <Text style={{ ...styles.tableColBold, width: '35%' }}>{kartu.committee_name}</Text>
-                  <Text style={{ ...styles.tableCol, width: '20%', textAlign: 'right' }}>{formatCurrency(target)}</Text>
-                  <Text style={{ ...styles.tableColBold, width: '20%', textAlign: 'right', color: collected > 0 ? '#047857' : '#1e293b' }}>
+                  <Text style={{ ...styles.tableCol, width: '8%' }}>{idx + 1}</Text>
+                  <Text style={{ ...styles.tableColBold, width: '22%' }}>{kartu.card_number || '-'}</Text>
+                  <Text style={{ ...styles.tableColBold, width: '45%' }}>{kartu.committee_name}</Text>
+                  <Text style={{ ...styles.tableColBold, width: '25%', textAlign: 'right', color: collected > 0 ? '#047857' : '#1e293b' }}>
                     {collected > 0 ? formatCurrency(collected) : '-'}
                   </Text>
-                  <Text style={{ 
-                    ...styles.tableColBold, 
-                    width: '15%', 
-                    textAlign: 'right',
-                    color: pct >= 100 ? '#047857' : pct > 0 ? '#d97706' : '#64748b'
-                  }}>{pct.toFixed(1)}%</Text>
                 </View>
               );
             })
           ) : (
             <View style={styles.tableRow}>
-              <Text style={{ ...styles.tableCol, width: '100%', textAlign: 'center', paddingVertical: 10 }}>Belum ada data kartu sahabat.</Text>
+              <Text style={{ ...styles.tableCol, width: '100%', textAlign: 'center', paddingVertical: 10 }}>Belum ada data kartu sahabat yang beredar.</Text>
             </View>
           )}
         </View>
@@ -562,19 +555,15 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
           flexDirection: 'row',
           justifyContent: 'space-between'
         }}>
-          <View style={{ width: '22%' }}>
+          <View style={{ width: '33%' }}>
             <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Kartu Edar</Text>
             <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{totalKartu} Lembar</Text>
           </View>
-          <View style={{ width: '25%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 10 }}>
+          <View style={{ width: '33%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 12 }}>
             <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Kartu Terisi ({">"} 0)</Text>
             <Text style={{ fontSize: 11, fontWeight: 700, color: '#b45309' }}>{activeKartu} Lembar</Text>
           </View>
-          <View style={{ width: '26%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 10 }}>
-            <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Total Target Dana</Text>
-            <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{formatCurrency(totalTargetKartu)}</Text>
-          </View>
-          <View style={{ width: '27%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 10 }}>
+          <View style={{ width: '34%', borderLeftWidth: 1, borderLeftColor: '#e2e8f0', paddingLeft: 12 }}>
             <Text style={{ fontSize: 7, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Total Dana Himpun</Text>
             <Text style={{ fontSize: 11, fontWeight: 700, color: '#047857' }}>{formatCurrency(totalKartuSahabat)}</Text>
           </View>

@@ -105,12 +105,18 @@ export function ProposalRow({ prop }: { prop: any }) {
           setError(result.error || 'Gagal menghapus proposal')
         }
       } else if (actionType === 'edit') {
-        const result = await updateProposal(prop.id, {
-          donorName,
-          institution,
-          committeeName,
-          message,
-        }, passcode)
+        const formData = new FormData()
+        formData.append('id', prop.id)
+        formData.append('donorName', donorName)
+        formData.append('institution', institution)
+        formData.append('committeeName', committeeName)
+        formData.append('message', message)
+        formData.append('passcode', passcode)
+        if (receiptFile) {
+          formData.append('receipt', receiptFile)
+        }
+
+        const result = await updateProposal(formData)
         if (result.success) {
           setIsOpen(false)
           router.refresh()
@@ -563,6 +569,44 @@ export function ProposalRow({ prop }: { prop: any }) {
                   <Label htmlFor="message" className="text-slate-300">Pesan Khusus (Opsional)</Label>
                   <Input id="message" value={message} onChange={(e) => setMessage(e.target.value)} className="bg-slate-900 border-white/10 text-slate-100" />
                 </div>
+                {/* Existing Transfer Proof */}
+                {hasDonation && prop.donations[0].receipt_url && (
+                  <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center">
+                    <span className="text-xs font-semibold text-slate-400 block self-start">Bukti Transfer Saat Ini</span>
+                    <img 
+                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
+                      alt="Bukti Transfer Saat Ini" 
+                      className="w-full max-h-32 object-contain rounded-lg border border-white/10"
+                    />
+                  </div>
+                )}
+                {/* Ganti Transfer Proof */}
+                <div className="space-y-2">
+                  <Label htmlFor="editReceiptFile" className="text-slate-300 font-semibold">
+                    {hasDonation && prop.donations[0].receipt_url ? 'Ganti Bukti Transfer (Opsional)' : 'Unggah Bukti Transfer (Opsional)'}
+                  </Label>
+                  <Input 
+                    id="editReceiptFile" 
+                    type="file" 
+                    accept="image/*,.pdf"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setReceiptFile(e.target.files[0])
+                      }
+                    }} 
+                    className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 text-xs h-9 flex items-center" 
+                  />
+                </div>
+                {receiptFile && receiptFile.type.startsWith('image/') && (
+                  <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
+                    <span className="text-xs font-semibold text-slate-400 block self-start">Preview Bukti Baru</span>
+                    <img 
+                      src={URL.createObjectURL(receiptFile)} 
+                      alt="Preview Bukti Baru" 
+                      className="w-full max-h-32 object-contain rounded-lg border border-white/10"
+                    />
+                  </div>
+                )}
               </>
             )}
             {(actionType === 'verify' || actionType === 'record_payment') && (

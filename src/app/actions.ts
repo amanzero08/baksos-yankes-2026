@@ -120,29 +120,92 @@ export async function submitDonation(formData: FormData) {
   }
 }
 
-export async function updateProposal(id: string, data: {
-  donorName: string
-  institution?: string
-  committeeName?: string
-  message?: string
-}, passcode: string) {
+export async function updateProposal(formData: FormData) {
   try {
+    const id = formData.get('id') as string
+    const donorName = formData.get('donorName') as string
+    const institution = formData.get('institution') as string
+    const committeeName = formData.get('committeeName') as string
+    const message = formData.get('message') as string
+    const passcode = formData.get('passcode') as string
+    const file = formData.get('receipt') as File | null
+
     if (passcode !== '2906') throw new Error('Passcode salah. Anda tidak memiliki izin untuk mengubah data.')
+    if (!id) throw new Error('ID Proposal tidak ditemukan.')
 
     const { data: updated, error } = await supabaseAdmin
       .from('proposals')
       .update({
-        donor_name: data.donorName,
-        institution: data.institution || null,
-        committee_name: data.committeeName || null,
-        message: data.message || null,
+        donor_name: donorName,
+        institution: institution || null,
+        committee_name: committeeName || null,
+        message: message || null,
       })
       .eq('id', id)
       .select()
       .single()
 
     if (error) throw new Error(error.message)
+
+    if (file && file.size > 0) {
+      const { data: existingDonations } = await supabaseAdmin
+        .from('donations')
+        .select('id')
+        .eq('proposal_id', id);
+
+      if (existingDonations && existingDonations.length > 0) {
+        const donationId = existingDonations[0].id;
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+          .from('receipts')
+          .upload(fileName, buffer, {
+            contentType: file.type,
+          })
+
+        if (uploadError) throw new Error(uploadError.message)
+
+        const { error: donationUpdateError } = await supabaseAdmin
+          .from('donations')
+          .update({ receipt_url: uploadData.path })
+          .eq('id', donationId);
+
+        if (donationUpdateError) throw new Error(donationUpdateError.message)
+      } else {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+          .from('receipts')
+          .upload(fileName, buffer, {
+            contentType: file.type,
+          })
+
+        if (uploadError) throw new Error(uploadError.message)
+
+        const { error: insertError } = await supabaseAdmin
+          .from('donations')
+          .insert({
+            donor_name: donorName,
+            proposal_id: id,
+            amount: 0,
+            receipt_url: uploadData.path,
+            verified: false
+          });
+
+        if (insertError) throw new Error(insertError.message)
+      }
+    }
+
     revalidatePath('/admin')
+    revalidatePath('/dashboard')
     return { success: true, data: updated }
   } catch (error: any) {
     return { success: false, error: error.message }
