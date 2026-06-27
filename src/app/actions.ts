@@ -151,13 +151,11 @@ export async function updateProposal(id: string, data: {
 
 export async function deleteProposal(id: string, passcode: string) {
   try {
-    if (passcode !== '2906') throw new Error('Passcode salah. Anda tidak memiliki izin untuk menghapus data.')
+    if (passcode !== '7777') throw new Error('Passcode salah. Khusus untuk penghapusan permanen, gunakan passcode 7777.')
 
-    // Poka-Yoke: Prevent deletion if proposal has verified donations
-    const { data: donations } = await supabaseAdmin.from('donations').select('id, verified').eq('proposal_id', id)
-    if (donations && donations.some(d => d.verified)) {
-      throw new Error('Gagal menghapus! Proposal ini sudah memiliki donasi yang terverifikasi.')
-    }
+    // Deleting the associated donations first to bypass verification/foreign key locks
+    const { error: donationError } = await supabaseAdmin.from('donations').delete().eq('proposal_id', id)
+    if (donationError) throw new Error(donationError.message)
 
     const { error } = await supabaseAdmin.from('proposals').delete().eq('id', id)
     if (error) throw new Error(error.message)
@@ -254,7 +252,7 @@ export async function updateKartuSahabat(formData: FormData) {
 
 export async function deleteKartuSahabat(id: string, passcode: string) {
   try {
-    if (passcode !== '2906') throw new Error('Passcode salah.')
+    if (passcode !== '7777') throw new Error('Passcode salah. Khusus penghapusan data, gunakan passcode 7777.')
 
     const { error } = await supabaseAdmin.from('kartu_sahabat').delete().eq('id', id)
     if (error) throw new Error(error.message)

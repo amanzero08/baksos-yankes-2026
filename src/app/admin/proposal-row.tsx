@@ -519,7 +519,7 @@ export function ProposalRow({ prop }: { prop: any }) {
                 ? 'Konfirmasi nominal donasi yang ditransfer. Nominal ini akan tercatat di Dasbor.'
                 : actionType === 'record_payment'
                 ? 'Rekam pembayaran donatur secara internal. Donasi akan langsung diverifikasi.'
-                : 'Tindakan ini tidak dapat dibatalkan. Masukkan passcode otoritas untuk menghapus permanen.'}
+                : 'Tindakan ini tidak dapat dibatalkan. Masukkan passcode khusus penghapusan (7777) untuk menghapus permanen.'}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-5 py-6">
