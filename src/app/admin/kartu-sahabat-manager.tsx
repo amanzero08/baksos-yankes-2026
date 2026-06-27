@@ -598,8 +598,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       </Dialog>
 
       {successToast && (
-        <div className="fixed top-5 right-5 z-50 bg-emerald-950/90 text-emerald-400 border border-emerald-500/20 px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-[0_0_30px_rgba(16,185,129,0.2)] backdrop-blur-md animate-fade-in">
-          <CheckCircle className="w-5 h-5 text-emerald-400" />
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-5 sm:translate-x-0 w-[calc(100%-2.5rem)] sm:w-auto max-w-sm z-50 bg-emerald-950/90 text-emerald-400 border border-emerald-500/20 px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-[0_0_30px_rgba(16,185,129,0.2)] backdrop-blur-md animate-fade-in">
+          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
           <span className="text-xs font-bold tracking-wide">{successToast}</span>
         </div>
       )}
