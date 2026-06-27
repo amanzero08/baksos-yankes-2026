@@ -196,7 +196,6 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
             </div>
           )}
 
-          {/* Bottom Expand Button for Mobile/Sleek view if not expanded */}
           {!showAllProposals && filteredProposals.length > 5 && (
             <div className="p-4 border-t border-white/5 flex justify-center bg-slate-900/10">
               <Button
@@ -204,7 +203,7 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
                 onClick={() => setShowAllProposals(true)}
                 className="text-amber-400 hover:text-amber-300 font-bold text-sm w-full py-3 flex items-center justify-center gap-1.5"
               >
-                Tampilkan Semua List Proposal ({filteredProposals.length} data) <ChevronDown className="w-4.5 h-4.5 animate-bounce mt-1" />
+                Tampilkan Semua ({filteredProposals.length}) <ChevronDown className="w-4.5 h-4.5 animate-bounce mt-1" />
               </Button>
             </div>
           )}
@@ -258,7 +257,6 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
         <CardContent className="p-6 sm:p-10">
           <KartuSahabatManager initialData={displayedKartu} />
 
-          {/* Bottom Expand Button for Kartu Sahabat */}
           {!showAllKartu && filteredKartu.length > 5 && (
             <div className="mt-6 pt-6 border-t border-white/5 flex justify-center">
               <Button
@@ -266,7 +264,7 @@ export function AdminDashboardClient({ proposals, kartuSahabatData }: AdminDashb
                 onClick={() => setShowAllKartu(true)}
                 className="text-blue-400 hover:text-blue-300 font-bold text-sm w-full py-3 flex items-center justify-center gap-1.5"
               >
-                Tampilkan Semua List Kartu Sahabat ({filteredKartu.length} data) <ChevronDown className="w-4.5 h-4.5 animate-bounce mt-1" />
+                Tampilkan Semua ({filteredKartu.length}) <ChevronDown className="w-4.5 h-4.5 animate-bounce mt-1" />
               </Button>
             </div>
           )}
