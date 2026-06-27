@@ -42,6 +42,7 @@ export default async function DashboardPage() {
 
   // Total Collected overall
   const totalCollected = totalProposalDonations + totalKartuSahabat + totalGeneralDonations;
+  const remainingAmount = Math.max(0, GLOBAL_TARGET - totalCollected);
   
   // Fetch 5 most recent proposals with donation status
   const { data: recentProposals } = await supabaseAdmin
@@ -106,9 +107,15 @@ export default async function DashboardPage() {
                   {formatIDR(totalCollected)}
                 </h2>
               </div>
-              <div className="text-left md:text-right">
-                <p className="text-slate-400 font-medium text-sm mb-1 uppercase tracking-wider">Target Dana</p>
-                <p className="text-xl md:text-2xl font-bold text-slate-300">{formatIDR(GLOBAL_TARGET)}</p>
+              <div className="text-left md:text-right flex flex-row sm:flex-row md:flex-col gap-x-6 gap-y-3">
+                <div>
+                  <p className="text-slate-400 font-medium text-[10px] md:text-xs mb-1 uppercase tracking-wider">Target Dana</p>
+                  <p className="text-lg md:text-xl font-bold text-slate-300">{formatIDR(GLOBAL_TARGET)}</p>
+                </div>
+                <div>
+                  <p className="text-amber-500/80 font-medium text-[10px] md:text-xs mb-1 uppercase tracking-wider">Sisa Kekurangan</p>
+                  <p className="text-lg md:text-xl font-bold text-amber-400">{formatIDR(remainingAmount)}</p>
+                </div>
               </div>
             </div>
             
