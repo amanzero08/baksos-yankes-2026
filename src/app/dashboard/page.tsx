@@ -320,8 +320,8 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                         className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
                         style={{ left: `${leftPct}%`, top: `${topPct}%` }}
                       >
-                        {/* Value Label above dot */}
-                        <div className="absolute bottom-3.5 text-[10px] sm:text-xs font-extrabold text-emerald-400 whitespace-nowrap bg-slate-950/90 px-2 py-0.5 rounded-md border border-emerald-500/20 shadow-lg backdrop-blur-sm">
+                        {/* Value Label above dot - Show all on desktop, but only first and last on mobile to prevent squishing */}
+                        <div className={`absolute bottom-3.5 text-[10px] sm:text-xs font-extrabold text-emerald-400 whitespace-nowrap bg-slate-950/90 px-2 py-0.5 rounded-md border border-emerald-500/20 shadow-lg backdrop-blur-sm ${(idx === 0 || idx === points.length - 1) ? "block" : "hidden sm:block"}`}>
                           {formatShortIDR(p.cumulative)}
                         </div>
 
@@ -337,14 +337,15 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                   })}
                 </div>
 
-                {/* HTML Overlay: Dates row aligned perfectly at the bottom */}
+                {/* HTML Overlay: Dates row aligned perfectly at the bottom - Show only key dates on mobile to prevent overlapping */}
                 <div className="absolute inset-x-6 bottom-0 w-[calc(100%-3rem)] h-6 pointer-events-none">
                   {points.map((p, idx) => {
                     const leftPct = (idx / (points.length - 1)) * 100;
+                    const isKeyLabel = idx === 0 || idx === Math.floor(points.length / 2) || idx === points.length - 1;
                     return (
                       <div 
                         key={idx} 
-                        className="absolute -translate-x-1/2 text-[10px] sm:text-xs font-bold text-slate-100 whitespace-nowrap"
+                        className={`absolute -translate-x-1/2 text-[10px] sm:text-xs font-bold text-slate-100 whitespace-nowrap ${isKeyLabel ? "block" : "hidden sm:block"}`}
                         style={{ left: `${leftPct}%` }}
                       >
                         {p.label}
