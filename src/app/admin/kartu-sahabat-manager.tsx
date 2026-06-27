@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Plus, Edit2, Trash2, Users, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { Plus, Edit2, Trash2, Users, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle } from "lucide-react"
 import { createKartuSahabat, updateKartuSahabat, deleteKartuSahabat } from "@/app/actions"
 
 export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
@@ -16,6 +16,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [deletePasscode, setDeletePasscode] = useState("")
   const [deleteError, setDeleteError] = useState("")
+  const [successToast, setSuccessToast] = useState("")
   
   const [committeeName, setCommitteeName] = useState("")
   const [cardNumber, setCardNumber] = useState("")
@@ -90,6 +91,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       setCommitteeName("")
       setCardNumber("")
       setPasscode("")
+      setSuccessToast("Kartu Sahabat berhasil dibuat!")
+      setTimeout(() => setSuccessToast(""), 4000)
     } else {
       setError(res.error || "Gagal menambah kartu sahabat")
     }
@@ -491,6 +494,13 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {successToast && (
+        <div className="fixed top-5 right-5 z-50 bg-emerald-950/90 text-emerald-400 border border-emerald-500/20 px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-[0_0_30px_rgba(16,185,129,0.2)] backdrop-blur-md animate-fade-in">
+          <CheckCircle className="w-5 h-5 text-emerald-400" />
+          <span className="text-xs font-bold tracking-wide">{successToast}</span>
+        </div>
+      )}
     </div>
   )
 }

@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SearchableSelect } from '@/components/searchable-select'
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
+import { CheckCircle2 } from 'lucide-react'
 
 // Dynamically import PDFDownloadLink to avoid SSR issues
 const PDFDownloadLink = dynamic(
@@ -34,6 +35,7 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
   const [proposalData, setProposalData] = useState<any>(null)
   const [error, setError] = useState('')
   const [waLang, setWaLang] = useState<'id' | 'en'>('id')
+  const [successToast, setSuccessToast] = useState('')
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
     resolver: zodResolver(schema)
@@ -51,6 +53,8 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
       })
       if (res.success) {
         setProposalData(res.data)
+        setSuccessToast("Proposal Kemitraan berhasil dibuat!")
+        setTimeout(() => setSuccessToast(""), 4000)
       } else {
         setError(res.error || 'Terjadi kesalahan saat membuat proposal')
       }
@@ -241,6 +245,13 @@ export function ProposalForm({ panitiaList }: { panitiaList: any[] }) {
             </CardContent>
           </Card>
         </motion.div>
+      )}
+
+      {successToast && (
+        <div className="fixed top-5 right-5 z-50 bg-emerald-950/90 text-emerald-400 border border-emerald-500/20 px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-[0_0_30px_rgba(16,185,129,0.2)] backdrop-blur-md animate-fade-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <span className="text-xs font-bold tracking-wide">{successToast}</span>
+        </div>
       )}
     </div>
   )
