@@ -145,7 +145,8 @@ async function seedPanitia() {
   const recordsToInsert = newPanitia.map(name => ({
     committee_name: name,
     collected_amount: 0,
-    target_amount: 2500000 // Standard/default target amount per committee member if any (optional, e.g. 2.5jt, or null)
+    target_amount: null,
+    card_number: null
   }));
 
   const { data: insertedData, error: insertError } = await supabase
