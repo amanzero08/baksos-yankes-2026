@@ -24,7 +24,7 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
   const verifiedDonation = hasDonation ? proposal.donations.find((d: any) => d.verified) : null;
 
   return (
-    <main className="flex-1 py-12 px-4 relative flex items-center justify-center min-h-[85vh] bg-slate-950 overflow-hidden">
+    <main className="flex-1 py-12 pb-28 md:pb-16 px-4 relative flex items-center justify-center min-h-[85vh] bg-slate-950">
       {/* Background Orbs with gold and emerald hues */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-[20%] right-[15%] w-[35%] h-[35%] bg-amber-500/10 rounded-full blur-[130px]" />

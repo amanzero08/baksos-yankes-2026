@@ -25,7 +25,7 @@ export default async function VerifyProposalPage({ params }: PageProps) {
   const pendingDonation = hasDonation ? proposal.donations.find((d: any) => !d.verified) : null;
 
   return (
-    <main className="flex-1 py-12 px-4 relative flex items-center justify-center min-h-[85vh] bg-slate-950 overflow-hidden">
+    <main className="flex-1 py-12 pb-28 md:pb-16 px-4 relative flex items-center justify-center min-h-[85vh] bg-slate-950">
       {/* Background Orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-[20%] left-[10%] w-[35%] h-[35%] bg-blue-600/10 rounded-full blur-[130px]" />
