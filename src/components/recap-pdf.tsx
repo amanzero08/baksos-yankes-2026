@@ -277,6 +277,9 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
     year: 'numeric'
   });
 
+  const qrData = `https://baksos-yankes-2026.vercel.app/dashboard?from=lpj&date=${currentDate}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}&color=0f172a&bgcolor=ffffff`;
+
   return (
     <Document>
       {/* ================= PAGE 1: EXECUTIVE SUMMARY ================= */}
@@ -360,7 +363,7 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
           {/* QR Sign Verification */}
           <View style={{ ...styles.sigBlock, width: '20%', alignItems: 'center' }}>
             <Image 
-              src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://baksos-yankes-2026.vercel.app/dashboard&color=0f172a&bgcolor=ffffff" 
+              src={qrUrl} 
               style={{ width: 45, height: 45, marginBottom: 4 }} 
             />
             <Text style={{ fontSize: 6, fontWeight: 700, color: '#0f172a', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>DIGITAL SIGNATURE</Text>

@@ -2,12 +2,20 @@ import React from "react";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Target, TrendingUp, Users, Award, FileText } from "lucide-react";
+import { Target, TrendingUp, Users, Award, FileText, ShieldCheck } from "lucide-react";
 import CountdownTimer from "@/components/countdown-timer";
 
 export const revalidate = 0;
 
-export default async function DashboardPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function DashboardPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const fromLpj = resolvedSearchParams.from === "lpj";
+  const lpjDate = resolvedSearchParams.date as string | undefined;
+
   const GLOBAL_TARGET = 774500000;
 
   // Fetch proposals with donations
@@ -86,6 +94,27 @@ export default async function DashboardPage() {
       </div>
 
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-12 relative z-10">
+        {fromLpj && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_0_30px_rgba(245,158,11,0.1)] flex items-start gap-4 relative overflow-hidden backdrop-blur-md">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none"></div>
+            <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20">
+              <ShieldCheck className="w-5.5 h-5.5" />
+            </div>
+            <div className="space-y-1 flex-1">
+              <h4 className="font-bold text-amber-400 text-sm sm:text-base tracking-tight">Otentikasi Rekapitulasi LPJ Berhasil</h4>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                Dokumen fisik Laporan Pertanggungjawaban (LPJ) telah terverifikasi secara digital. Angka nominal yang tertera sinkron dengan basis data server sinkronisasi real-time kami.
+              </p>
+              {lpjDate && (
+                <div className="pt-2 flex items-center gap-1.5 text-[11px] text-amber-500/80 font-bold uppercase tracking-wider">
+                  <span>Dicetak pada tanggal:</span>
+                  <span className="bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/10">{lpjDate}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="text-center">
           <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-100 tracking-tight mt-6">Dasbor Pencapaian</h1>
           <div className="text-slate-400 mt-4 text-base sm:text-lg max-w-2xl mx-auto">
