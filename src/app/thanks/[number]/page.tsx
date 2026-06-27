@@ -122,6 +122,20 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
                   <span className="text-slate-500 text-xs italic">Otoritas Valid</span>
                 </div>
               </div>
+
+              {/* Bukti Transaksi */}
+              {verifiedDonation.receipt_url && (
+                <div className="space-y-4 pt-2">
+                  <h3 className="text-slate-400 font-bold uppercase tracking-wider text-xs">Lampiran Bukti Transaksi</h3>
+                  <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-slate-950/40 p-4 flex flex-col items-center">
+                    <img 
+                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${verifiedDonation.receipt_url}`} 
+                      alt="Bukti Transaksi" 
+                      className="w-full max-h-64 object-contain rounded-xl border border-white/10"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Gratitude Message */}
