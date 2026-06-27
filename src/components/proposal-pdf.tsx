@@ -1528,7 +1528,7 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
         {/* QR Code and Validation */}
         <View style={styles.qrBlock}>
           <Image 
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://baksos-yankes.id/verify/${data.proposal_number}&color=0f172a&bgcolor=ffffff`} 
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://baksos-yankes-2026.vercel.app/verify/${data.proposal_number}&color=0f172a&bgcolor=ffffff`} 
             style={styles.qrCode} 
           />
           <Text style={{ ...styles.signatureName, fontSize: 8.5 }}>{strings.officialAuth}</Text>
