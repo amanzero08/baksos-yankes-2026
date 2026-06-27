@@ -290,9 +290,7 @@ export async function updateKartuSahabat(formData: FormData) {
     if (passcode !== '2906') throw new Error('Passcode salah.')
     if (!id) throw new Error('ID Kartu Sahabat tidak ditemukan.')
 
-    const collectedAmount = collectedAmountStr ? parseFloat(collectedAmountStr.replace(/\D/g,"")) : 0
-    if (collectedAmount < 0) throw new Error('Nominal tidak boleh negatif')
-
+    // 1. Update Card Number (if changed/provided)
     let formattedCardNumber: string | null = null;
     if (cardNumber) {
       const clean = cardNumber.trim();
@@ -317,40 +315,70 @@ export async function updateKartuSahabat(formData: FormData) {
       }
     }
 
-    const updateData: any = {
-      collected_amount: collectedAmount,
-      received_at: receivedAtStr || null,
-      card_number: formattedCardNumber
-    }
-
-    if (file && file.size > 0) {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-      
-      const arrayBuffer = await file.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
-
-      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-        .from('receipts')
-        .upload(`kartu-sahabat/${fileName}`, buffer, {
-          contentType: file.type,
-        })
-
-      if (uploadError) throw new Error(uploadError.message)
-      updateData.photo_url = uploadData.path
-    }
-
-    const { data: updated, error } = await supabaseAdmin
+    const { error: parentError } = await supabaseAdmin
       .from('kartu_sahabat')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single()
+      .update({ card_number: formattedCardNumber })
+      .eq('id', id);
 
-    if (error) throw new Error(error.message)
+    if (parentError) throw new Error(parentError.message)
+
+    // 2. Add new collection report (payment) if amount > 0
+    const collectedAmount = collectedAmountStr ? parseFloat(collectedAmountStr.replace(/\D/g,"")) : 0
+    if (collectedAmount > 0) {
+      let photoUrl: string | null = null;
+
+      if (file && file.size > 0) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+          .from('receipts')
+          .upload(`kartu-sahabat/${fileName}`, buffer, {
+            contentType: file.type,
+          })
+
+        if (uploadError) throw new Error(uploadError.message)
+        photoUrl = uploadData.path
+      }
+
+      const { error: paymentError } = await supabaseAdmin
+        .from('kartu_sahabat_payments')
+        .insert({
+          kartu_sahabat_id: id,
+          amount: collectedAmount,
+          received_at: receivedAtStr || new Date().toISOString().substring(0, 10),
+          photo_url: photoUrl
+        });
+
+      if (paymentError) throw new Error(paymentError.message)
+    }
+
     revalidatePath('/admin')
     revalidatePath('/dashboard')
-    return { success: true, data: updated }
+    return { success: true }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}
+
+export async function deleteKartuSahabatPayment(paymentId: string, passcode: string) {
+  try {
+    if (passcode !== '2906') throw new Error('Passcode salah.')
+    if (!paymentId) throw new Error('ID Pembayaran tidak ditemukan.')
+
+    const { error } = await supabaseAdmin
+      .from('kartu_sahabat_payments')
+      .delete()
+      .eq('id', paymentId);
+
+    if (error) throw new Error(error.message)
+
+    revalidatePath('/admin')
+    revalidatePath('/dashboard')
+    return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
   }

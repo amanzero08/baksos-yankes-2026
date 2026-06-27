@@ -1,15 +1,17 @@
 'use client'
 
 import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Plus, Edit2, Trash2, Users, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle } from "lucide-react"
-import { createKartuSahabat, updateKartuSahabat, deleteKartuSahabat } from "@/app/actions"
+import { createKartuSahabat, updateKartuSahabat, deleteKartuSahabat, deleteKartuSahabatPayment } from "@/app/actions"
 
 export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
+  const router = useRouter()
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [selectedKartu, setSelectedKartu] = useState<any>(null)
@@ -101,9 +103,8 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
 
   const handleOpenDetails = (kartu: any) => {
     setSelectedKartu(kartu)
-    const rawVal = kartu.collected_amount?.toString() || ""
-    setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "")
-    setReceivedAt(kartu.received_at || "")
+    setCollectedAmount("")
+    setReceivedAt(new Date().toISOString().substring(0, 10))
     setCardNumber(kartu.card_number || "")
     setPhotoFile(null)
     setPasscode("")
@@ -135,6 +136,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
         setCardNumber("")
         setPhotoFile(null)
         setPasscode("")
+        router.refresh()
       } else {
         setError(res.error || "Gagal mengupdate data")
       }
@@ -164,6 +166,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       setIsDeleteOpen(false)
       setIsDetailsOpen(false)
       setDeletePasscode("")
+      router.refresh()
     } else {
       setDeleteError(res.error || "Gagal menghapus kartu sahabat")
     }
@@ -303,46 +306,64 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     <span className="text-xs font-bold text-amber-500 uppercase">{selectedKartu.card_number || "-"}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Terkumpul</span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Total Terkumpul</span>
                     <span className="text-base font-bold text-emerald-400">{formatIDR(selectedKartu.collected_amount || 0)}</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Tanggal Terima</span>
-                    <span className="text-xs font-semibold text-slate-200">
-                      {selectedKartu.received_at 
-                        ? new Date(selectedKartu.received_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-                        : "Belum"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Lampiran</span>
-                    {selectedKartu.photo_url ? (
-                      <span className="text-xs font-semibold text-blue-400">Tersedia</span>
-                    ) : (
-                      <span className="text-xs text-slate-500 italic">Belum ada</span>
-                    )}
                   </div>
                 </div>
 
-                {selectedKartu.photo_url && (
-                  <div className="pt-2 border-t border-white/5">
-                    <div className="relative group overflow-hidden rounded-lg border border-white/5 bg-slate-950/40">
-                      <img 
-                        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${selectedKartu.photo_url}`} 
-                        alt="Lampiran Kartu Sahabat" 
-                        className="w-full max-h-32 object-contain transition-all duration-300 group-hover:scale-[1.02]"
-                      />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <a 
-                          href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${selectedKartu.photo_url}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-[10px] font-bold transition-all shadow"
-                        >
-                          Buka Lampiran
-                        </a>
+                {/* List of Payments */}
+                {selectedKartu.kartu_sahabat_payments && selectedKartu.kartu_sahabat_payments.length > 0 ? (
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1 border-t border-white/5 pt-3">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Riwayat Transaksi</span>
+                    {selectedKartu.kartu_sahabat_payments.map((pmt: any) => (
+                      <div key={pmt.id} className="flex items-center justify-between bg-slate-950/40 p-2 rounded-lg border border-white/5">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-semibold text-slate-300">
+                            {new Date(pmt.received_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                          <span className="text-xs font-bold text-emerald-400">{formatIDR(pmt.amount)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {pmt.photo_url && (
+                            <a 
+                              href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${pmt.photo_url}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-blue-400 hover:text-blue-300 underline font-semibold"
+                            >
+                              Lihat Bukti
+                            </a>
+                          )}
+                          <button 
+                            type="button"
+                            onClick={async () => {
+                              const pass = prompt("Masukkan Passcode Admin (2906) untuk menghapus setoran ini:");
+                              if (!pass) return;
+                              if (pass !== '2906') {
+                                alert("Passcode salah!");
+                                return;
+                              }
+                              const res = await deleteKartuSahabatPayment(pmt.id, pass);
+                              if (res.success) {
+                                setIsDetailsOpen(false);
+                                router.refresh();
+                              } else {
+                                alert(res.error || "Gagal menghapus transaksi");
+                              }
+                            }}
+                            className="p-1 hover:bg-white/5 rounded text-red-400 hover:text-red-300 transition-colors"
+                            title="Hapus Transaksi"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="border-t border-white/5 pt-3">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Riwayat Transaksi</span>
+                    <span className="text-xs text-slate-500 italic">Belum ada transaksi terekam</span>
                   </div>
                 )}
               </div>
@@ -351,10 +372,9 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               <form onSubmit={handleEdit} className="space-y-3.5 border-t border-white/5 pt-4">
                 <h4 className="text-[10px] font-bold text-blue-400 tracking-wider uppercase">Pembaruan Data</h4>
                 
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Dana Terkumpul</Label>
+                 <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Tambah Setoran Baru (Opsional)</Label>
                   <Input 
-                    required 
                     type="text" 
                     value={collectedAmount} 
                     onChange={handleCollectedAmountChange} 
@@ -375,7 +395,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                   </div>
                   
                   <div className="space-y-1.5">
-                    <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Unggah Foto Kartu</Label>
+                    <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Foto Bukti Setoran</Label>
                     <Input 
                       type="file" 
                       accept="image/*"
@@ -403,7 +423,6 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                 <div className="space-y-1.5">
                   <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Nomor Kartu (Format: XXX-KS-2026)</Label>
                   <Input 
-                    required 
                     type="text" 
                     value={cardNumber} 
                     onChange={e => setCardNumber(e.target.value)} 

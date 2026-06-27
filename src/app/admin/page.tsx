@@ -13,7 +13,7 @@ export default async function AdminDashboard() {
   // Fetch Kartu Sahabat
   const { data: kartuSahabatData } = await supabaseAdmin
     .from("kartu_sahabat")
-    .select("*")
+    .select("*, kartu_sahabat_payments(*)")
     .order("collected_amount", { ascending: false })
     .order("created_at", { ascending: false });
 
