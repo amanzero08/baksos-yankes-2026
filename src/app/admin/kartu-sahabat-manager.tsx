@@ -18,7 +18,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [deleteError, setDeleteError] = useState("")
   
   const [committeeName, setCommitteeName] = useState("")
-  const [targetAmount, setTargetAmount] = useState("")
+  const [cardNumber, setCardNumber] = useState("")
   const [collectedAmount, setCollectedAmount] = useState("")
   const [receivedAt, setReceivedAt] = useState("")
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -26,10 +26,10 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const [sortField, setSortField] = useState<'committee_name' | 'collected_amount' | 'target_amount' | null>(null)
+  const [sortField, setSortField] = useState<'committee_name' | 'collected_amount' | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
-  const handleSort = (field: 'committee_name' | 'collected_amount' | 'target_amount') => {
+  const handleSort = (field: 'committee_name' | 'collected_amount') => {
     if (sortField === field) {
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')
     } else {
@@ -38,7 +38,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     }
   }
 
-  const renderSortIcon = (field: 'committee_name' | 'collected_amount' | 'target_amount') => {
+  const renderSortIcon = (field: 'committee_name' | 'collected_amount') => {
     if (sortField !== field) return <ArrowUpDown className="w-3.5 h-3.5 ml-1.5 inline-block opacity-40 group-hover:opacity-75 transition-opacity" />;
     return sortDirection === 'asc' 
       ? <ArrowUp className="w-3.5 h-3.5 ml-1.5 inline-block text-blue-400" />
@@ -69,12 +69,6 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     });
   }, [initialData, sortField, sortDirection]);
 
-  const handleTargetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/\D/g, "")
-    const formattedValue = rawValue ? new Intl.NumberFormat("id-ID").format(Number(rawValue)) : ""
-    setTargetAmount(formattedValue)
-  }
-
   const handleCollectedAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, "")
     const formattedValue = rawValue ? new Intl.NumberFormat("id-ID").format(Number(rawValue)) : ""
@@ -90,13 +84,11 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     setLoading(true)
     setError("")
     
-    const targetNum = targetAmount ? parseFloat(targetAmount.replace(/\D/g,"")) : 0;
-    
-    const res = await createKartuSahabat({ committeeName, targetAmount: targetNum })
+    const res = await createKartuSahabat({ committeeName, cardNumber })
     if (res.success) {
       setIsAddOpen(false)
       setCommitteeName("")
-      setTargetAmount("")
+      setCardNumber("")
       setPasscode("")
     } else {
       setError(res.error || "Gagal menambah kartu sahabat")
@@ -109,6 +101,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     const rawVal = kartu.collected_amount?.toString() || ""
     setCollectedAmount(rawVal ? new Intl.NumberFormat("id-ID").format(Number(rawVal)) : "")
     setReceivedAt(kartu.received_at || "")
+    setCardNumber(kartu.card_number || "")
     setPhotoFile(null)
     setPasscode("")
     setError("")
@@ -126,6 +119,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
       formData.append("collectedAmount", collectedAmount)
       formData.append("receivedAt", receivedAt)
       formData.append("passcode", passcode)
+      formData.append("cardNumber", cardNumber)
       if (photoFile) {
         formData.append("photo", photoFile)
       }
@@ -135,6 +129,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
         setIsDetailsOpen(false)
         setCollectedAmount("")
         setReceivedAt("")
+        setCardNumber("")
         setPhotoFile(null)
         setPasscode("")
       } else {
@@ -176,7 +171,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
     <div className="space-y-6">
       <div className="flex justify-end items-center px-2">
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full" onClick={() => setIsAddOpen(true)}>
+          <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full" onClick={() => { setCardNumber(""); setCommitteeName(""); setError(""); setIsAddOpen(true); }}>
             <Plus className="w-4 h-4 mr-2" /> Tambah Panitia
           </Button>
           <DialogContent className="glass-panel border-white/10 text-slate-200 sm:max-w-md">
@@ -189,11 +184,11 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
             <form onSubmit={handleAdd} className="space-y-4 pt-4">
               <div className="space-y-2">
                 <Label>Nama Panitia</Label>
-                <Input required value={committeeName} onChange={e => setCommitteeName(e.target.value)} className="bg-slate-900/50 border-white/10" placeholder="Contoh: Pnt. Andreas" />
+                <Input required value={committeeName} onChange={e => setCommitteeName(e.target.value)} className="bg-slate-900/50 border-white/10 text-slate-100" placeholder="Contoh: Bpk. Edward Kanter" />
               </div>
               <div className="space-y-2">
-                <Label>Target Pribadi (Opsional)</Label>
-                <Input value={targetAmount} onChange={handleTargetAmountChange} className="bg-slate-900/50 border-white/10" placeholder="Contoh: 5.000.000" />
+                <Label>Nomor Kartu (Format: XXX-KS-2026)</Label>
+                <Input required value={cardNumber} onChange={e => setCardNumber(e.target.value)} className="bg-slate-900/50 border-white/10 text-slate-100" placeholder="Contoh: 045 atau 045-KS-2026" />
               </div>
               {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
               <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500">
@@ -210,7 +205,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
             <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
               <TableHead 
                 onClick={() => handleSort('committee_name')}
-                className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 cursor-pointer select-none group hover:text-blue-300 transition-colors"
+                className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 cursor-pointer select-none group hover:text-blue-300 transition-colors animate-none"
               >
                 <span className="flex items-center">
                   Panitia
@@ -219,20 +214,11 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               </TableHead>
               <TableHead 
                 onClick={() => handleSort('collected_amount')}
-                className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right cursor-pointer select-none group hover:text-blue-300 transition-colors"
+                className="font-bold text-blue-400 uppercase text-xs tracking-widest py-4 text-right cursor-pointer select-none group hover:text-blue-300 transition-colors animate-none"
               >
                 <span className="flex items-center justify-end">
                   Terkumpul
                   {renderSortIcon('collected_amount')}
-                </span>
-              </TableHead>
-              <TableHead 
-                onClick={() => handleSort('target_amount')}
-                className="font-bold text-blue-400 uppercase text-xs tracking-widest px-6 py-4 text-right cursor-pointer select-none group hover:text-blue-300 transition-colors"
-              >
-                <span className="flex items-center justify-end">
-                  Target
-                  {renderSortIcon('target_amount')}
                 </span>
               </TableHead>
             </TableRow>
@@ -246,9 +232,13 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     onClick={() => handleOpenDetails(kartu)}
                     className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
                   >
-                    <TableCell className="px-6 py-4 font-bold text-slate-200">{kartu.committee_name}</TableCell>
+                    <TableCell className="px-6 py-4 font-bold text-slate-200">
+                      <div>{kartu.committee_name}</div>
+                      {kartu.card_number && (
+                        <div className="text-[10px] text-slate-500 font-bold mt-0.5 tracking-wider uppercase">No: {kartu.card_number}</div>
+                      )}
+                    </TableCell>
                     <TableCell className="py-4 text-emerald-400 font-bold text-right">{formatIDR(kartu.collected_amount || 0)}</TableCell>
-                    <TableCell className="px-6 py-4 text-slate-400 font-medium text-right">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</TableCell>
                   </TableRow>
 
                   {/* Mobile Card View */}
@@ -257,17 +247,18 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                     className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <td className="block w-full">
-                      <div className="mb-2">
+                      <div className="flex justify-between items-center mb-2">
                         <span className="font-bold text-slate-200 text-base">{kartu.committee_name}</span>
+                        {kartu.card_number && (
+                          <span className="text-[9px] text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded-full font-bold uppercase">
+                            {kartu.card_number}
+                          </span>
+                        )}
                       </div>
                       <div className="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-white/5">
                         <div className="flex flex-col">
                           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Terkumpul</span>
                           <span className="text-emerald-400 font-bold">{formatIDR(kartu.collected_amount || 0)}</span>
-                        </div>
-                        <div className="flex flex-col text-right">
-                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Target</span>
-                          <span className="text-slate-400 font-medium">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</span>
                         </div>
                       </div>
                     </td>
@@ -276,7 +267,7 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-8 text-slate-500">Belum ada panitia yang terdaftar.</TableCell>
+                <TableCell colSpan={2} className="text-center py-8 text-slate-500">Belum ada panitia yang terdaftar.</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -305,14 +296,12 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                 
                 <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-white/5 pt-3">
                   <div>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Terkumpul</span>
-                    <span className="text-base font-bold text-emerald-400">{formatIDR(selectedKartu.collected_amount || 0)}</span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Nomor Kartu</span>
+                    <span className="text-xs font-bold text-amber-500 uppercase">{selectedKartu.card_number || "-"}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Target</span>
-                    <span className="text-base font-bold text-slate-300">
-                      {selectedKartu.target_amount ? formatIDR(selectedKartu.target_amount) : "-"}
-                    </span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Terkumpul</span>
+                    <span className="text-base font-bold text-emerald-400">{formatIDR(selectedKartu.collected_amount || 0)}</span>
                   </div>
                   <div>
                     <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Tanggal Terima</span>
@@ -397,6 +386,18 @@ export function KartuSahabatManager({ initialData }: { initialData: any[] }) {
                   </div>
                 </div>
                 
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Nomor Kartu (Format: XXX-KS-2026)</Label>
+                  <Input 
+                    required 
+                    type="text" 
+                    value={cardNumber} 
+                    onChange={e => setCardNumber(e.target.value)} 
+                    className="bg-slate-900/50 border-white/10 text-slate-100 h-9 text-sm" 
+                    placeholder="Contoh: 045 atau 045-KS-2026" 
+                  />
+                </div>
+
                 <div className="space-y-1.5">
                   <Label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Passcode Admin</Label>
                   <Input 

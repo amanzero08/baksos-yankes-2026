@@ -170,20 +170,37 @@ export async function deleteProposal(id: string, passcode: string) {
 
 // === KARTU SAHABAT ACTIONS ===
 
-export async function createKartuSahabat(data: { committeeName: string, targetAmount?: number }) {
+export async function createKartuSahabat(data: { committeeName: string, cardNumber?: string }) {
   try {
     if (!data.committeeName) throw new Error('Nama panitia wajib diisi.')
-    
-    // Poka-Yoke: Cegah target negatif
-    if (data.targetAmount !== undefined && data.targetAmount < 0) {
-      throw new Error('Target tidak boleh negatif')
+    if (!data.cardNumber) throw new Error('Nomor kartu wajib diisi.')
+
+    let formattedCardNumber = '';
+    const clean = data.cardNumber.trim();
+    if (/^\d+$/.test(clean)) {
+      formattedCardNumber = `${clean}-KS-2026`;
+    } else if (/^\d+-KS-2026$/.test(clean)) {
+      formattedCardNumber = clean;
+    } else {
+      throw new Error('Format nomor kartu harus XXX-KS-2026 (contoh: 045-KS-2026 atau cukup ketik 045).');
+    }
+
+    // Check uniqueness
+    const { data: existing } = await supabaseAdmin
+      .from('kartu_sahabat')
+      .select('id')
+      .eq('card_number', formattedCardNumber)
+      .maybeSingle();
+
+    if (existing) {
+      throw new Error(`Nomor kartu ${formattedCardNumber} sudah digunakan oleh panitia lain.`);
     }
 
     const { data: inserted, error } = await supabaseAdmin
       .from('kartu_sahabat')
       .insert({
         committee_name: data.committeeName,
-        target_amount: data.targetAmount,
+        card_number: formattedCardNumber,
         collected_amount: 0
       })
       .select()
@@ -205,6 +222,7 @@ export async function updateKartuSahabat(formData: FormData) {
     const receivedAtStr = formData.get('receivedAt') as string // YYYY-MM-DD
     const passcode = formData.get('passcode') as string
     const file = formData.get('photo') as File | null
+    const cardNumber = formData.get('cardNumber') as string | null
 
     if (passcode !== '2906') throw new Error('Passcode salah.')
     if (!id) throw new Error('ID Kartu Sahabat tidak ditemukan.')
@@ -212,9 +230,34 @@ export async function updateKartuSahabat(formData: FormData) {
     const collectedAmount = collectedAmountStr ? parseFloat(collectedAmountStr.replace(/\D/g,"")) : 0
     if (collectedAmount < 0) throw new Error('Nominal tidak boleh negatif')
 
+    let formattedCardNumber: string | null = null;
+    if (cardNumber) {
+      const clean = cardNumber.trim();
+      if (/^\d+$/.test(clean)) {
+        formattedCardNumber = `${clean}-KS-2026`;
+      } else if (/^\d+-KS-2026$/.test(clean)) {
+        formattedCardNumber = clean;
+      } else {
+        throw new Error('Format nomor kartu harus XXX-KS-2026 (contoh: 045-KS-2026 atau cukup ketik 045).');
+      }
+
+      // Check uniqueness
+      const { data: existing } = await supabaseAdmin
+        .from('kartu_sahabat')
+        .select('id')
+        .eq('card_number', formattedCardNumber)
+        .neq('id', id)
+        .maybeSingle();
+
+      if (existing) {
+        throw new Error(`Nomor kartu ${formattedCardNumber} sudah digunakan oleh panitia lain.`);
+      }
+    }
+
     const updateData: any = {
       collected_amount: collectedAmount,
-      received_at: receivedAtStr || null
+      received_at: receivedAtStr || null,
+      card_number: formattedCardNumber
     }
 
     if (file && file.size > 0) {

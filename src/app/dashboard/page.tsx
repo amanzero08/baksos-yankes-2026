@@ -580,7 +580,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                       <TableRow className="bg-slate-900/60 hover:bg-slate-900/60 border-b border-white/10">
                         <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider px-6 py-4">Nama Panitia</TableHead>
                         <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider py-4 text-right">Terkumpul</TableHead>
-                        <TableHead className="font-bold text-blue-400 uppercase text-[10px] tracking-wider px-6 py-4 text-right">Target</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -589,30 +588,31 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                           {/* Desktop Row */}
                           <TableRow className="hidden md:table-row border-b border-white/5 hover:bg-white/5 transition-colors">
                             <TableCell className="px-6 py-4 font-semibold text-slate-200 text-xs">
-                              {kartu.committee_name}
+                              <div>{kartu.committee_name}</div>
+                              {kartu.card_number && (
+                                <div className="text-[10px] text-slate-500 font-bold mt-0.5 tracking-wider uppercase">No: {kartu.card_number}</div>
+                              )}
                             </TableCell>
                             <TableCell className="py-4 text-emerald-400 font-bold text-right text-xs">
                               {formatIDR(kartu.collected_amount || 0)}
-                            </TableCell>
-                            <TableCell className="px-6 py-4 text-slate-400 font-medium text-right text-xs">
-                              {kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}
                             </TableCell>
                           </TableRow>
 
                           {/* Mobile Card Row */}
                           <TableRow className="md:hidden block border-b border-white/5 p-4 hover:bg-white/5 transition-colors">
                             <td className="block w-full">
-                              <div className="mb-2">
+                              <div className="flex justify-between items-center mb-2">
                                 <span className="font-semibold text-slate-200 text-xs">{kartu.committee_name}</span>
+                                {kartu.card_number && (
+                                  <span className="text-[9px] text-amber-500 border border-amber-500/20 px-1.5 py-0.5 rounded font-bold uppercase">
+                                    {kartu.card_number}
+                                  </span>
+                                )}
                               </div>
                               <div className="flex justify-between items-center bg-slate-900/40 p-2.5 rounded-xl border border-white/5 text-xs">
                                 <div className="flex flex-col">
                                   <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Terkumpul</span>
                                   <span className="text-emerald-400 font-bold">{formatIDR(kartu.collected_amount || 0)}</span>
-                                </div>
-                                <div className="flex flex-col text-right">
-                                  <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Target</span>
-                                  <span className="text-slate-400 font-medium">{kartu.target_amount ? formatIDR(kartu.target_amount) : '-'}</span>
                                 </div>
                               </div>
                             </td>
