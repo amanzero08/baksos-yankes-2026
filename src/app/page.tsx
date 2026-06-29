@@ -433,7 +433,7 @@ export default function Home() {
       <footer className="bg-slate-950 border-t border-white/5 py-12 pb-24 sm:pb-12 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4">
-            <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" alt="Yankes Logo" className="h-10 transition-all duration-500" />
+            <img src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" className="h-10 transition-all duration-500" />
             <span className="font-heading font-bold text-slate-300 tracking-wider text-xl">BAKSOS <span className="text-amber-500">2026</span></span>
           </div>
           <p className="text-slate-500 text-sm text-center md:text-left font-medium tracking-wide">
