@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Target, TrendingUp, Users, Award, FileText, ShieldCheck } from "lucide-react";
 import CountdownTimer from "@/components/countdown-timer";
+import TrendChart from "@/components/trend-chart";
 
 export const revalidate = 0;
 
@@ -98,68 +99,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // Sort transactions by date ascending
   transactions.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  // Generate milestone cumulative points
-  const milestones: { label: string; cumulative: number }[] = [];
-  let runningSum = 0;
-
-  if (transactions.length === 0) {
-    for (let i = 0; i < 6; i++) {
-      milestones.push({ label: "-", cumulative: 0 });
-    }
-  } else {
-    // Generate running sum milestones
-    const allMilestones: { label: string; cumulative: number }[] = [];
-    
-    // Add starting point (0)
-    if (transactions.length > 0) {
-      const firstTxDate = transactions[0].date;
-      const prevDate = new Date(firstTxDate);
-      prevDate.setDate(prevDate.getDate() - 1);
-      allMilestones.push({
-        label: prevDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-        cumulative: 0
-      });
-    }
-
-    transactions.forEach(t => {
-      runningSum += t.amount;
-      const dateStr = t.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-      allMilestones.push({
-        label: dateStr,
-        cumulative: runningSum
-      });
-    });
-
-    if (allMilestones.length < 6) {
-      // Pad with initial 0s at the start
-      const padCount = 6 - allMilestones.length;
-      for (let i = 0; i < padCount; i++) {
-        milestones.push({ label: "-", cumulative: 0 });
-      }
-      milestones.push(...allMilestones);
-    } else {
-      // Take the last 6 milestones to show the progression leading up to the final total
-      milestones.push(...allMilestones.slice(-6));
-    }
-  }
-
-  const maxVal = Math.max(...milestones.map(m => m.cumulative), 10000000);
-
-  const formatShortIDR = (val: number) => {
-    if (val === 0) return "Rp 0";
-    if (val >= 1000000000) return "Rp " + (val / 1000000000).toFixed(1) + "M";
-    if (val >= 1000000) return "Rp " + (val / 1000000).toFixed(0) + "jt";
-    return "Rp " + val.toLocaleString('id-ID');
-  };
-
-  const points = milestones.map((m, idx) => {
-    const x = (idx / (milestones.length - 1)) * 100;
-    const y = 80 - (maxVal > 0 ? (m.cumulative / maxVal) * 60 : 0);
-    return { x, y, label: m.label, cumulative: m.cumulative };
-  });
-
-  const lineD = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-  const areaD = `${lineD} L 100 100 L 0 100 Z`;
+  // Serialize transaction dates for the client component
+  const serializedTransactions = transactions.map(t => ({
+    date: t.date.toISOString(),
+    amount: t.amount,
+    label: t.label
+  }));
 
   // Proposal counts
   const totalProposalsCount = proposalsList?.length || 0;
@@ -270,93 +215,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-6 sm:px-10 pb-8 pt-4">
-            <div className="w-full bg-slate-950/50 rounded-2xl border border-white/5 p-6 pb-12 relative overflow-hidden flex flex-col items-center">
-              <div className="relative w-full h-[140px]">
-                {/* SVG Line and Area - preserveAspectRatio="none" stretches them perfectly */}
-                <svg className="absolute inset-x-6 top-0 w-[calc(100%-3rem)] h-[110px]" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.2" />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                    </linearGradient>
-                    <linearGradient id="lineGlow" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#059669" />
-                      <stop offset="50%" stopColor="#10b981" />
-                      <stop offset="100%" stopColor="#34d399" />
-                    </linearGradient>
-                  </defs>
-                  <style>{`
-                    @keyframes pathDraw {
-                      to {
-                        stroke-dashoffset: 0;
-                      }
-                    }
-                    .animate-path {
-                      stroke-dasharray: 1000;
-                      stroke-dashoffset: 1000;
-                      animation: pathDraw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-                    }
-                  `}</style>
-                  
-                  {/* Horizontal Grid Lines */}
-                  <line x1="0" y1="20" x2="100" y2="20" stroke="#ffffff" strokeOpacity="0.04" strokeDasharray="3,3" />
-                  <line x1="0" y1="50" x2="100" y2="50" stroke="#ffffff" strokeOpacity="0.04" strokeDasharray="3,3" />
-                  <line x1="0" y1="80" x2="100" y2="80" stroke="#ffffff" strokeOpacity="0.04" strokeDasharray="3,3" />
-
-                  {/* Area Gradient Fill */}
-                  <path d={areaD} fill="url(#chartGradient)" />
-
-                  {/* Line Plot */}
-                  <path d={lineD} fill="none" stroke="url(#lineGlow)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="animate-path" />
-                </svg>
-
-                {/* HTML Overlay: Dots & Value Badges are perfectly circular & crisp divisions positioned absolutely */}
-                <div className="absolute inset-x-6 top-0 w-[calc(100%-3rem)] h-[110px] pointer-events-none">
-                  {points.map((p, idx) => {
-                    const leftPct = (idx / (points.length - 1)) * 100;
-                    const topPct = p.y; // Y value from 0 to 100 percentage
-
-                    return (
-                      <div 
-                        key={idx} 
-                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-                        style={{ left: `${leftPct}%`, top: `${topPct}%` }}
-                      >
-                        {/* Value Label above dot - Show all on desktop, but only first and last on mobile to prevent squishing */}
-                        <div className={`absolute bottom-3.5 text-[10px] sm:text-xs font-extrabold text-emerald-400 whitespace-nowrap bg-slate-950/90 px-2 py-0.5 rounded-md border border-emerald-500/20 shadow-lg backdrop-blur-sm ${(idx === 0 || idx === points.length - 1) ? "block" : "hidden sm:block"}`}>
-                          {formatShortIDR(p.cumulative)}
-                        </div>
-
-                        {/* Circular Dot */}
-                        <div className="relative w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950 shadow-md">
-                          {/* Pulsing ring for the last dot */}
-                          {idx === points.length - 1 && (
-                            <div className="absolute -inset-1 rounded-full border border-emerald-400 animate-ping"></div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* HTML Overlay: Dates row aligned perfectly at the bottom - Show only key dates on mobile to prevent overlapping */}
-                <div className="absolute inset-x-6 bottom-0 w-[calc(100%-3rem)] h-6 pointer-events-none">
-                  {points.map((p, idx) => {
-                    const leftPct = (idx / (points.length - 1)) * 100;
-                    const isKeyLabel = idx === 0 || idx === Math.floor(points.length / 2) || idx === points.length - 1;
-                    return (
-                      <div 
-                        key={idx} 
-                        className={`absolute -translate-x-1/2 text-[10px] sm:text-xs font-bold text-slate-100 whitespace-nowrap ${isKeyLabel ? "block" : "hidden sm:block"}`}
-                        style={{ left: `${leftPct}%` }}
-                      >
-                        {p.label}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <TrendChart initialTransactions={serializedTransactions} />
           </CardContent>
         </Card>
 
