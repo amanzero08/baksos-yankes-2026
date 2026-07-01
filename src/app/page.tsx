@@ -495,7 +495,7 @@ export default function Home() {
                 <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Kontak Person Panitia</span>
                 <div>
                   <h4 className="font-bold text-slate-200 text-base">Ibu Antje Kanter</h4>
-                  <p className="text-slate-500 text-xs mt-0.5 font-medium">Divisi Penggalangan Dana</p>
+                  <p className="text-slate-500 text-xs mt-0.5 font-medium">Bendahara Panitia</p>
                 </div>
                 <a 
                   href="https://wa.me/62818744695" 
