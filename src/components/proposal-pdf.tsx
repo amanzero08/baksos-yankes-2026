@@ -578,7 +578,7 @@ const t = {
 
     sec3Num: "III.",
     sec3Title: "Waktu Dan Tempat Pelaksanaan",
-    sec3Text: "Bakti Sosial Lintas Sinodal ini akan diselenggarakan secara maraton pada tanggal 14 s.d. 18 September 2026 dengan membagi tim medis ke dalam tiga wilayah koordinasi pelayanan utama, yaitu:",
+    sec3Text: "Bakti Sosial Lintas Sinodal ini akan diselenggarakan secara maraton pada tanggal 7 s.d. 11 September 2026 dengan membagi tim medis ke dalam tiga wilayah koordinasi pelayanan utama, yaitu:",
     pointA: "Titik A (Mitra)",
     pointADesc: "Desa Tondanouw, Kec. Touluaan, Kabupaten Minahasa Tenggara",
     pointB: "Titik B (Minut)",
@@ -722,7 +722,7 @@ const t = {
 
     sec3Num: "III.",
     sec3Title: "Time and Place of Implementation",
-    sec3Text: "This Cross-Synodal Social Mission will be held as a marathon from September 14 to 18, 2026, by dividing the medical team into three main service coordination points:",
+    sec3Text: "This Cross-Synodal Social Mission will be held as a marathon from September 7 to 11, 2026, by dividing the medical team into three main service coordination points:",
     pointA: "Point A (Mitra)",
     pointADesc: "Tondanouw Village, Touluaan District, Southeast Minahasa Regency",
     pointB: "Point B (Minut)",

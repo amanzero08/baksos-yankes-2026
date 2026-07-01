@@ -14,7 +14,7 @@ export default function CountdownTimer({ simple = false }: CountdownTimerProps) 
   useEffect(() => {
     setMounted(true);
     const calculateTimeLeft = () => {
-      const difference = +new Date("2026-09-14T00:00:00+07:00") - +new Date();
+      const difference = +new Date("2026-09-07T00:00:00+07:00") - +new Date();
       let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
       if (difference > 0) {
@@ -105,7 +105,7 @@ export default function CountdownTimer({ simple = false }: CountdownTimerProps) 
           <span className="text-[#56565c] text-[10px] md:text-xs font-bold uppercase tracking-wider block mb-1.5">Tanggal Pelaksanaan</span>
           <div className="flex items-center gap-3">
             <Calendar className="w-4.5 h-4.5 text-amber-500 shrink-0" />
-            <span className="font-bold text-slate-200 text-sm md:text-base">Senin, 14 September 2026</span>
+            <span className="font-bold text-slate-200 text-sm md:text-base">Senin, 7 September 2026</span>
           </div>
         </div>
 
@@ -113,7 +113,7 @@ export default function CountdownTimer({ simple = false }: CountdownTimerProps) 
           <span className="text-[#56565c] text-[10px] md:text-xs font-bold uppercase tracking-wider block mb-1.5">Waktu / Durasi</span>
           <div className="flex items-center gap-3">
             <Clock className="w-4.5 h-4.5 text-amber-500 shrink-0" />
-            <span className="font-bold text-slate-200 text-sm md:text-base">14 - 18 September 2026</span>
+            <span className="font-bold text-slate-200 text-sm md:text-base">7 - 11 September 2026</span>
           </div>
         </div>
 

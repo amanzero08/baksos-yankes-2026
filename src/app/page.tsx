@@ -32,7 +32,7 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
     const calculateTimeLeft = () => {
-      const difference = +new Date("2026-09-14T00:00:00+07:00") - +new Date();
+      const difference = +new Date("2026-09-07T00:00:00+07:00") - +new Date();
       let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
       if (difference > 0) {
@@ -80,7 +80,7 @@ export default function Home() {
         >
           <motion.div variants={fadeUp} className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 backdrop-blur-md px-5 py-2 text-sm font-medium text-amber-200 mb-8 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
             <Sparkles className="w-4 h-4 mr-2 text-amber-400" />
-            <span className="tracking-wide">Pelayanan Kasih 14 - 18 September 2026</span>
+            <span className="tracking-wide">Pelayanan Kasih 7 - 11 September 2026</span>
           </motion.div>
           
           <motion.div variants={fadeUp}>
@@ -195,7 +195,7 @@ export default function Home() {
                 <Calendar className="h-8 w-8" />
               </div>
               <h3 className="font-heading text-2xl font-bold text-slate-100 mb-4">Tepat Sasaran</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">Dilaksanakan pada 14-18 September 2026, bertepatan dengan momentum sinodal strategis untuk dampak yang maksimal.</p>
+              <p className="text-slate-400 leading-relaxed font-medium">Dilaksanakan pada 7-11 September 2026, bertepatan dengan momentum sinodal strategis untuk dampak yang maksimal.</p>
             </motion.div>
           </div>
         </div>
