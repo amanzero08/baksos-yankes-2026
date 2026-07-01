@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock, Stethoscope, Droplet, Eye, Scissors, Activity, Phone } from "lucide-react";
+import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock, Stethoscope, Droplet, Eye, Scissors, Activity, Phone, Copy, Check } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import CountdownTimer from "@/components/countdown-timer";
 
@@ -21,6 +21,13 @@ const stagger: Variants = {
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("2303331336");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -456,7 +463,26 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-slate-500 text-xs font-bold uppercase tracking-wider w-28 shrink-0">No. Rekening</span>
-                    <span className="text-amber-400 text-sm font-extrabold tracking-wider">2303331336</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-amber-400 text-sm font-extrabold tracking-wider">2303331336</span>
+                      <button 
+                        onClick={handleCopy}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/10 hover:border-white/20 transition-all text-slate-400 hover:text-amber-400 active:scale-95 text-[10px] font-bold uppercase tracking-wider"
+                        title="Salin nomor rekening"
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-400">Tersalin</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Salin</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-slate-500 text-xs font-bold uppercase tracking-wider w-28 shrink-0">Atas Nama</span>
