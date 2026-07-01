@@ -1473,21 +1473,21 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
 
         <Text style={styles.text}>{strings.sec8P1}</Text>
 
-        {/* Box Rekening Mandiri */}
+        {/* Box Rekening BCA */}
         <View style={styles.donationBox}>
           <Text style={styles.donationTitle}>{strings.officialAccountBox}</Text>
           <View style={styles.donationDetailsRow}>
             <View style={styles.donationDetailItem}>
               <Text style={styles.donationDetailLabel}>{strings.bankName}</Text>
-              <Text style={styles.donationDetailVal}>Bank Mandiri</Text>
+              <Text style={styles.donationDetailVal}>Bank BCA</Text>
             </View>
             <View style={styles.donationDetailItem}>
               <Text style={styles.donationDetailLabel}>{strings.accNum}</Text>
-              <Text style={{ ...styles.donationDetailVal, letterSpacing: 1.5 }}>115-00-0240902-6</Text>
+              <Text style={{ ...styles.donationDetailVal, letterSpacing: 1.5 }}>2303331336</Text>
             </View>
             <View style={styles.donationDetailItem}>
               <Text style={styles.donationDetailLabel}>{strings.beneficiary}</Text>
-              <Text style={styles.donationDetailVal}>YAYASAN KESEHATAN GPIB (Bakti Sosial)</Text>
+              <Text style={styles.donationDetailVal}>JONA LUMANAUW</Text>
             </View>
           </View>
         </View>

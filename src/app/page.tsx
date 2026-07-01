@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock, Stethoscope, Droplet, Eye, Scissors, Activity } from "lucide-react";
+import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock, Stethoscope, Droplet, Eye, Scissors, Activity, Phone } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import CountdownTimer from "@/components/countdown-timer";
 
@@ -426,6 +426,63 @@ export default function Home() {
               ))}
             </div>
           </Tabs>
+        </div>
+      </section>
+
+      {/* Informasi Rekening Section */}
+      <section className="py-20 relative z-20 border-t border-white/5 bg-slate-900/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <motion.div 
+            initial="hidden" 
+            whileInView="visible" 
+            viewport={{ once: true }} 
+            variants={fadeUp}
+            className="glass-panel border-t-4 border-t-amber-500 rounded-[2rem] p-8 md:p-10 shadow-[0_0_30px_rgba(245,158,11,0.15)] overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none"></div>
+            
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
+              <div className="space-y-4">
+                <span className="text-amber-500 font-bold tracking-[0.2em] uppercase text-xs block">Saluran Dukungan</span>
+                <h3 className="font-heading text-2xl md:text-3xl font-extrabold text-slate-100 tracking-tight">Informasi Rekening Donasi</h3>
+                <p className="text-slate-400 text-sm max-w-md leading-relaxed font-medium">
+                  Partisipasi donasi untuk Bakti Sosial Lintas Sinodal 2026 dapat disalurkan secara langsung melalui nomor rekening resmi di bawah ini.
+                </p>
+                
+                <div className="pt-2 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider w-28 shrink-0">Bank</span>
+                    <span className="text-slate-200 text-sm font-semibold">Bank BCA</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider w-28 shrink-0">No. Rekening</span>
+                    <span className="text-amber-400 text-sm font-extrabold tracking-wider">2303331336</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider w-28 shrink-0">Atas Nama</span>
+                    <span className="text-slate-200 text-sm font-semibold">JONA LUMANAUW</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full md:w-auto bg-slate-950/60 p-6 rounded-2xl border border-white/5 flex flex-col gap-4 min-w-[280px]">
+                <span className="text-slate-400 text-xs font-bold uppercase tracking-wider block">Kontak Person Panitia</span>
+                <div>
+                  <h4 className="font-bold text-slate-200 text-base">Ibu Antje Kanter</h4>
+                  <p className="text-slate-500 text-xs mt-0.5 font-medium">Divisi Penggalangan Dana</p>
+                </div>
+                <a 
+                  href="https://wa.me/62818744695" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl py-3 px-4 text-sm font-semibold transition-all duration-300 hover:scale-[1.02]"
+                >
+                  <Phone className="w-4 h-4 text-emerald-400" />
+                  <span>WhatsApp: 0818744695</span>
+                </a>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
