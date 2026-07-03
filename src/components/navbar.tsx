@@ -12,8 +12,32 @@ export function Navbar() {
   
   return (
     <>
-      {/* Desktop Top Nav */}
-      <header className="hidden md:block sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all">
+      <div className="sticky top-0 z-50 w-full flex flex-col">
+        {/* Infinite Marquee Ticker */}
+        <div className="relative w-full overflow-hidden bg-amber-500/10 border-b border-amber-500/20 py-1.5 flex items-center backdrop-blur-md">
+          <motion.div
+            animate={{ x: [0, "-50%"] }}
+            transition={{ repeat: Infinity, ease: "linear", duration: 100 }}
+            className="flex whitespace-nowrap w-max"
+          >
+            {[...Array(2)].map((_, groupIdx) => (
+              <div key={groupIdx} className="flex gap-8 items-center text-amber-500/80 font-bold tracking-[0.2em] text-[9px] md:text-[10px] uppercase px-4">
+                {Array(6).fill("Powered by the AMAN Ecosystem • amanloka.com").map((text, i) => (
+                  <span key={i} className="flex items-center gap-8">
+                    <div className="flex items-center gap-2">
+                      <Image src="/amanloka.png" alt="Amanloka Logo" width={14} height={14} className="w-3.5 h-auto object-contain opacity-80" />
+                      <span>{text}</span>
+                    </div>
+                    <span className="w-1 h-1 rounded-full bg-amber-500/40"></span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Desktop Top Nav */}
+        <header className="hidden md:block w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all">
         <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link href="/" className="font-heading font-bold text-slate-100 text-xl flex items-center gap-3">
              <Image src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" width={40} height={40} priority className="h-10 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" />
@@ -39,12 +63,13 @@ export function Navbar() {
       </header>
 
       {/* Mobile Top Header */}
-      <header className="md:hidden sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/90 backdrop-blur-xl h-16 flex items-center px-4 justify-center shadow-sm">
+      <header className="md:hidden w-full border-b border-white/10 bg-slate-950/90 backdrop-blur-xl h-16 flex items-center px-4 justify-center shadow-sm">
         <Link href="/" className="font-heading font-bold text-slate-100 text-lg flex items-center gap-2">
            <Image src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" width={28} height={28} priority className="h-7 w-auto drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]" />
            <span className="tracking-tight text-glow">Lintas Sinodal 26</span>
         </Link>
       </header>
+      </div>
 
       {/* Mobile Bottom Nav */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-lg border-t border-white/10 pb-5 pt-3 px-4 sm:px-8 flex justify-between items-center shadow-[0_-10px_40px_rgba(0,0,0,0.4)] rounded-t-3xl">
