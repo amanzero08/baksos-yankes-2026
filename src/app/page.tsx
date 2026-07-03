@@ -485,6 +485,29 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Infinite Marquee Ticker */}
+      <div className="relative w-full overflow-hidden bg-amber-500/5 border-y border-amber-500/10 py-3 flex items-center z-20">
+        <motion.div
+          animate={{ x: [0, "-50%"] }}
+          transition={{ repeat: Infinity, ease: "linear", duration: 100 }}
+          className="flex whitespace-nowrap w-max"
+        >
+          {[...Array(2)].map((_, groupIdx) => (
+            <div key={groupIdx} className="flex gap-8 items-center text-amber-500/70 font-semibold tracking-[0.2em] text-[11px] md:text-xs uppercase px-4">
+              {Array(6).fill("Powered by the AMAN Ecosystem • amanloka.com").map((text, i) => (
+                <span key={i} className="flex items-center gap-8">
+                  <div className="flex items-center gap-3">
+                    <Image src="/amanloka.png" alt="Amanloka Logo" width={20} height={20} className="w-5 h-auto object-contain opacity-80" />
+                    <span>{text}</span>
+                  </div>
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/40"></span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
       {/* Footer */}
       <footer className="bg-slate-950 border-t border-white/5 py-12 pb-24 sm:pb-12 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
