@@ -123,7 +123,7 @@ export default function CountdownTimer({ simple = false }: CountdownTimerProps) 
             <MapPin className="w-4.5 h-4.5 text-amber-500 shrink-0 mt-0.5" />
             <div className="flex flex-col">
               <span className="font-bold text-slate-200 text-sm md:text-base">3 Titik Wilayah</span>
-              <span className="text-[#7c7c82] text-[10px] md:text-xs font-medium mt-0.5">Tondanouw, Likupang, & Lolah</span>
+              <span className="text-[#7c7c82] text-[10px] md:text-xs font-medium mt-0.5">Ratahan Timur, Likupang 2, & Lansot</span>
             </div>
           </div>
         </div>

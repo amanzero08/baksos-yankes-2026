@@ -290,26 +290,26 @@ export default function Home() {
             <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">Menjangkau yang tak terjangkau. Fokus pelayanan terbagi di tiga wilayah utama Sulawesi Utara.</p>
           </motion.div>
 
-          <Tabs defaultValue="tondanouw" className="w-full max-w-5xl mx-auto">
+          <Tabs defaultValue="ratahan" className="w-full max-w-5xl mx-auto">
             <div className="flex justify-center mb-10 md:mb-12 px-4 md:px-0">
               <TabsList className="glass-panel p-1 rounded-full w-full max-w-md grid grid-cols-3 gap-1 h-auto min-h-11 items-center">
                 <TabsTrigger 
-                  value="tondanouw" 
+                  value="ratahan" 
                   className="rounded-full py-2 px-3 text-xs md:text-sm font-bold text-slate-400 hover:text-slate-200 transition-all data-[active]:bg-amber-500 data-[active]:text-slate-950 dark:data-[active]:bg-amber-500 dark:data-[active]:text-slate-950 dark:data-[active]:border-transparent dark:data-[active]:shadow-[0_0_15px_rgba(245,158,11,0.4)]"
                 >
-                  Tondanouw
+                  Ratahan Timur
                 </TabsTrigger>
                 <TabsTrigger 
-                  value="likupang" 
+                  value="likupang2" 
                   className="rounded-full py-2 px-3 text-xs md:text-sm font-bold text-slate-400 hover:text-slate-200 transition-all data-[active]:bg-amber-500 data-[active]:text-slate-950 dark:data-[active]:bg-amber-500 dark:data-[active]:text-slate-950 dark:data-[active]:border-transparent dark:data-[active]:shadow-[0_0_15px_rgba(245,158,11,0.4)]"
                 >
-                  Likupang
+                  Likupang 2
                 </TabsTrigger>
                 <TabsTrigger 
-                  value="lolah" 
+                  value="lansot" 
                   className="rounded-full py-2 px-3 text-xs md:text-sm font-bold text-slate-400 hover:text-slate-200 transition-all data-[active]:bg-amber-500 data-[active]:text-slate-950 dark:data-[active]:bg-amber-500 dark:data-[active]:text-slate-950 dark:data-[active]:border-transparent dark:data-[active]:shadow-[0_0_15px_rgba(245,158,11,0.4)]"
                 >
-                  Lolah
+                  Lansot
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -317,63 +317,35 @@ export default function Home() {
             <div className="glass-panel rounded-[2.5rem] p-8 md:p-12 overflow-hidden relative">
               {/* Tabs Content */}
               {[{
-                val: "tondanouw", 
-                title: "Desa Tondanouw", 
-                subtitle: "Kec. Touluaan, Kab. Mitra", 
+                val: "ratahan", 
+                title: "Ratahan Timur", 
+                subtitle: "Minahasa Tenggara", 
                 desc: (
                   <div className="text-sm space-y-4 mt-6 text-slate-300 text-left leading-relaxed">
-                    <p>Desa Tondanouw adalah salah satu desa yang berada di wilayah Kecamatan Touluaan, bagian dari Kabupaten Minahasa Tenggara di Provinsi Sulawesi Utara, Indonesia. Desa ini merupakan wilayah pedesaan yang kehidupan masyarakatnya banyak bergantung pada sektor pertanian dan kegiatan sosial kemasyarakatan khas daerah Minahasa.</p>
-                    <p><strong className="text-amber-400">1. Letak Geografis</strong><br/>Desa Tondanouw berada di kawasan Kecamatan Touluaan yang terdiri dari beberapa desa lain seperti Lobu, Ranoketang Atas, dan Tondanouw Satu. Wilayah ini termasuk daerah dataran dengan ketinggian sekitar ±272 meter di atas permukaan laut dan memiliki kode pos 95981.</p>
-                    <p><strong className="text-amber-400">2. Kondisi Penduduk</strong><br/>Jumlah penduduk desa ini sekitar ±1.500 jiwa dengan masyarakat yang hidup dalam suasana kekeluargaan dan gotong royong yang kuat. Struktur wilayah desa biasanya dibagi dalam beberapa jaga (lingkungan) untuk memudahkan pelayanan pemerintahan dan koordinasi masyarakat.</p>
-                    <p><strong className="text-amber-400">3. Mata Pencaharian dan Potensi Desa</strong><br/>Sebagian besar masyarakat Desa Tondanouw bekerja di bidang pertanian dan perkebunan, terutama:</p>
-                    <ul className="list-disc pl-5 space-y-1 text-slate-400">
-                      <li>Pertanian padi sawah (desa ini dikenal sebagai salah satu sentra produksi padi di wilayah tersebut)</li>
-                      <li>Perkebunan tanaman pangan dan hortikultura</li>
-                      <li>Usaha kecil dan perdagangan lokal</li>
-                    </ul>
+                    <p>Ratahan Timur adalah sebuah kecamatan di Kabupaten Minahasa Tenggara, Provinsi Sulawesi Utara. Daerah ini memiliki potensi besar dalam sektor pertanian dan perkebunan, serta menjadi salah satu pusat kegiatan sosial dan ekonomi masyarakat lokal.</p>
                   </div>
                 ),
-                mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.756260278784!2d124.6970425!3d1.037497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32876b54133b6697%3A0xc3f7a4e7f3c64c12!2sTondanou%2C%20Touluaan%2C%20Southeast%20Minahasa%20Regency%2C%20North%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
+                mapSrc: "https://maps.google.com/maps?q=Ratahan%20Timur%2C%20Minahasa%20Tenggara&t=&z=13&ie=UTF8&iwloc=&output=embed"
               }, {
-                val: "likupang",
-                title: "Likupang",
-                subtitle: "Kab. Minahasa Utara",
+                val: "likupang2",
+                title: "Desa Likupang 2",
+                subtitle: "Kecamatan Likupang Timur, Minahasa Utara",
                 desc: (
                   <div className="text-sm space-y-4 mt-6 text-slate-300 text-left leading-relaxed">
-                    <p>Likupang adalah kawasan yang terletak di Kabupaten Minahasa Utara, Provinsi Sulawesi Utara. Wilayah ini berada di bagian utara Pulau Sulawesi dan berjarak sekitar 60 km dari Kota Manado.</p>
-                    <p>Secara administratif, kawasan Likupang terbagi menjadi beberapa kecamatan:</p>
-                    <ul className="list-disc pl-5 space-y-1 text-slate-400">
-                      <li>Likupang Barat</li>
-                      <li>Likupang Timur</li>
-                      <li>Likupang Selatan</li>
-                    </ul>
-                    <p><strong className="text-amber-400">Data Populasi</strong><br/>Data populasi Likupang biasanya dihitung per kecamatan. Berdasarkan data BPS (sekitar sensus 2010):</p>
-                    <ul className="list-disc pl-5 space-y-1 text-slate-400">
-                      <li>Likupang Barat: ±16.988 jiwa</li>
-                      <li>Likupang Timur: ±16.519 jiwa</li>
-                      <li>Likupang Selatan: ±4.958 jiwa</li>
-                    </ul>
-                    <p>Jadi, total perkiraan populasi kawasan Likupang (gabungan tiga kecamatan) sekitar ±38.000 jiwa.</p>
+                    <p>Desa Likupang 2 merupakan salah satu desa yang terletak di Kecamatan Likupang Timur, Kabupaten Minahasa Utara, Provinsi Sulawesi Utara. Daerah pesisir Likupang Timur dikenal sebagai salah satu destinasi prioritas dan memiliki masyarakat yang hidup dari sektor kelautan, pertanian, serta pariwisata.</p>
                   </div>
                 ),
-                mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127581.4243685511!2d125.0069502!3d1.6787342!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32870ad46b3846cd%3A0x86bd7dcf3607775!2sLikupang%2C%20North%20Minahasa%20Regency%2C%20North%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
+                mapSrc: "https://maps.google.com/maps?q=Desa%20Likupang%202%2C%20Kecamatan%20Likupang%20Timur%2C%20Minahasa%20Utara&t=&z=13&ie=UTF8&iwloc=&output=embed"
               }, {
-                val: "lolah",
-                title: "Desa Lolah",
-                subtitle: "Kec. Tombariri Timur",
+                val: "lansot",
+                title: "Kelurahan Lansot",
+                subtitle: "Kecamatan Tomohon Selatan, Tomohon",
                 desc: (
                   <div className="text-sm space-y-4 mt-6 text-slate-300 text-left leading-relaxed">
-                    <p>Lolah Satu adalah sebuah desa administratif yang terletak di Kecamatan Tombariri Timur, Kabupaten Minahasa, Provinsi Sulawesi Utara, Indonesia. Desa ini memadukan potensi agraris, warisan budaya megalitik, dan panorama pesisir di ujung utara Pulau Sulawesi.</p>
-                    <p>Rincian profil dan karakteristik wilayah Lolah Satu meliputi:</p>
-                    <ul className="list-disc pl-5 space-y-3 text-slate-400">
-                      <li><strong className="text-amber-400">Geografi dan Aksesibilitas:</strong> Berada di wilayah administrasi Kabupaten Minahasa, desa ini berdekatan secara geografis dengan Kota Tomohon dan ibu kota provinsi, Kota Manado. Wilayah ini dihubungkan oleh jaringan jalan darat yang memberikan akses menuju pusat ekonomi dan wisata di pesisir barat Minahasa.</li>
-                      <li><strong className="text-amber-400">Potensi Ekonomi:</strong> Mayoritas penduduknya menggantungkan hidup pada sektor pertanian, perkebunan, dan perikanan (untuk wilayah yang dekat dengan pesisir). Desa ini juga dikenal memiliki infrastruktur pendukung pertanian skala kecil seperti mesin perontok padi dan jagung.</li>
-                      <li><strong className="text-amber-400">Warisan Budaya:</strong> Lolah Satu dan sekitarnya (Situs Lolah) termasuk wilayah yang kaya akan peninggalan budaya megalitik. Di kawasan ini terdapat temuan sejarah arkeologis seperti waruga dan menhir.</li>
-                      <li><strong className="text-amber-400">Demografi:</strong> Desa ini dihuni oleh ratusan kepala keluarga dengan jumlah penduduk mencapai sekitar seribu jiwa, dengan mayoritas masyarakat yang hidup dalam nuansa adat dan budaya Minahasa yang kental.</li>
-                    </ul>
+                    <p>Kelurahan Lansot terletak di Kecamatan Tomohon Selatan, Kota Tomohon, Provinsi Sulawesi Utara. Kota Tomohon yang dikenal dengan hawanya yang sejuk merupakan pusat aktivitas warga dengan komunitas yang sangat menjunjung tinggi kebersamaan dan kerukunan. Wilayah ini memiliki masyarakat yang ramah dan aktif dalam berbagai kegiatan keagamaan serta sosial.</p>
                   </div>
                 ),
-                mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15953.595085600984!2d124.7876801!3d1.341852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3287140e695d13ef%3A0x1d4ffbc4242ec674!2sLolah%2C%20East%20Tombariri%2C%20Minahasa%20Regency%2C%20North%20Sulawesi!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
+                mapSrc: "https://maps.google.com/maps?q=Kelurahan%20Lansot%2C%20Kecamatan%20Tomohon%20Selatan%2C%20Tomohon&t=&z=13&ie=UTF8&iwloc=&output=embed"
               }].map(loc => (
                 <TabsContent key={loc.val} value={loc.val} className="mt-0 focus-visible:outline-none">
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start pt-4">
