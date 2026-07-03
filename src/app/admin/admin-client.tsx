@@ -9,12 +9,7 @@ import { Search, FileText, Users, MapPin, ChevronDown, ChevronUp, Download, Chec
 import { ProposalRow } from "./proposal-row"
 import { KartuSahabatManager } from "./kartu-sahabat-manager"
 import { RecapPDF } from "@/components/recap-pdf"
-import dynamic from "next/dynamic"
-
-const PDFDownloadLink = dynamic(
-  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
-)
+import { PDFDownloadLink } from "@/components/pdf-download"
 
 interface AdminDashboardClientProps {
   proposals: any[]

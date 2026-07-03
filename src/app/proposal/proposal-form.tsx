@@ -10,15 +10,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SearchableSelect } from '@/components/searchable-select'
-import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { CheckCircle2 } from 'lucide-react'
-
-// Dynamically import PDFDownloadLink to avoid SSR issues
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
-)
+import { PDFDownloadLink } from '@/components/pdf-download'
 import { ProposalPDF } from '@/components/proposal-pdf'
 
 const schema = z.object({

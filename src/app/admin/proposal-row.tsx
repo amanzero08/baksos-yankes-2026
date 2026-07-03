@@ -10,12 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { updateProposal, deleteProposal, verifyDonation, recordInternalPayment } from '@/app/actions'
-import dynamic from 'next/dynamic'
-
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
-)
+import { PDFDownloadLink } from '@/components/pdf-download'
 import { ProposalPDF } from '@/components/proposal-pdf'
 import { ThankYouPDF } from '@/components/thank-you-pdf'
 import {
