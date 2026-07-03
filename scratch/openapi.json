@@ -1,0 +1,1107 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "title": "standard public schema",
+    "version": "14.5"
+  },
+  "host": "savasoahsiupzqkheduj.supabase.co:443",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "produces": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "produces": [
+          "application/openapi+json",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "OpenAPI description (this document)",
+        "tags": [
+          "Introspection"
+        ]
+      }
+    },
+    "/proposals": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.proposals.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.proposal_number"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.donor_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.institution"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.committee_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.message"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/proposals"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "proposals"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.proposals"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "proposals"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.proposals.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.proposal_number"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.donor_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.institution"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.committee_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.message"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "proposals"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.proposals.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.proposal_number"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.donor_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.institution"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.committee_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.message"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.proposals.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.proposals"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "proposals"
+        ]
+      }
+    },
+    "/kartu_sahabat": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.committee_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.collected_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.target_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/kartu_sahabat"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "kartu_sahabat"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.kartu_sahabat"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "kartu_sahabat"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.committee_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.collected_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.target_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "kartu_sahabat"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.committee_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.collected_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.target_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.kartu_sahabat.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.kartu_sahabat"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "kartu_sahabat"
+        ]
+      }
+    },
+    "/news": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.news.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.title"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.content"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.image_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/news"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "news"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.news"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "news"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.news.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.title"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.content"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.image_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "news"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.news.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.title"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.content"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.image_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.news.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.news"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "news"
+        ]
+      }
+    },
+    "/donations": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.donations.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.proposal_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.donor_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.notes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.receipt_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.verified"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.amount"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/donations"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "donations"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.donations"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "donations"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.donations.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.proposal_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.donor_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.notes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.receipt_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.verified"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.amount"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "donations"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.donations.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.proposal_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.donor_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.notes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.receipt_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.verified"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.donations.amount"
+          },
+          {
+            "$ref": "#/parameters/body.donations"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "donations"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "proposals": {
+      "required": [
+        "id",
+        "proposal_number",
+        "donor_name",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "extensions.uuid_generate_v4()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "proposal_number": {
+          "format": "text",
+          "type": "string"
+        },
+        "donor_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "institution": {
+          "format": "text",
+          "type": "string"
+        },
+        "committee_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "message": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "timezone('utc'::text, now())",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kartu_sahabat": {
+      "required": [
+        "id",
+        "committee_name",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "extensions.uuid_generate_v4()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "committee_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "collected_amount": {
+          "default": 0,
+          "format": "numeric",
+          "type": "number"
+        },
+        "target_amount": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "created_at": {
+          "default": "timezone('utc'::text, now())",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "news": {
+      "required": [
+        "id",
+        "title",
+        "content",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "extensions.uuid_generate_v4()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "title": {
+          "format": "text",
+          "type": "string"
+        },
+        "content": {
+          "format": "text",
+          "type": "string"
+        },
+        "image_url": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "timezone('utc'::text, now())",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "donations": {
+      "required": [
+        "id",
+        "donor_name",
+        "receipt_url",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "extensions.uuid_generate_v4()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "proposal_id": {
+          "description": "Note:\nThis is a Foreign Key to `proposals.id`.<fk table='proposals' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "donor_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "notes": {
+          "format": "text",
+          "type": "string"
+        },
+        "receipt_url": {
+          "format": "text",
+          "type": "string"
+        },
+        "verified": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "created_at": {
+          "default": "timezone('utc'::text, now())",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "amount": {
+          "default": 0,
+          "format": "numeric",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {
+    "preferParams": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "preferReturn": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferCount": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "count=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferPost": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none",
+        "resolution=ignore-duplicates",
+        "resolution=merge-duplicates"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "select": {
+      "name": "select",
+      "description": "Filtering Columns",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "on_conflict": {
+      "name": "on_conflict",
+      "description": "On Conflict",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "order": {
+      "name": "order",
+      "description": "Ordering",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "range": {
+      "name": "Range",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "rangeUnit": {
+      "name": "Range-Unit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "default": "items",
+      "in": "header",
+      "type": "string"
+    },
+    "offset": {
+      "name": "offset",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "limit": {
+      "name": "limit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.proposals": {
+      "name": "proposals",
+      "description": "proposals",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/proposals"
+      }
+    },
+    "rowFilter.proposals.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.proposals.proposal_number": {
+      "name": "proposal_number",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.proposals.donor_name": {
+      "name": "donor_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.proposals.institution": {
+      "name": "institution",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.proposals.committee_name": {
+      "name": "committee_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.proposals.message": {
+      "name": "message",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.proposals.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.kartu_sahabat": {
+      "name": "kartu_sahabat",
+      "description": "kartu_sahabat",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/kartu_sahabat"
+      }
+    },
+    "rowFilter.kartu_sahabat.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.kartu_sahabat.committee_name": {
+      "name": "committee_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.kartu_sahabat.collected_amount": {
+      "name": "collected_amount",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.kartu_sahabat.target_amount": {
+      "name": "target_amount",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.kartu_sahabat.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.news": {
+      "name": "news",
+      "description": "news",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/news"
+      }
+    },
+    "rowFilter.news.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.news.title": {
+      "name": "title",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.news.content": {
+      "name": "content",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.news.image_url": {
+      "name": "image_url",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.news.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.donations": {
+      "name": "donations",
+      "description": "donations",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/donations"
+      }
+    },
+    "rowFilter.donations.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.proposal_id": {
+      "name": "proposal_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.donor_name": {
+      "name": "donor_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.notes": {
+      "name": "notes",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.receipt_url": {
+      "name": "receipt_url",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.verified": {
+      "name": "verified",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.donations.amount": {
+      "name": "amount",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    }
+  },
+  "externalDocs": {
+    "description": "PostgREST Documentation",
+    "url": "https://postgrest.org/en/v14/references/api.html"
+  }
+}

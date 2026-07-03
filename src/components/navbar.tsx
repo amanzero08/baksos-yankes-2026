@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Home, FileText, CheckCircle, BarChart3, Settings } from 'lucide-react'
@@ -15,7 +16,7 @@ export function Navbar() {
       <header className="hidden md:block sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all">
         <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link href="/" className="font-heading font-bold text-slate-100 text-xl flex items-center gap-3">
-             <img src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" className="h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" />
+             <Image src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" width={40} height={40} priority className="h-10 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" />
              <div className="flex flex-col">
                <span className="leading-tight tracking-tight text-glow">Lintas Sinodal</span>
                <span className="text-[10px] text-amber-500 font-medium tracking-widest uppercase">Bakti Sosial 2026</span>
@@ -40,7 +41,7 @@ export function Navbar() {
       {/* Mobile Top Header */}
       <header className="md:hidden sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/90 backdrop-blur-xl h-16 flex items-center px-4 justify-center shadow-sm">
         <Link href="/" className="font-heading font-bold text-slate-100 text-lg flex items-center gap-2">
-           <img src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" className="h-7 drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]" />
+           <Image src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" width={28} height={28} priority className="h-7 w-auto drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]" />
            <span className="tracking-tight text-glow">Lintas Sinodal 26</span>
         </Link>
       </header>

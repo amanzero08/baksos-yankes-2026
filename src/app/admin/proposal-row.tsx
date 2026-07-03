@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { TableRow, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Building2, User, Calendar, MessageSquare, Edit, Trash2, Download, Eye, FileText, CheckCircle } from "lucide-react"
@@ -334,10 +335,11 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               <div className="flex flex-col gap-1.5 border-b border-white/5 pb-4">
                 <span className="text-sm font-semibold text-slate-500">Bukti Transfer</span>
                 <div className="relative group overflow-hidden rounded-lg border border-white/5 bg-slate-950/40 mt-1 max-w-[200px]">
-                  <img 
+                  <Image 
                     src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
                     alt="Bukti Transfer Donatur" 
-                    className="w-full max-h-32 object-contain transition-all duration-300 group-hover:scale-[1.02]"
+                    width={400} height={300}
+                    className="w-full h-auto max-h-32 object-contain transition-all duration-300 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <a 
@@ -577,10 +579,11 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
                 {hasDonation && prop.donations[0].receipt_url && (
                   <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center">
                     <span className="text-xs font-semibold text-slate-400 block self-start">Bukti Transfer Saat Ini</span>
-                    <img 
+                    <Image 
                       src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
                       alt="Bukti Transfer Saat Ini" 
-                      className="w-full max-h-32 object-contain rounded-lg border border-white/10"
+                      width={400} height={300}
+                      className="w-full h-auto max-h-32 object-contain rounded-lg border border-white/10"
                     />
                   </div>
                 )}
@@ -628,10 +631,11 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
             {actionType === 'verify' && hasDonation && prop.donations[0].receipt_url && (
               <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
                 <span className="text-xs font-semibold text-slate-400 block self-start">Bukti Transfer Donatur</span>
-                <img 
+                <Image 
                   src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
                   alt="Bukti Transfer Donatur" 
-                  className="w-full max-h-48 object-contain rounded-lg border border-white/10"
+                  width={400} height={300}
+                  className="w-full h-auto max-h-48 object-contain rounded-lg border border-white/10"
                 />
               </div>
             )}

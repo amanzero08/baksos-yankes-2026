@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import NextTopLoader from 'nextjs-toploader';
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
@@ -18,6 +19,13 @@ export const metadata: Metadata = {
   description: "Aplikasi Donasi dan Informasi Bakti Sosial Yayasan Kesehatan GPIB & GMIM",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,6 +38,7 @@ export default function RootLayout({
       style={{ colorScheme: 'dark' }}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <NextTopLoader color="#f59e0b" showSpinner={false} />
         <Navbar />
         <div className="flex-1 flex flex-col">
           {children}

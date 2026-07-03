@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { CheckCircle2, AlertTriangle, FileText, User, Building2, Calendar, ShieldCheck, DollarSign, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface PageProps {
   params: Promise<{ number: string }>;
@@ -147,10 +148,11 @@ export default async function VerifyProposalPage({ params }: PageProps) {
                 <div className="space-y-4 pt-2">
                   <h3 className="text-slate-400 font-bold uppercase tracking-wider text-xs">Lampiran Bukti Transaksi</h3>
                   <div className="relative group overflow-hidden rounded-2xl border border-white/5 bg-slate-950/40 p-4 flex flex-col items-center">
-                    <img 
+                    <Image 
                       src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${verifiedDonation?.receipt_url || pendingDonation?.receipt_url}`} 
                       alt="Bukti Transaksi" 
-                      className="w-full max-h-64 object-contain rounded-xl border border-white/10"
+                      width={600} height={400}
+                      className="w-full h-auto max-h-64 object-contain rounded-xl border border-white/10"
                     />
                   </div>
                 </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Calendar, HeartPulse, ArrowRight, CheckCircle2, Sparkles, Clock, Stethoscope, Droplet, Eye, Scissors, Activity, Phone, Copy, Check } from "lucide-react";
@@ -132,7 +133,7 @@ export default function Home() {
             {/* GPIB */}
             <div className="flex flex-col items-center group">
               <div className="h-40 md:h-48 w-full mb-8 flex items-center justify-center p-2 rounded-[2rem] glass-panel transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group-hover:-translate-y-2 group-hover:bg-slate-800/50">
-                <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-gpib.png" alt="GPIB" className="h-28 md:h-36 w-auto object-contain transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
+                <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-gpib.png" alt="GPIB" width={150} height={150} className="h-28 md:h-36 w-auto object-contain transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
               </div>
               <h4 className="font-heading font-bold text-2xl text-slate-100 mb-3 tracking-tight">GPIB</h4>
               <p className="text-slate-400 text-sm leading-relaxed font-medium">
@@ -143,7 +144,7 @@ export default function Home() {
             {/* Yankes GPIB */}
             <div className="flex flex-col items-center group">
               <div className="h-40 md:h-48 w-full mb-8 flex items-center justify-center p-2 rounded-[2rem] glass-panel transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group-hover:-translate-y-2 group-hover:bg-slate-800/50">
-                <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" alt="Yayasan Kesehatan GPIB" className="h-28 md:h-36 w-auto object-contain transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
+                <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-yankes.png" alt="Yayasan Kesehatan GPIB" width={150} height={150} className="h-28 md:h-36 w-auto object-contain transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
               </div>
               <h4 className="font-heading font-bold text-2xl text-slate-100 mb-3 tracking-tight">Yayasan Kesehatan GPIB</h4>
               <p className="text-slate-400 text-sm leading-relaxed font-medium">
@@ -154,7 +155,7 @@ export default function Home() {
             {/* GMIM */}
             <div className="flex flex-col items-center group">
               <div className="h-40 md:h-48 w-full mb-8 flex items-center justify-center p-2 rounded-[2rem] glass-panel transition-all duration-700 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group-hover:-translate-y-2 group-hover:bg-slate-800/50">
-                <img src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-gmim.png" alt="GMIM" className="h-24 md:h-32 w-auto object-contain transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
+                <Image src="https://savasoahsiupzqkheduj.supabase.co/storage/v1/object/public/assets/logos/logo-gmim.png" alt="GMIM" width={150} height={150} className="h-24 md:h-32 w-auto object-contain transition-all duration-700 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
               </div>
               <h4 className="font-heading font-bold text-2xl text-slate-100 mb-3 tracking-tight">GMIM</h4>
               <p className="text-slate-400 text-sm leading-relaxed font-medium">
@@ -516,7 +517,7 @@ export default function Home() {
       <footer className="bg-slate-950 border-t border-white/5 py-12 pb-24 sm:pb-12 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4">
-            <img src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" className="h-10 transition-all duration-500" />
+            <Image src="/logo-apps.png" alt="Logo Baksos Lintas Sinodal" width={40} height={40} className="h-10 w-auto transition-all duration-500" />
             <span className="font-heading font-bold text-slate-300 tracking-wider text-xl">BAKSOS <span className="text-amber-500">2026</span></span>
           </div>
           <p className="text-slate-500 text-sm text-center md:text-left font-medium tracking-wide">
