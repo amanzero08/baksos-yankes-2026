@@ -24,10 +24,15 @@ export function Navbar() {
               <div key={groupIdx} className="flex gap-8 items-center text-amber-500/80 font-bold tracking-[0.2em] text-[9px] md:text-[10px] uppercase px-4">
                 {Array(6).fill("Powered by the AMAN Ecosystem • amanloka.com").map((text, i) => (
                   <span key={i} className="flex items-center gap-8">
-                    <div className="flex items-center gap-2">
+                    <a 
+                      href="https://amanloka.com" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 hover:text-amber-300 transition-colors cursor-pointer"
+                    >
                       <Image src="/amanloka.png" alt="Amanloka Logo" width={14} height={14} className="w-3.5 h-auto object-contain opacity-80" />
                       <span>{text}</span>
-                    </div>
+                    </a>
                     <span className="w-1 h-1 rounded-full bg-amber-500/40"></span>
                   </span>
                 ))}
