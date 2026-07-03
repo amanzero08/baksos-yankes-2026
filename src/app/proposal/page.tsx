@@ -1,7 +1,7 @@
 import { getPanitiaList } from '@/app/actions'
 import { ProposalForm } from './proposal-form'
 
-export const revalidate = 0; // Disable cache for this page
+export const revalidate = 60; // Enable ISR cache (60 seconds) for Vercel Hobby optimization
 
 export default async function ProposalPage() {
   const panitiaList = await getPanitiaList()

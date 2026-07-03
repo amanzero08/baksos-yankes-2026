@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { AdminDashboardClient } from "./admin-client";
 
-export const revalidate = 0; // Disable cache for this page to always fetch latest
+export const revalidate = 60; // Enable ISR cache (60 seconds) to always fetch latest
 
 export default async function AdminDashboard() {
   // Fetch proposals

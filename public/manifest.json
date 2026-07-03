@@ -1,0 +1,23 @@
+{
+  "name": "Bakti Sosial Lintas Sinodal 2026",
+  "short_name": "Baksos 2026",
+  "description": "Aplikasi Donasi dan Informasi Bakti Sosial Yayasan Kesehatan GPIB & GMIM",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo-apps.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-apps.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

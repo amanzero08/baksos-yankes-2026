@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://yankes.amanzero.space'),
   title: "Bakti Sosial Lintas Sinodal 2026",
   description: "Aplikasi Donasi dan Informasi Bakti Sosial Yayasan Kesehatan GPIB & GMIM",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Baksos 2026",
+  },
   openGraph: {
     title: "Bakti Sosial Lintas Sinodal 2026",
     description: "Aplikasi Donasi dan Informasi Bakti Sosial Yayasan Kesehatan GPIB & GMIM",
@@ -29,6 +35,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  themeColor: "#f59e0b",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

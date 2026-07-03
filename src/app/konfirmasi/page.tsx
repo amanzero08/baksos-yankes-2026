@@ -1,7 +1,7 @@
 import { getPendingProposals } from '@/app/actions'
 import { KonfirmasiForm } from './konfirmasi-form'
 
-export const revalidate = 0; // Disable cache for this page
+export const revalidate = 60; // Enable ISR cache (60 seconds) for Vercel Hobby optimization
 
 export default async function KonfirmasiPage() {
   const pendingProposals = await getPendingProposals()

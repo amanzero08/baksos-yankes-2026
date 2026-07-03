@@ -6,7 +6,7 @@ import { Target, TrendingUp, Users, Award, FileText, ShieldCheck } from "lucide-
 import CountdownTimer from "@/components/countdown-timer";
 import TrendChart from "@/components/trend-chart";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
