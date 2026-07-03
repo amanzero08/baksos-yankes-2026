@@ -13,34 +13,6 @@ export function Navbar() {
   return (
     <>
       <div className="sticky top-0 z-50 w-full flex flex-col">
-        {/* Infinite Marquee Ticker */}
-        <div className="relative w-full overflow-hidden bg-amber-500/10 border-b border-amber-500/20 py-1.5 flex items-center backdrop-blur-md">
-          <motion.div
-            animate={{ x: [0, "-50%"] }}
-            transition={{ repeat: Infinity, ease: "linear", duration: 100 }}
-            className="flex whitespace-nowrap w-max"
-          >
-            {[...Array(2)].map((_, groupIdx) => (
-              <div key={groupIdx} className="flex gap-8 items-center text-amber-500/80 font-bold tracking-[0.2em] text-[9px] md:text-[10px] uppercase px-4">
-                {Array(6).fill("Powered by the AMAN Ecosystem • amanloka.com").map((text, i) => (
-                  <span key={i} className="flex items-center gap-8">
-                    <a 
-                      href="https://amanloka.com" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 hover:text-amber-300 transition-colors cursor-pointer"
-                    >
-                      <Image src="/amanloka.png" alt="Amanloka Logo" width={14} height={14} className="w-3.5 h-auto object-contain opacity-80" />
-                      <span>{text}</span>
-                    </a>
-                    <span className="w-1 h-1 rounded-full bg-amber-500/40"></span>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
         {/* Desktop Top Nav */}
         <header className="hidden md:block w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all">
         <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
@@ -74,6 +46,34 @@ export function Navbar() {
            <span className="tracking-tight text-glow">Lintas Sinodal 26</span>
         </Link>
       </header>
+
+        {/* Infinite Marquee Ticker */}
+        <div className="relative w-full overflow-hidden bg-amber-500/10 border-b border-amber-500/20 py-1.5 flex items-center backdrop-blur-md">
+          <motion.div
+            animate={{ x: [0, "-50%"] }}
+            transition={{ repeat: Infinity, ease: "linear", duration: 100 }}
+            className="flex whitespace-nowrap w-max"
+          >
+            {[...Array(2)].map((_, groupIdx) => (
+              <div key={groupIdx} className="flex gap-8 items-center text-amber-500/80 font-bold tracking-[0.2em] text-[9px] md:text-[10px] uppercase px-4">
+                {Array(6).fill("Powered by the AMAN Ecosystem • amanloka.com").map((text, i) => (
+                  <span key={i} className="flex items-center gap-8">
+                    <a 
+                      href="https://amanloka.com" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 hover:text-amber-300 transition-colors cursor-pointer"
+                    >
+                      <Image src="/amanloka.png" alt="Amanloka Logo" width={14} height={14} className="w-3.5 h-auto object-contain opacity-80" />
+                      <span>{text}</span>
+                    </a>
+                    <span className="w-1 h-1 rounded-full bg-amber-500/40"></span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </motion.div>
+        </div>
       </div>
 
       {/* Mobile Bottom Nav */}
