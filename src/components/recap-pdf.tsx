@@ -279,7 +279,7 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
     year: 'numeric'
   });
 
-  const qrData = `https://baksos-yankes-2026.vercel.app/dashboard?from=lpj&date=${currentDate}`;
+  const qrData = `https://yankes.amanzero.space/dashboard?from=lpj&date=${currentDate}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}&color=0f172a&bgcolor=ffffff`;
 
   return (

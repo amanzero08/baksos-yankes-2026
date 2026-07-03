@@ -1527,9 +1527,9 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
 
         {/* QR Code and Validation */}
         <View style={styles.qrBlock}>
-          <Link src={`https://baksos-yankes-2026.vercel.app/verify/${data.proposal_number}`}>
+          <Link src={`https://yankes.amanzero.space/verify/${data.proposal_number}`}>
             <Image 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://baksos-yankes-2026.vercel.app/verify/${data.proposal_number}`)}&color=0f172a&bgcolor=ffffff`} 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://yankes.amanzero.space/verify/${data.proposal_number}`)}&color=0f172a&bgcolor=ffffff`} 
               style={styles.qrCode} 
             />
           </Link>
