@@ -19,22 +19,38 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
   const GLOBAL_TARGET = 774500000;
 
-  // Fetch proposals with donations
-  const { data: proposalsList } = await supabaseAdmin
-    .from("proposals")
-    .select("id, donations(amount, verified)");
-
-  // Fetch Kartu Sahabat
-  const { data: kartuSahabatList } = await supabaseAdmin
-    .from("kartu_sahabat")
-    .select("*")
-    .order("collected_amount", { ascending: false });
-
-  // Fetch all verified donations
-  const { data: donations } = await supabaseAdmin
-    .from("donations")
-    .select("amount, proposal_id, created_at")
-    .eq("verified", true);
+  // Fetch data in parallel and efficiently
+  const [
+    { count: totalProposalsCountResult },
+    { data: kartuSahabatList },
+    { data: donations },
+    { data: recentProposals },
+    { data: recentKartuSahabat }
+  ] = await Promise.all([
+    supabaseAdmin
+      .from("proposals")
+      .select("*", { count: "exact", head: true }),
+    supabaseAdmin
+      .from("kartu_sahabat")
+      .select("collected_amount, received_at, created_at"),
+    supabaseAdmin
+      .from("donations")
+      .select("amount, proposal_id, created_at")
+      .eq("verified", true),
+    supabaseAdmin
+      .from("proposals")
+      .select("id, proposal_number, donor_name, institution, created_at, donations(amount, verified)")
+      .order("created_at", { ascending: false })
+      .limit(5),
+    supabaseAdmin
+      .from("kartu_sahabat")
+      .select("id, committee_name, card_number, collected_amount, created_at")
+      .not("card_number", "is", null)
+      .neq("card_number", "")
+      .order("collected_amount", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(5)
+  ]);
 
   // Total collected from verified donations that are linked to a proposal
   const totalProposalDonations = donations
@@ -52,23 +68,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   // Total Collected overall
   const totalCollected = totalProposalDonations + totalKartuSahabat + totalGeneralDonations;
   const remainingAmount = Math.max(0, GLOBAL_TARGET - totalCollected);
-  
-  // Fetch 5 most recent proposals with donation status
-  const { data: recentProposals } = await supabaseAdmin
-    .from("proposals")
-    .select("id, proposal_number, donor_name, institution, created_at, donations(amount, verified)")
-    .order("created_at", { ascending: false })
-    .limit(5);
-
-  // Fetch 5 kartu sahabat, prioritizing those that have results (collected_amount > 0) and have card numbers
-  const { data: recentKartuSahabat } = await supabaseAdmin
-    .from("kartu_sahabat")
-    .select("*")
-    .not("card_number", "is", null)
-    .neq("card_number", "")
-    .order("collected_amount", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(5);
   
   const progressPercentage = Math.min(100, Math.max(0, (totalCollected / GLOBAL_TARGET) * 100));
 
@@ -107,7 +106,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   }));
 
   // Proposal counts
-  const totalProposalsCount = proposalsList?.length || 0;
+  const totalProposalsCount = totalProposalsCountResult || 0;
   const verifiedProposalIds = new Set(
     donations?.filter(d => d.proposal_id).map(d => d.proposal_id) || []
   );
