@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image, Font, Link } from '@react-pdf/renderer'
 
 // Register Open Sans
 Font.register({
@@ -364,10 +364,12 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
 
           {/* QR Sign Verification */}
           <View style={{ ...styles.sigBlock, width: '20%', alignItems: 'center' }}>
-            <Image 
-              src={qrUrl} 
-              style={{ width: 45, height: 45, marginBottom: 4 }} 
-            />
+            <Link src={qrData}>
+              <Image 
+                src={qrUrl} 
+                style={{ width: 45, height: 45, marginBottom: 4 }} 
+              />
+            </Link>
             <Text style={{ fontSize: 6, fontWeight: 700, color: '#0f172a', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>DIGITAL SIGNATURE</Text>
             <Text style={{ fontSize: 5, color: '#64748b', textAlign: 'center', marginTop: 1 }}>Pindai untuk Validasi Real-time</Text>
           </View>

@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image, Font, Link } from '@react-pdf/renderer'
 
 // Register Open Sans
 Font.register({
@@ -382,10 +382,12 @@ export const ThankYouPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
 
           {/* Validation QR Code */}
           <View style={styles.qrBlock}>
-            <Image 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://baksos-yankes-2026.vercel.app/thanks/${data.proposal_number}&color=065f46&bgcolor=ffffff`} 
-              style={styles.qrCode} 
-            />
+            <Link src={`https://baksos-yankes-2026.vercel.app/thanks/${data.proposal_number}`}>
+              <Image 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://baksos-yankes-2026.vercel.app/thanks/${data.proposal_number}`)}&color=065f46&bgcolor=ffffff`} 
+                style={styles.qrCode} 
+              />
+            </Link>
             <Text style={styles.qrLabel}>{t[lang].qrLabel}</Text>
           </View>
 
