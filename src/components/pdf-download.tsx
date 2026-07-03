@@ -22,7 +22,7 @@ export function PDFDownloadLink({ document, fileName, children, className }: PDF
     setLoading(true)
     try {
       const { pdf } = await import('@react-pdf/renderer')
-      const blob = await pdf(document).toBlob()
+      const blob = await pdf(document as any).toBlob()
       const url = URL.createObjectURL(blob)
       const link = window.document.createElement('a')
       link.href = url
