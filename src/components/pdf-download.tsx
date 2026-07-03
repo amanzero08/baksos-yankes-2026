@@ -95,7 +95,7 @@ export function PDFDownloadLink({ document, fileName, children, className }: PDF
             </motion.div>
           )}
         </AnimatePresence>,
-        document.body
+        window.document.body
       )}
     </>
   )
