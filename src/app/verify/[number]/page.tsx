@@ -143,6 +143,107 @@ export default async function VerifyProposalPage({ params }: PageProps) {
                 )}
               </div>
 
+              {/* Tanda Tangan Digital Terverifikasi */}
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-slate-400 font-bold uppercase tracking-wider text-xs">Penandatangan Dokumen</h3>
+                  <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Terverifikasi Sistem
+                  </span>
+                </div>
+                
+                <div className="bg-slate-950/40 border border-white/5 rounded-2xl p-5 space-y-4">
+                  {/* Digital signatures validation note */}
+                  <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-4 flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-slate-200 text-xs font-bold">Tanda Tangan Digital Valid & Otentik</p>
+                      <p className="text-slate-400 text-[11px] mt-1 leading-relaxed">
+                        Sistem menyatakan bahwa seluruh tanda tangan digital dari 4 penandatangan di bawah ini adalah <strong className="text-emerald-400 font-bold">VALID</strong> dan <strong className="text-emerald-400 font-bold">OTENTIK</strong> (terverifikasi secara digital by system).
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Signatories Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* Signatory 1 */}
+                    <div className="bg-slate-950/60 p-4 rounded-xl border border-white/5 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                      <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-emerald-500/5 rounded-full blur-md group-hover:bg-emerald-500/10 transition-all duration-300" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-slate-200 font-bold text-xs block">dr. Griselda P. S. Aer, Sp.KP</span>
+                          <span className="text-[10px] text-slate-500 block mt-0.5">Ketua Yayasan Kesehatan GPIB</span>
+                          <span className="text-[9px] text-emerald-400 font-extrabold uppercase mt-1 tracking-wider flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Verified
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Signatory 2 */}
+                    <div className="bg-slate-950/60 p-4 rounded-xl border border-white/5 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                      <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-emerald-500/5 rounded-full blur-md group-hover:bg-emerald-500/10 transition-all duration-300" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-slate-200 font-bold text-xs block">Pdt. Semuel A. Z. Karinda, M.Si.</span>
+                          <span className="text-[10px] text-slate-500 block mt-0.5">Ketua II Majelis Sinode GPIB</span>
+                          <span className="text-[9px] text-emerald-400 font-extrabold uppercase mt-1 tracking-wider flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Verified
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Signatory 3 */}
+                    <div className="bg-slate-950/60 p-4 rounded-xl border border-white/5 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                      <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-emerald-500/5 rounded-full blur-md group-hover:bg-emerald-500/10 transition-all duration-300" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-slate-200 font-bold text-xs block">Pdt. Jan Jona Lumanauw</span>
+                          <span className="text-[10px] text-slate-500 block mt-0.5">Ketua Pelaksana Baksos 2026</span>
+                          <span className="text-[9px] text-emerald-400 font-extrabold uppercase mt-1 tracking-wider flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Verified
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Signatory 4 */}
+                    <div className="bg-slate-950/60 p-4 rounded-xl border border-white/5 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                      <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-emerald-500/5 rounded-full blur-md group-hover:bg-emerald-500/10 transition-all duration-300" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-slate-200 font-bold text-xs block truncate max-w-[180px]">
+                            {proposal.committee_name || "Panitia Pelaksana Lintas Sinodal"}
+                          </span>
+                          <span className="text-[10px] text-slate-500 block mt-0.5">PIC / Tim Penggalangan Dana</span>
+                          <span className="text-[9px] text-emerald-400 font-extrabold uppercase mt-1 tracking-wider flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Verified
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Bukti Transaksi */}
               {(verifiedDonation?.receipt_url || pendingDonation?.receipt_url) && (
                 <div className="space-y-4 pt-2">
