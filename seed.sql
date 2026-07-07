@@ -56,7 +56,7 @@ VALUES
   ('Dkn. Lady Tangkere-Sondakh', 0, 2500000),
   ('Ibu Karema Rumambi', 0, 2500000),
   ('Pdt. Marthen Leiwakabessy', 0, 2500000),
-  ('Ibu Marcela Lantang', 0, 2500000),
+  ('Ibu Marcella E. Lantang', 0, 2500000),
   ('Pdt. Danny Titaley', 0, 2500000),
   ('Dkn. Yvone Wakkary', 0, 2500000),
   ('Pnt. Antje Kanter', 0, 2500000),

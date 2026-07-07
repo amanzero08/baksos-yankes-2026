@@ -1359,7 +1359,7 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
           <Text style={styles.committeeGroupTitle}>{strings.committeeRoles.acaraDana}</Text>
           <View style={styles.committeeRow}>
             <Text style={styles.committeeRole}>{strings.committeeRoles.acaraRole}</Text>
-            <Text style={styles.committeeName}>Pdt. Marthen Leiwakabessy (Koord) / Pdt. Danny Titaley / Ibu Marcela Lantang</Text>
+            <Text style={styles.committeeName}>Pdt. Marthen Leiwakabessy (Koord) / Pdt. Danny Titaley / Ibu Marcella E. Lantang</Text>
           </View>
           <View style={styles.committeeRow}>
             <Text style={styles.committeeRole}>{strings.committeeRoles.danaRole}</Text>

@@ -48,7 +48,7 @@ const panitiaNames = [
 
   // Sie. Acara
   "Pdt. Marthen Leiwakabessy",
-  "Ibu Marcela Lantang",
+  "Ibu Marcella E. Lantang",
   "Pdt. Danny Titaley",
 
   // Sie. Dana
