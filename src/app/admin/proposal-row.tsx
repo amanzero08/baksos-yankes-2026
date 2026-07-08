@@ -27,7 +27,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [waLang, setWaLang] = useState<'id' | 'en'>('id')
   const [certLang, setCertLang] = useState<'id' | 'en'>('id')
-  
+
   // Action state
   const [isOpen, setIsOpen] = useState(false)
   const [actionType, setActionType] = useState<'edit' | 'delete' | 'verify' | 'record_payment' | null>(null)
@@ -40,7 +40,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
   const [institution, setInstitution] = useState(prop.institution || '')
   const [committeeName, setCommitteeName] = useState(prop.committee_name || '')
   const [message, setMessage] = useState(prop.message || '')
-  
+
   // Verification / Recording payment state
   const [verificationAmount, setVerificationAmount] = useState('')
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().substring(0, 10))
@@ -122,7 +122,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
           setError(result.error || 'Gagal mengupdate proposal')
         }
       } else if (actionType === 'verify' && hasDonation) {
-        const amountNum = parseFloat(verificationAmount.replace(/\D/g,"")) || 0;
+        const amountNum = parseFloat(verificationAmount.replace(/\D/g, "")) || 0;
         const result = await verifyDonation(prop.donations[0].id, amountNum, passcode)
         if (result.success) {
           setIsOpen(false)
@@ -133,7 +133,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
           setError(result.error || 'Gagal memverifikasi donasi')
         }
       } else if (actionType === 'record_payment') {
-        const amountNum = parseFloat(verificationAmount.replace(/\D/g,"")) || 0;
+        const amountNum = parseFloat(verificationAmount.replace(/\D/g, "")) || 0;
         if (amountNum <= 0) {
           setError('Nominal donasi harus lebih dari 0')
           setIsSubmitting(false)
@@ -168,17 +168,17 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
 
   const waMessages = {
     id: `Syalom ${prop.donor_name},\n\n` +
-        `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
-        `Kami sangat bersyukur atas ketulusan hati dan kepedulian yang senantiasa Bapak/Ibu tunjukkan bagi sesama. Keteladanan Bapak/Ibu senantiasa menjadi inspirasi nyata bagi kami.\n\n` +
-        `Dalam rangka mewujudkan pelayanan kasih, kami dari Panitia Bakti Sosial Lintas Sinodal 2026 (Yankes GPIB & GMIM) bermaksud menyampaikan proposal permohonan donasi untuk pelayanan kesehatan gratis di Likupang, Touluaan, dan Lolah, Sulawesi Utara. Rincian program pelayanan ini dapat dilihat pada dokumen PDF terlampir.\n\n` +
-        `Merupakan suatu kehormatan dan sukacita besar bagi kami apabila Bapak/Ibu berkenan untuk melangkah bersama kami, menjadi perpanjangan tangan kasih Tuhan bagi saudara-saudara kita yang membutuhkan.\n\n` +
-        `Terima kasih yang mendalam atas perhatian dan kemurahan hati Bapak/Ibu. Tuhan Yesus senantiasa memberkati kesehatan, keluarga, serta segala usaha dan karya Bapak/Ibu. Amin.`,
+      `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
+      `Kami sangat bersyukur atas ketulusan hati dan kepedulian yang senantiasa Bapak/Ibu tunjukkan bagi sesama. Keteladanan Bapak/Ibu senantiasa menjadi inspirasi nyata bagi kami.\n\n` +
+      `Dalam rangka mewujudkan pelayanan kasih, kami dari Panitia Bakti Sosial Lintas Sinodal 2026 (Yankes GPIB & GMIM) bermaksud menyampaikan proposal permohonan donasi untuk pelayanan kesehatan gratis di Likupang, Touluaan, dan Lolah, Sulawesi Utara. Rincian program pelayanan ini dapat dilihat pada dokumen PDF terlampir.\n\n` +
+      `Merupakan suatu kehormatan dan sukacita besar bagi kami apabila Bapak/Ibu berkenan untuk melangkah bersama kami, menjadi perpanjangan tangan kasih Tuhan bagi saudara-saudara kita yang membutuhkan.\n\n` +
+      `Terima kasih yang mendalam atas perhatian dan kemurahan hati Bapak/Ibu. Tuhan Yesus senantiasa memberkati kesehatan, keluarga, serta segala usaha dan karya Bapak/Ibu. Amin.`,
     en: `Shalom ${prop.donor_name},\n\n` +
-        `Warm greetings in the love of our Lord Jesus Christ.\n\n` +
-        `We are deeply grateful for the sincerity of heart and care that you have always shown to others. Your exemplary life continues to be a true inspiration for us.\n\n` +
-        `In order to realize our love ministry, we, the Committee of the 2026 Cross-Synodal Social Mission (Healthcare Services by GPIB & GMIM), intend to submit a partnership donation proposal for free healthcare services in Likupang, Touluaan, and Lolah, North Sulawesi. The details of this service program can be found in the attached PDF document.\n\n` +
-        `It would be a great honor and joy for us if you would walk with us as an extension of God's hand of love for our brothers and sisters in need.\n\n` +
-        `Thank you very much for your attention and generosity. May the Lord Jesus always bless your health, family, and all your work and efforts. Amen.`
+      `Warm greetings in the love of our Lord Jesus Christ.\n\n` +
+      `We are deeply grateful for the sincerity of heart and care that you have always shown to others. Your exemplary life continues to be a true inspiration for us.\n\n` +
+      `In order to realize our love ministry, we, the Committee of the 2026 Cross-Synodal Social Mission (Healthcare Services by GPIB & GMIM), intend to submit a partnership donation proposal for free healthcare services in Likupang, Touluaan, and Lolah, North Sulawesi. The details of this service program can be found in the attached PDF document.\n\n` +
+      `It would be a great honor and joy for us if you would walk with us as an extension of God's hand of love for our brothers and sisters in need.\n\n` +
+      `Thank you very much for your attention and generosity. May the Lord Jesus always bless your health, family, and all your work and efforts. Amen.`
   };
 
   const donationAmount = prop.donations && prop.donations.length > 0 ? prop.donations[0].amount : 0;
@@ -187,22 +187,22 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
 
   const waCertMessages = {
     id: `Syalom ${prop.donor_name},\n\n` +
-        `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
-        `Dengan penuh rasa hormat dan sukacita, kami segenap Panitia Bakti Sosial Lintas Sinodal 2026 menyampaikan ucapan terima kasih yang mendalam atas donasi pelayanan kasih sebesar ${formattedAmountID} yang telah kami terima dan verifikasi.\n\n` +
-        `Keberadaan dukungan Bapak/Ibu adalah bukti nyata kepedulian yang menghidupkan harapan baru bagi saudara-saudara kita yang membutuhkan layanan kesehatan di pelosok Sulawesi Utara. Kami bersyukur atas ketulusan hati Bapak/Ibu.\n\n` +
-        `Sebagai bentuk apresiasi resmi dan pertanggungjawaban kami, bersama pesan ini kami lampirkan dokumen digital Sertifikat Penghargaan resmi (silakan unduh file PDF yang kami bagikan ini).\n\n` +
-        `Doa kami senantiasa, kiranya Tuhan Yesus Kristus melimpahkan kesehatan, damai sejahtera, serta memberkati seluruh karya, usaha, dan keluarga Bapak/Ibu. Amin.`,
+      `Salam sejahtera dalam kasih Tuhan Yesus Kristus.\n\n` +
+      `Dengan penuh rasa hormat dan sukacita, kami segenap Panitia Bakti Sosial Lintas Sinodal 2026 menyampaikan ucapan terima kasih yang mendalam atas donasi pelayanan kasih sebesar ${formattedAmountID} yang telah kami terima dan verifikasi.\n\n` +
+      `Keberadaan dukungan Bapak/Ibu adalah bukti nyata kepedulian yang menghidupkan harapan baru bagi saudara-saudara kita yang membutuhkan layanan kesehatan di pelosok Sulawesi Utara. Kami bersyukur atas ketulusan hati Bapak/Ibu.\n\n` +
+      `Sebagai bentuk apresiasi resmi dan pertanggungjawaban kami, bersama pesan ini kami lampirkan dokumen digital Sertifikat Penghargaan resmi (silakan unduh file PDF yang kami bagikan ini).\n\n` +
+      `Doa kami senantiasa, kiranya Tuhan Yesus Kristus melimpahkan kesehatan, damai sejahtera, serta memberkati seluruh karya, usaha, dan keluarga Bapak/Ibu. Amin.`,
     en: `Shalom ${prop.donor_name},\n\n` +
-        `Warm greetings in the love of our Lord Jesus Christ.\n\n` +
-        `With deep respect and joy, the entire Committee of the 2026 Cross-Synodal Social Mission expresses our heartfelt gratitude for your generous donation of ${formattedAmountEN} which has been received and verified.\n\n` +
-        `Your support is a tangible proof of care that brings new hope and healing to our brothers and sisters in need of healthcare services in remote areas of North Sulawesi. We are truly grateful for your generosity.\n\n` +
-        `As a token of our official appreciation and accountability, we attach herewith the digital document of the official Certificate of Appreciation (please download the PDF file we shared).\n\n` +
-        `Our prayer is always that the Lord Jesus Christ blesses your health, peace, and all your work, endeavors, and family. Amen.`
+      `Warm greetings in the love of our Lord Jesus Christ.\n\n` +
+      `With deep respect and joy, the entire Committee of the 2026 Cross-Synodal Social Mission expresses our heartfelt gratitude for your generous donation of ${formattedAmountEN} which has been received and verified.\n\n` +
+      `Your support is a tangible proof of care that brings new hope and healing to our brothers and sisters in need of healthcare services in remote areas of North Sulawesi. We are truly grateful for your generosity.\n\n` +
+      `As a token of our official appreciation and accountability, we attach herewith the digital document of the official Certificate of Appreciation (please download the PDF file we shared).\n\n` +
+      `Our prayer is always that the Lord Jesus Christ blesses your health, peace, and all your work, endeavors, and family. Amen.`
   };
 
   return (
     <>
-      <TableRow 
+      <TableRow
         onClick={() => setDetailsOpen(true)}
         className="hidden md:table-row hover:bg-slate-800/40 transition-colors border-b border-white/5 cursor-pointer"
       >
@@ -251,7 +251,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
       </TableRow>
 
       {/* Mobile Card View */}
-      <TableRow 
+      <TableRow
         onClick={() => setDetailsOpen(true)}
         className="md:hidden block border-b border-white/5 p-5 cursor-pointer hover:bg-slate-800/40 transition-colors"
       >
@@ -266,7 +266,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               <Badge className="bg-slate-800 text-slate-400 border border-white/5 text-[10px] px-2 py-0.5">Belum Ada</Badge>
             )}
           </div>
-          
+
           <div className="flex flex-col gap-1.5 mb-4">
             <span className="font-semibold text-slate-100 flex items-center gap-2 text-base">
               <User className="w-4 h-4 text-slate-400" />
@@ -279,7 +279,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               </span>
             )}
           </div>
-          
+
           <div className="flex items-center justify-between pt-3 border-t border-white/5">
             <span className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
               <Calendar className="w-3.5 h-3.5" />
@@ -306,7 +306,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               Informasi lengkap proposal dan aksi manajemen.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-5 py-6">
             <div className="grid grid-cols-3 gap-2 border-b border-white/5 pb-4">
               <span className="text-sm font-semibold text-slate-500">Nomor</span>
@@ -330,16 +330,16 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               <div className="flex flex-col gap-1.5 border-b border-white/5 pb-4">
                 <span className="text-sm font-semibold text-slate-500">Bukti Transfer</span>
                 <div className="relative group overflow-hidden rounded-lg border border-white/5 bg-slate-950/40 mt-1 max-w-[200px]">
-                  <Image 
-                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
-                    alt="Bukti Transfer Donatur" 
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`}
+                    alt="Bukti Transfer Donatur"
                     width={400} height={300}
                     className="w-full h-auto max-h-32 object-contain transition-all duration-300 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <a 
-                      href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
-                      target="_blank" 
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[10px] font-bold transition-all shadow"
                     >
@@ -448,7 +448,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
                     ? 'Donation verified. Download the official PDF certificate of appreciation and share our warm appreciation with the donor.'
                     : 'Donasi telah diverifikasi. Unduh sertifikat penghargaan resmi PDF dan bagikan apresiasi hangat kepada donatur.'}
                 </p>
-                
+
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <PDFDownloadLink
                     document={<ThankYouPDF data={prop} lang={certLang} />}
@@ -459,13 +459,13 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
                     {({ loading }) => (
                       <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-9" disabled={loading}>
                         <Download className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                        {loading 
-                          ? '...' 
+                        {loading
+                          ? '...'
                           : (certLang === 'en' ? 'Download PDF' : 'Unduh PDF')}
                       </Button>
                     )}
                   </PDFDownloadLink>
- 
+
                   <a
                     href={`https://api.whatsapp.com/send?text=${encodeURIComponent(waCertMessages[certLang])}`}
                     target="_blank"
@@ -480,7 +480,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
                     </Button>
                   </a>
                 </div>
- 
+
                 {/* Panduan Pengiriman */}
                 <div className="p-3.5 bg-slate-900/60 rounded-xl border border-white/5 space-y-2 mt-2">
                   <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider block">
@@ -505,7 +505,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               </div>
             )}
 
-            
+
             <div className="flex justify-end gap-2.5 pt-2">
               {!hasDonation && (
                 <Button variant="outline" className="h-9 text-xs text-emerald-400 border-emerald-900/50 hover:bg-emerald-900/30 hover:text-emerald-300 bg-slate-900 font-semibold" onClick={() => handleOpenAction('record_payment')}>
@@ -533,29 +533,29 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
         <DialogContent className="sm:max-w-[425px] bg-slate-950 border-white/10 text-slate-200">
           <DialogHeader>
             <DialogTitle className="text-2xl font-heading text-amber-400">
-              {actionType === 'edit' 
-                ? 'Edit Proposal' 
-                : actionType === 'verify' 
-                ? 'Verifikasi Donasi' 
-                : actionType === 'record_payment'
-                ? 'Rekam Pembayaran'
-                : 'Hapus Proposal'}
+              {actionType === 'edit'
+                ? 'Edit Proposal'
+                : actionType === 'verify'
+                  ? 'Verifikasi Donasi'
+                  : actionType === 'record_payment'
+                    ? 'Rekam Pembayaran'
+                    : 'Hapus Proposal'}
             </DialogTitle>
             <DialogDescription className="text-slate-400">
-              {actionType === 'edit' 
-                ? 'Ubah data proposal di bawah ini. Masukkan passcode otoritas untuk menyimpan.' 
+              {actionType === 'edit'
+                ? 'Ubah data proposal di bawah ini. Masukkan passcode otoritas untuk menyimpan.'
                 : actionType === 'verify'
-                ? 'Konfirmasi nominal donasi yang ditransfer. Nominal ini akan tercatat di Dasbor.'
-                : actionType === 'record_payment'
-                ? 'Rekam pembayaran donatur secara internal. Donasi akan langsung diverifikasi.'
-                : 'Tindakan ini tidak dapat dibatalkan. Masukkan passcode otoritas untuk menghapus permanen.'}
+                  ? 'Konfirmasi nominal donasi yang ditransfer. Nominal ini akan tercatat di Dasbor.'
+                  : actionType === 'record_payment'
+                    ? 'Rekam pembayaran donatur secara internal. Donasi akan langsung diverifikasi.'
+                    : 'Tindakan ini tidak dapat dibatalkan. Masukkan passcode otoritas untuk menghapus permanen.'}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-5 py-6">
             {actionType === 'edit' && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="donorName" className="text-slate-300">Nama Calon Donatur</Label>
+                  <Label htmlFor="donorName" className="text-slate-300">Nama Donatur</Label>
                   <Input id="donorName" value={donorName} onChange={(e) => setDonorName(e.target.value)} className="bg-slate-900 border-white/10 text-slate-100" />
                 </div>
                 <div className="space-y-2">
@@ -574,9 +574,9 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
                 {hasDonation && prop.donations[0].receipt_url && (
                   <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center">
                     <span className="text-xs font-semibold text-slate-400 block self-start">Bukti Transfer Saat Ini</span>
-                    <Image 
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
-                      alt="Bukti Transfer Saat Ini" 
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`}
+                      alt="Bukti Transfer Saat Ini"
                       width={400} height={300}
                       className="w-full h-auto max-h-32 object-contain rounded-lg border border-white/10"
                     />
@@ -587,24 +587,24 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
                   <Label htmlFor="editReceiptFile" className="text-slate-300 font-semibold">
                     {hasDonation && prop.donations[0].receipt_url ? 'Ganti Bukti Transfer (Opsional)' : 'Unggah Bukti Transfer (Opsional)'}
                   </Label>
-                  <Input 
-                    id="editReceiptFile" 
-                    type="file" 
+                  <Input
+                    id="editReceiptFile"
+                    type="file"
                     accept="image/*,.pdf"
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
                         setReceiptFile(e.target.files[0])
                       }
-                    }} 
-                    className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 text-xs h-9 flex items-center" 
+                    }}
+                    className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 text-xs h-9 flex items-center"
                   />
                 </div>
                 {receiptFile && receiptFile.type.startsWith('image/') && (
                   <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
                     <span className="text-xs font-semibold text-slate-400 block self-start">Preview Bukti Baru</span>
-                    <img 
-                      src={URL.createObjectURL(receiptFile)} 
-                      alt="Preview Bukti Baru" 
+                    <img
+                      src={URL.createObjectURL(receiptFile)}
+                      alt="Preview Bukti Baru"
                       className="w-full max-h-32 object-contain rounded-lg border border-white/10"
                     />
                   </div>
@@ -614,11 +614,11 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
             {(actionType === 'verify' || actionType === 'record_payment') && (
               <div className="space-y-2">
                 <Label htmlFor="verificationAmount" className="text-slate-300">Nominal Donasi (Angka)</Label>
-                <Input 
-                  id="verificationAmount" 
-                  value={verificationAmount} 
-                  onChange={handleVerificationAmountChange} 
-                  className="bg-slate-900 border-white/10 text-slate-100" 
+                <Input
+                  id="verificationAmount"
+                  value={verificationAmount}
+                  onChange={handleVerificationAmountChange}
+                  className="bg-slate-900 border-white/10 text-slate-100"
                   placeholder="Contoh: 1.500.000"
                 />
               </div>
@@ -626,9 +626,9 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
             {actionType === 'verify' && hasDonation && prop.donations[0].receipt_url && (
               <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
                 <span className="text-xs font-semibold text-slate-400 block self-start">Bukti Transfer Donatur</span>
-                <Image 
-                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`} 
-                  alt="Bukti Transfer Donatur" 
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/receipts/${prop.donations[0].receipt_url}`}
+                  alt="Bukti Transfer Donatur"
                   width={400} height={300}
                   className="w-full h-auto max-h-48 object-contain rounded-lg border border-white/10"
                 />
@@ -638,34 +638,34 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
               <>
                 <div className="space-y-2">
                   <Label htmlFor="paymentDate" className="text-slate-300">Tanggal Bayar / Transfer</Label>
-                  <Input 
-                    id="paymentDate" 
+                  <Input
+                    id="paymentDate"
                     type="date"
-                    value={paymentDate} 
-                    onChange={(e) => setPaymentDate(e.target.value)} 
-                    className="bg-slate-900 border-white/10 text-slate-100" 
+                    value={paymentDate}
+                    onChange={(e) => setPaymentDate(e.target.value)}
+                    className="bg-slate-900 border-white/10 text-slate-100"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="receiptFile" className="text-slate-300 font-semibold">Bukti Transfer (Opsional)</Label>
-                  <Input 
-                    id="receiptFile" 
-                    type="file" 
+                  <Input
+                    id="receiptFile"
+                    type="file"
                     accept="image/*,.pdf"
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
                         setReceiptFile(e.target.files[0])
                       }
-                    }} 
-                    className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3" 
+                    }}
+                    className="bg-slate-900 border-white/10 text-slate-300 file:bg-white/10 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3"
                   />
                 </div>
                 {receiptFile && receiptFile.type.startsWith('image/') && (
                   <div className="space-y-2 border border-white/5 bg-slate-900/40 p-3 rounded-xl flex flex-col items-center animate-fade-in">
                     <span className="text-xs font-semibold text-slate-400 block self-start">Preview Bukti Baru</span>
-                    <img 
-                      src={URL.createObjectURL(receiptFile)} 
-                      alt="Preview Bukti Baru" 
+                    <img
+                      src={URL.createObjectURL(receiptFile)}
+                      alt="Preview Bukti Baru"
                       className="w-full max-h-48 object-contain rounded-lg border border-white/10"
                     />
                   </div>
@@ -674,11 +674,11 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
             )}
             <div className="space-y-2 mt-2">
               <Label htmlFor="passcode" className="text-red-400 font-semibold tracking-wide">Passcode Otorisasi</Label>
-              <Input 
-                id="passcode" 
-                type="password" 
-                value={passcode} 
-                onChange={(e) => setPasscode(e.target.value)} 
+              <Input
+                id="passcode"
+                type="password"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
                 placeholder="Masukkan passcode"
                 className="bg-slate-900 border-red-900/50 focus-visible:ring-red-500 text-slate-100"
               />
@@ -687,20 +687,20 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting} className="border-white/10 bg-transparent text-slate-300 hover:bg-white/5 hover:text-white">Batal</Button>
-            <Button 
-              onClick={handleSubmitAction} 
+            <Button
+              onClick={handleSubmitAction}
               disabled={isSubmitting}
               className={actionType === 'delete' ? 'bg-red-600 hover:bg-red-500 text-white' : (actionType === 'verify' || actionType === 'record_payment') ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-amber-600 hover:bg-amber-500 text-slate-900 font-bold'}
             >
-              {isSubmitting 
-                ? 'Memproses...' 
-                : actionType === 'edit' 
-                ? 'Simpan Perubahan' 
-                : actionType === 'verify' 
-                ? 'Verifikasi Sekarang' 
-                : actionType === 'record_payment'
-                ? 'Rekam & Verifikasi'
-                : 'Hapus Permanen'}
+              {isSubmitting
+                ? 'Memproses...'
+                : actionType === 'edit'
+                  ? 'Simpan Perubahan'
+                  : actionType === 'verify'
+                    ? 'Verifikasi Sekarang'
+                    : actionType === 'record_payment'
+                      ? 'Rekam & Verifikasi'
+                      : 'Hapus Permanen'}
             </Button>
           </DialogFooter>
         </DialogContent>
