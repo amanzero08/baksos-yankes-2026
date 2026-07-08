@@ -21,16 +21,28 @@ const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVIC
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function makeReceiptsBucketPublic() {
-  console.log("Updating receipts bucket to public...");
-  const { data, error } = await supabase.storage.updateBucket('receipts', {
-    public: true
-  });
-  if (error) {
-    console.error("Error updating bucket:", error);
+async function listReceipts() {
+  console.log("Listing files in receipts bucket...");
+  const { data: rootFiles, error: rootError } = await supabase.storage
+    .from('receipts')
+    .list('', { limit: 100 });
+
+  if (rootError) {
+    console.error("Error listing root files:", rootError);
   } else {
-    console.log("Successfully updated bucket receipts to public:", data);
+    console.log("Root files in receipts bucket:", rootFiles);
+  }
+
+  console.log("Listing files in receipts/kartu-sahabat...");
+  const { data: ksFiles, error: ksError } = await supabase.storage
+    .from('receipts')
+    .list('kartu-sahabat', { limit: 100 });
+
+  if (ksError) {
+    console.error("Error listing kartu-sahabat files:", ksError);
+  } else {
+    console.log("Files in kartu-sahabat folder:", ksFiles);
   }
 }
 
-makeReceiptsBucketPublic();
+listReceipts();

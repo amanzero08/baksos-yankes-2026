@@ -20,17 +20,19 @@ const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
-  const { data: stats, error } = await supabase.rpc('pg_stat_statements');
+  console.log("Fetching all files in receipts bucket...");
+  const { data, error } = await supabase.storage
+    .from('receipts')
+    .list('', { limit: 1000, sortBy: { column: 'name', order: 'asc' } });
+  
   if (error) {
-    // If rpc fails, try selecting from pg_stat_statements view directly
-    const { data: statsDirect, error: directError } = await supabase
-      .from('pg_stat_statements')
-      .select('*')
-      .limit(100);
-    console.log("Direct query error:", directError);
-    console.log("Direct query stats:", statsDirect);
-  } else {
-    console.log("RPC stats:", stats);
+    console.error("Error:", error);
+    return;
   }
+
+  console.log(`Found ${data.length} files in receipts bucket.`);
+  fs.writeFileSync('scratch/receipts-list.json', JSON.stringify(data, null, 2));
+  console.log("Saved to scratch/receipts-list.json");
 }
+
 run();
