@@ -190,7 +190,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                 className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
                 style={{ width: `${progressPercentage}%` }}
               >
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                <div className="absolute inset-0 bg-noise opacity-20 mix-blend-overlay"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
               </div>
             </div>

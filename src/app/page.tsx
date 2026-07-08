@@ -70,7 +70,7 @@ export default function Home() {
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
           className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-amber-500/10 rounded-full blur-[150px]"
         />
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay"></div>
       </div>
 
       {/* Hero Section */}
