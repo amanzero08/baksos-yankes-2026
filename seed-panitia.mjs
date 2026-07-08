@@ -42,7 +42,7 @@ const panitiaNames = [
   "Pnt. Adri Manafe",
   "Dkn. Inang M. K. Kaloke",
   "Sdri. Anggita Cesilia Febriana",
-  "Ibu Yetje Sumual",
+  "Ibu Yece Sumual",
   "Dkn. Lady Tangkere-Sondakh",
   "Ibu Karema Rumambi",
 
@@ -80,6 +80,8 @@ const panitiaNames = [
   "Pdt. Johny A. Lontoh",
   "Pdt. Sealthiel Izaak",
   "Pdt. Asachristo",
+  "Pdt. Sandra Sormin - Sihasale",
+  "Pdt. Betsyeba Ndoen",
 
   // Panitia Lokal - Minahasa Utara
   "Bpk. Edwien Moniaga",

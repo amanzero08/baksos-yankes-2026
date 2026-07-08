@@ -1350,7 +1350,7 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
           </View>
           <View style={styles.committeeRow}>
             <Text style={styles.committeeRole}>{strings.committeeRoles.bendahara}</Text>
-            <Text style={styles.committeeName}>Ibu Yetje Sumual / Dkn. Lady Tangkere-Sondakh / Ibu Karema Rumambi</Text>
+            <Text style={styles.committeeName}>Ibu Yece Sumual / Dkn. Lady Tangkere-Sondakh / Ibu Karema Rumambi</Text>
           </View>
         </View>
 
@@ -1408,7 +1408,7 @@ export const ProposalPDF = ({ data, lang = 'id' }: { data: any; lang?: 'id' | 'e
           </View>
           <View style={styles.committeeRow}>
             <Text style={styles.committeeRole}>{strings.committeeRoles.pastoralRole}</Text>
-            <Text style={styles.committeeName}>Pdt. Johny A. Lontoh (Koord) / Pdt. Sealthiel Izaak / Pdt. Asachristo</Text>
+            <Text style={styles.committeeName}>Pdt. Johny A. Lontoh (Koord) / Pdt. Sealthiel Izaak / Pdt. Asachristo / Pdt. Sandra Sormin - Sihasale / Pdt. Betsyeba Ndoen</Text>
           </View>
         </View>
 

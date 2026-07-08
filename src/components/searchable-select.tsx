@@ -95,11 +95,11 @@ export function SearchableSelect({
 
           <div className="overflow-y-auto flex-1 max-h-[220px] pr-1 space-y-1 scrollbar-thin">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((opt) => {
+              filteredOptions.map((opt, index) => {
                 const isSelected = opt.value === value
                 return (
                   <button
-                    key={opt.value}
+                    key={`${opt.value}-${index}`}
                     type="button"
                     onClick={() => {
                       onChange(opt.value)

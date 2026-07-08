@@ -376,7 +376,7 @@ export const RecapPDF = ({ proposals, kartuSahabat }: { proposals: any[]; kartuS
 
           <View style={styles.sigBlock}>
             <Text style={styles.sigTitle}>Disiapkan Oleh,{"\n"}Bendahara Pelaksana Panitia Baksos</Text>
-            <Text style={styles.sigName}>Ibu Yetje Sumual</Text>
+            <Text style={styles.sigName}>Ibu Yece Sumual</Text>
             <Text style={styles.sigRole}>Bendahara Keuangan</Text>
           </View>
         </View>

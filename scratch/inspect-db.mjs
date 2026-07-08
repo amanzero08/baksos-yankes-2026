@@ -20,8 +20,13 @@ const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
-  const { data, error } = await supabase.from('kartu_sahabat').select('*').limit(1);
+  const ids = ['e946d13e-f197-4146-a265-4ec492e13550', '8c3afef5-5164-4205-b73b-60dbbd4c6773'];
+  const { data: payments, error } = await supabase
+    .from('kartu_sahabat_payments')
+    .select('*')
+    .in('kartu_sahabat_id', ids);
+  
   console.log("Error:", error);
-  console.log("Data:", data);
+  console.log("Payments for Marcella IDs:", payments);
 }
 run();
