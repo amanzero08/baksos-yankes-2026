@@ -123,6 +123,7 @@ export async function submitDonation(formData: FormData) {
 export async function updateProposal(formData: FormData) {
   try {
     const id = formData.get('id') as string
+    const proposalNumber = formData.get('proposalNumber') as string
     const donorName = formData.get('donorName') as string
     const institution = formData.get('institution') as string
     const committeeName = formData.get('committeeName') as string
@@ -133,14 +134,19 @@ export async function updateProposal(formData: FormData) {
     if (passcode !== '2906') throw new Error('Passcode salah. Anda tidak memiliki izin untuk mengubah data.')
     if (!id) throw new Error('ID Proposal tidak ditemukan.')
 
+    const updatePayload: any = {
+      donor_name: donorName,
+      institution: institution || null,
+      committee_name: committeeName || null,
+      message: message || null,
+    };
+    if (proposalNumber) {
+      updatePayload.proposal_number = proposalNumber;
+    }
+
     const { data: updated, error } = await supabaseAdmin
       .from('proposals')
-      .update({
-        donor_name: donorName,
-        institution: institution || null,
-        committee_name: committeeName || null,
-        message: message || null,
-      })
+      .update(updatePayload)
       .eq('id', id)
       .select()
       .single()

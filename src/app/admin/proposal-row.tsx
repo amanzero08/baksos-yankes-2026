@@ -36,6 +36,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Edit form state
+  const [proposalNumber, setProposalNumber] = useState(prop.proposal_number)
   const [donorName, setDonorName] = useState(prop.donor_name)
   const [institution, setInstitution] = useState(prop.institution || '')
   const [committeeName, setCommitteeName] = useState(prop.committee_name || '')
@@ -66,6 +67,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
     setReceiptFile(null)
     setPaymentDate(new Date().toISOString().substring(0, 10))
     // reset form
+    setProposalNumber(prop.proposal_number)
     setDonorName(prop.donor_name)
     setInstitution(prop.institution || '')
     setCommitteeName(prop.committee_name || '')
@@ -104,6 +106,7 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
       } else if (actionType === 'edit') {
         const formData = new FormData()
         formData.append('id', prop.id)
+        formData.append('proposalNumber', proposalNumber)
         formData.append('donorName', donorName)
         formData.append('institution', institution)
         formData.append('committeeName', committeeName)
@@ -554,6 +557,10 @@ export function ProposalRow({ prop, onShowToast }: { prop: any; onShowToast: (ms
           <div className="grid gap-5 py-6">
             {actionType === 'edit' && (
               <>
+                <div className="space-y-2">
+                  <Label htmlFor="proposalNumber" className="text-slate-300">Nomor Proposal</Label>
+                  <Input id="proposalNumber" value={proposalNumber} onChange={(e) => setProposalNumber(e.target.value)} className="bg-slate-900 border-white/10 text-slate-100" />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="donorName" className="text-slate-300">Nama Donatur</Label>
                   <Input id="donorName" value={donorName} onChange={(e) => setDonorName(e.target.value)} className="bg-slate-900 border-white/10 text-slate-100" />
